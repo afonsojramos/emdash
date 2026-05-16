@@ -139,24 +139,13 @@ function pnpmWorkspaceYaml(template) {
 	const allowBuilds = template.endsWith("-cloudflare")
 		? "  esbuild: true\n  workerd: true\n  better-sqlite3: false\n  sharp: false"
 		: "  esbuild: true\n  better-sqlite3: true\n  sharp: true\n  workerd: false";
-	return `# Approve only the native build scripts this runtime needs (pnpm >=10.26
-# and pnpm 11). The rest are listed false so strictDepBuilds, which is on
-# by default, treats them as reviewed and does not fail the install.
+	return `# Build scripts: allow only what each runtime needs; rest false so
+# strictDepBuilds (pnpm >=10.26 / 11) passes.
 allowBuilds:
 ${allowBuilds}
 
-# Supply-chain hardening:
-# - minimumReleaseAge: don't install a version until it has been public for
-#   24h, so a compromised release has time to be caught. EmDash's own
-#   packages are exempt so new EmDash releases install immediately.
-# - trustPolicy: never install a package whose trust level has dropped.
-#   The sole exclusion is chokidar@4.0.3: Astro pins that exact release,
-#   and it dropped npm publish provenance relative to earlier ones. Pinned
-#   to the version so it is narrow and self-expiring -- once Astro upgrades
-#   to a provenance-bearing chokidar this entry stops matching and the
-#   guard fully re-applies with no action needed.
-# - blockExoticSubdeps: transitive deps must come from the registry,
-#   workspace, or local paths -- no git/tarball sub-dependencies.
+# Supply-chain hardening. chokidar@4.0.3 is the lone trust exclusion --
+# Astro pins that provenance-dropped release; self-expires on its next bump.
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - emdash
