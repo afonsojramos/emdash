@@ -145,19 +145,16 @@ function pnpmWorkspaceYaml(template) {
 allowBuilds:
 ${allowBuilds}
 
-# Astro pins chokidar@4, whose npm publish provenance was dropped relative
-# to earlier releases, so it fails trustPolicy: no-downgrade. chokidar@5
-# restored provenance, so force the tree to v5 instead of weakening the
-# trust guard with an exclusion.
-overrides:
-  chokidar: "^5.0.0"
-
 # Supply-chain hardening:
 # - minimumReleaseAge: don't install a version until it has been public for
 #   24h, so a compromised release has time to be caught. EmDash's own
 #   packages are exempt so new EmDash releases install immediately.
-# - trustPolicy: never install a package whose trust level has dropped
-#   (no exclusions -- the chokidar override above keeps this clean).
+# - trustPolicy: never install a package whose trust level has dropped.
+#   The sole exclusion is chokidar@4.0.3: Astro pins that exact release,
+#   and it dropped npm publish provenance relative to earlier ones. Pinned
+#   to the version so it is narrow and self-expiring -- once Astro upgrades
+#   to a provenance-bearing chokidar this entry stops matching and the
+#   guard fully re-applies with no action needed.
 # - blockExoticSubdeps: transitive deps must come from the registry,
 #   workspace, or local paths -- no git/tarball sub-dependencies.
 minimumReleaseAge: 1440
@@ -165,6 +162,8 @@ minimumReleaseAgeExclude:
   - emdash
   - "@emdash-cms/*"
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - "chokidar@4.0.3"
 blockExoticSubdeps: true
 `;
 }
