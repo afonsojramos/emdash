@@ -1,0 +1,5 @@
+.build/
+.alchemy/
+node_modules/
+.env
+.env.local

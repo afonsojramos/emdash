@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ES2023",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"verbatimModuleSyntax": true,
+		"noEmit": true,
+		"allowImportingTsExtensions": false,
+		"types": ["@cloudflare/workers-types"]
+	},
+	"include": ["agents/**/*.ts", "lib/**/*.ts", "scripts/**/*.ts", "alchemy.run.ts"],
+	"exclude": [".build", "node_modules"]
+}
