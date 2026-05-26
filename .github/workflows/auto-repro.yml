@@ -61,6 +61,12 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          # Scope the token to exactly what the orchestrator uses it for:
+          # comment + label writes on this one repository. Without these
+          # inputs the action mints a token inheriting all of the App's
+          # installation permissions, which zizmor flags as a footgun.
+          repositories: emdash
+          permission-issues: write
 
       - name: Setup PNPM
         uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
