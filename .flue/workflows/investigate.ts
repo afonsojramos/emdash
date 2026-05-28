@@ -70,8 +70,25 @@ const reproduceResultSchema = v.object({
 	notes: v.pipe(v.string(), v.minLength(10), v.maxLength(6000)),
 	screenshots: v.array(
 		v.object({
-			filename: v.string(),
-			description: v.string(),
+			// Filename is interpolated into a markdown image URL
+			// (https://raw.githubusercontent.com/.../<filename>) and
+			// must not contain characters that would break out of the
+			// `![desc](url)` syntax or path-traverse on the artifacts
+			// branch. The schema enforces a tight allowlist; the
+			// orchestrator validates again before rendering.
+			filename: v.pipe(
+				v.string(),
+				v.minLength(1),
+				v.maxLength(80),
+				v.regex(/^[a-zA-Z0-9._-]+$/, "filename must be [a-zA-Z0-9._-]+"),
+			),
+			// Description is interpolated as the alt text in
+			// `![desc](url)`. It is rendered as text, not parsed as
+			// markdown, but unescaped `]` could close the alt-text
+			// span and let the rest of the description leak into the
+			// surrounding comment. Cap the length and let the YAML
+			// MD-escape the residual.
+			description: v.pipe(v.string(), v.minLength(1), v.maxLength(200)),
 		}),
 	),
 });

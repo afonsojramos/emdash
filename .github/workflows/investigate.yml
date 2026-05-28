@@ -420,10 +420,24 @@ jobs:
           # Build the screenshot markdown block. URLs point at the
           # orphan artifact branch on the emdash repo, not this PR's
           # branch.
+          #
+          # Defense in depth on the agent's structured output:
+          #   - filename: regex-validated against [a-zA-Z0-9._-]+, max
+          #     80 chars. Anything that fails is dropped from the
+          #     comment (the screenshot is still on the artifact
+          #     branch; just not rendered). Prevents URL injection
+          #     and path traversal.
+          #   - description: any `]`, `[`, `(`, `)`, `\` MD-escaped
+          #     with a `\` prefix so the alt-text span can't be
+          #     broken out of.
           SHOTS_MD="$(jq -r --arg branch "$ART_BRANCH" '
-            (.screenshots // []) | map(
-              "![" + (.description // .filename) + "](https://raw.githubusercontent.com/emdash-cms/emdash/" + $branch + "/.bot-artifacts/" + .filename + ")"
-            ) | join("\n\n")
+            def md_escape: gsub("([\\\\\\[\\]()])"; "\\\\\\1");
+            (.screenshots // [])
+              | map(select((.filename // "") | test("^[a-zA-Z0-9._-]{1,80}$")))
+              | map(
+                "![" + ((.description // .filename) | md_escape) + "](https://raw.githubusercontent.com/emdash-cms/emdash/" + $branch + "/.bot-artifacts/" + .filename + ")"
+              )
+              | join("\n\n")
           ' /tmp/agent-result.json)"
 
           # Configure git identity and a GIT_ASKPASS shim so the app
@@ -493,7 +507,7 @@ jobs:
             echo
             echo "${NOTES}"
             echo
-            echo "**Try the fix:**"
+            echo "**Try the fix** _(the preview release may take ~60s to publish after the bot pushes its branch -- if `npm i` 404s, wait a moment and retry)_:"
             echo
             echo '```bash'
             echo "${INSTALL_CMD}"

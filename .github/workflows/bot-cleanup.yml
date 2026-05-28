@@ -39,6 +39,11 @@ jobs:
           owner: emdash-cms
           repositories: emdash
           permission-contents: write
+          # Read-only PR scope so we can `gh pr list --head bot/fix-N`
+          # before deleting the branch -- protects an open bot-opened
+          # PR from being orphaned when an issue is closed without
+          # merging.
+          permission-pull-requests: read
 
       - name: Delete bot branches for closed issue
         env:
@@ -46,14 +51,42 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           set -euo pipefail
-          for BRANCH in "bot/fix-${ISSUE_NUMBER}" "bot/artifacts-${ISSUE_NUMBER}"; do
-            # URL-encode the slash; gh api will pass through.
-            ENCODED="${BRANCH//\//%2F}"
-            # Capture status -- 204 = success, 422/404 = already gone.
+          FIX_BRANCH="bot/fix-${ISSUE_NUMBER}"
+          ART_BRANCH="bot/artifacts-${ISSUE_NUMBER}"
+
+          # bot/fix-N MAY have an open PR pointing at it (the bot
+          # opens one after `bot:verified`). Deleting the ref would
+          # invalidate that PR. Two close paths to worry about:
+          #
+          #  - PR merged -> issue auto-closes via "Closes #N" -> we
+          #    fire here. The PR is closed; deleting the now-unused
+          #    ref is fine. GitHub may have already deleted it.
+          #  - Maintainer manually closes the issue ("won't fix",
+          #    "stale", etc.) while the bot PR is still open. We
+          #    must NOT delete the ref -- it would close the PR
+          #    silently and lose the bot's work with no recovery.
+          OPEN_PR_COUNT="$(gh pr list \
+            --repo emdash-cms/emdash \
+            --head "$FIX_BRANCH" \
+            --state open \
+            --json number \
+            --jq 'length' 2>/dev/null || echo 0)"
+
+          if [[ "$OPEN_PR_COUNT" != "0" ]]; then
+            echo "::notice::skipping ${FIX_BRANCH} deletion: ${OPEN_PR_COUNT} open PR(s) reference it"
+          else
+            ENCODED="${FIX_BRANCH//\//%2F}"
             STATUS="$(gh api -X DELETE "repos/emdash-cms/emdash/git/refs/heads/${ENCODED}" \
               --silent -i 2>/dev/null | head -n 1 || true)"
-            echo "DELETE ${BRANCH}: ${STATUS:-no response}"
-          done
+            echo "DELETE ${FIX_BRANCH}: ${STATUS:-no response}"
+          fi
+
+          # bot/artifacts-N is never the head of any PR (it's an
+          # orphan branch with screenshots only). Always safe to delete.
+          ENCODED="${ART_BRANCH//\//%2F}"
+          STATUS="$(gh api -X DELETE "repos/emdash-cms/emdash/git/refs/heads/${ENCODED}" \
+            --silent -i 2>/dev/null | head -n 1 || true)"
+          echo "DELETE ${ART_BRANCH}: ${STATUS:-no response}"
 
   cleanup-daily:
     name: Prune stale artifact branches

@@ -1,11 +1,15 @@
----
-name: investigate
-description: Parent skill for the bot:repro investigation pipeline. Classifies the issue, dispatches to the right reproduce sub-skill, then walks diagnose / verify / fix.
----
+# Investigation pipeline (reference document)
 
-# Investigate
+> **Not a Flue skill.** This document describes the four-stage
+> pipeline implemented in `.flue/workflows/investigate.ts`. It is not
+> loaded as a `SkillReference` and editing it has no runtime effect.
+> The leaf skills the workflow does load are siblings of this file
+> (`diagnose/SKILL.md`, `verify/SKILL.md`, `fix/SKILL.md`,
+> `repro-api/SKILL.md`, `repro-admin/SKILL.md`, `repro-public/SKILL.md`).
+> The leading underscore in the filename keeps this directory from
+> being mistaken for a Flue skill directory by Vite's skill loader.
 
-You are investigating a single GitHub issue on `emdash-cms/emdash` that a maintainer flagged with the `bot:repro` label. You run on a GitHub Actions runner with a clean EmDash checkout in the working directory. Your job is to walk a four-stage pipeline and return one structured result that downstream code uses to post a comment on the issue.
+The bot investigates a single GitHub issue on `emdash-cms/emdash` that a maintainer flagged with the `bot:repro` label. It runs on a GitHub Actions runner with a clean EmDash checkout in the working directory. It walks a four-stage pipeline and returns one structured result that downstream code uses to post a comment on the issue.
 
 You are read-only on GitHub. The `GH_TOKEN` available to bash has read scope only. You cannot comment, label, edit, close, or push branches from inside this skill. The orchestrator handles all writes after you return.
 
