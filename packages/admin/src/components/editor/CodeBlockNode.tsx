@@ -65,6 +65,25 @@ function filterLanguages(item: string, query: string) {
 	return lang.aliases?.some((alias) => alias.toLowerCase().includes(needle)) ?? false;
 }
 
+/**
+ * Tells password managers / autofill extensions to leave the language input
+ * alone. Keeper (seen in the wild setting `data-keeper-edited`) respects the
+ * `keeper-ignore` class; 1Password / LastPass / Bitwarden respect the data-*
+ * attributes. Without this, the extension injects into the input and toggles
+ * a focus guard that marks the surrounding editor content `aria-hidden`,
+ * which makes ProseMirror redraw and recreate the code block node view --
+ * tearing the picker down mid-edit (issue #1200). Mirrors Kumo's
+ * `<Input passwordManagerIgnore>`, which `Autocomplete.InputGroup` does not
+ * expose, so we apply it by hand to the input and the picker container.
+ */
+const PASSWORD_MANAGER_IGNORE_CLASS = "keeper-ignore";
+const PASSWORD_MANAGER_IGNORE_ATTRS = {
+	"data-1p-ignore": "true",
+	"data-lpignore": "true",
+	"data-bwignore": "true",
+	"data-form-type": "other",
+} as const;
+
 function CodeBlockNodeView({ node, updateAttributes, selected }: NodeViewProps) {
 	const { t } = useLingui();
 	const [isEditing, setIsEditing] = React.useState(false);
@@ -147,8 +166,9 @@ function CodeBlockNodeView({ node, updateAttributes, selected }: NodeViewProps) 
 				{isEditing ? (
 					<div
 						ref={popoverRef}
-						className="flex items-center gap-1 rounded-md border bg-kumo-overlay p-1 shadow-lg"
+						className={`flex items-center gap-1 rounded-md border bg-kumo-overlay p-1 shadow-lg ${PASSWORD_MANAGER_IGNORE_CLASS}`}
 						onKeyDown={handleKeyDown}
+						{...PASSWORD_MANAGER_IGNORE_ATTRS}
 					>
 						<Autocomplete
 							items={LANGUAGE_ITEMS}
@@ -156,7 +176,11 @@ function CodeBlockNodeView({ node, updateAttributes, selected }: NodeViewProps) 
 							onValueChange={(next: string) => setDraft(next)}
 							filter={filterLanguages}
 						>
-							<Autocomplete.InputGroup size="sm" placeholder={t`Language`} />
+							<Autocomplete.InputGroup
+								size="sm"
+								placeholder={t`Language`}
+								className={PASSWORD_MANAGER_IGNORE_CLASS}
+							/>
 							<Autocomplete.Content sideOffset={4} className={LANGUAGE_PICKER_POPUP_CLASS}>
 								<Autocomplete.List>
 									{(item: string) => (
