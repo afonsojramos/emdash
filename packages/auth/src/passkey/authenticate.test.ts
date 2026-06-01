@@ -1,21 +1,22 @@
 import { createHash, generateKeyPairSync, sign } from "node:crypto";
 
-import {
-	createAssertionSignatureMessage,
-	coseAlgorithmES256,
-	coseAlgorithmRS256,
-} from "@oslojs/webauthn";
 import { describe, it, expect, vi } from "vitest";
 
 import type { AuthAdapter, Credential } from "../types.js";
 import { authenticateWithPasskey, PasskeyAuthenticationError } from "./authenticate.js";
+import { COSE_ALG_ES256, COSE_ALG_RS256 } from "./cose-key.js";
 import type { ChallengeStore } from "./types.js";
+
+/** WebAuthn signs over authenticatorData || SHA256(clientDataJSON). */
+function assertionSignatureMessage(authenticatorData: Buffer, clientDataJSON: Buffer): Buffer {
+	return Buffer.concat([authenticatorData, createHash("sha256").update(clientDataJSON).digest()]);
+}
 
 const credential: Credential = {
 	id: "registered-credential",
 	userId: "user_1",
 	publicKey: new Uint8Array(),
-	algorithm: coseAlgorithmES256,
+	algorithm: COSE_ALG_ES256,
 	counter: 0,
 	deviceType: "singleDevice",
 	backedUp: false,
@@ -78,7 +79,7 @@ function createValidAssertion(opts: { rpId?: string; origin?: string } = {}) {
 	const signatureCounter = Buffer.alloc(4);
 	signatureCounter.writeUInt32BE(1);
 	const authenticatorData = Buffer.concat([rpIdHash, Buffer.from([0x01]), signatureCounter]);
-	const signatureMessage = createAssertionSignatureMessage(authenticatorData, clientDataJSON);
+	const signatureMessage = assertionSignatureMessage(authenticatorData, clientDataJSON);
 	const signatureBytes = sign("sha256", signatureMessage, privateKey);
 
 	return {
@@ -130,7 +131,7 @@ function createValidRS256Assertion(opts: { rpId?: string; origin?: string } = {}
 	const signatureCounter = Buffer.alloc(4);
 	signatureCounter.writeUInt32BE(1);
 	const authenticatorData = Buffer.concat([rpIdHash, Buffer.from([0x01]), signatureCounter]);
-	const signatureMessage = createAssertionSignatureMessage(authenticatorData, clientDataJSON);
+	const signatureMessage = assertionSignatureMessage(authenticatorData, clientDataJSON);
 
 	// RSA signatures in WebAuthn use RSASSA-PKCS1-v1_5 + SHA-256
 	const signatureBytes = sign("sha256", signatureMessage, privateKey);
@@ -138,7 +139,7 @@ function createValidRS256Assertion(opts: { rpId?: string; origin?: string } = {}
 	return {
 		credential: {
 			...credential,
-			algorithm: coseAlgorithmRS256,
+			algorithm: COSE_ALG_RS256,
 			publicKey: new Uint8Array(publicKeyBytes),
 		},
 		response: {

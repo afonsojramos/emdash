@@ -40,7 +40,6 @@
   "dependencies": {
     "@oslojs/crypto": "catalog:",
     "@oslojs/encoding": "catalog:",
-    "@oslojs/webauthn": "catalog:",
     "ulidx": "^2.4.1",
     "zod": "catalog:"
   },

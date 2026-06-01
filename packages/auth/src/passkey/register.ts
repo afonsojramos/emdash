@@ -1,26 +1,13 @@
 /**
  * Passkey registration (credential creation)
- *
- * Based on oslo webauthn documentation:
- * https://webauthn.oslojs.dev/examples/registration
  */
 
-import { ECDSAPublicKey, p256 } from "@oslojs/crypto/ecdsa";
-import { RSAPublicKey } from "@oslojs/crypto/rsa";
 import { encodeBase64urlNoPadding, decodeBase64urlIgnorePadding } from "@oslojs/encoding";
-import {
-	parseAttestationObject,
-	parseClientDataJSON,
-	coseAlgorithmES256,
-	coseAlgorithmRS256,
-	coseEllipticCurveP256,
-	ClientDataType,
-	AttestationStatementFormat,
-	COSEKeyType,
-} from "@oslojs/webauthn";
 
 import { generateToken } from "../tokens.js";
 import type { Credential, NewCredential, AuthAdapter, User, DeviceType } from "../types.js";
+import { parseAttestationObject, parseClientDataJSON } from "./authenticator-data.js";
+import { COSE_ALG_ES256, COSE_ALG_RS256, coseKeyToStored } from "./cose-key.js";
 import type {
 	RegistrationOptions,
 	RegistrationResponse,
@@ -28,6 +15,7 @@ import type {
 	ChallengeStore,
 	PasskeyConfig,
 } from "./types.js";
+import { verifyRpIdHash } from "./verify.js";
 
 const CHALLENGE_TTL = 5 * 60 * 1000; // 5 minutes
 
@@ -67,8 +55,8 @@ export async function generateRegistrationOptions(
 			displayName: user.name || user.email,
 		},
 		pubKeyCredParams: [
-			{ type: "public-key", alg: coseAlgorithmES256 }, // ES256 (-7)
-			{ type: "public-key", alg: coseAlgorithmRS256 }, // RS256 (-257)
+			{ type: "public-key", alg: COSE_ALG_ES256 }, // ES256 (-7)
+			{ type: "public-key", alg: COSE_ALG_RS256 }, // RS256 (-257)
 		],
 		timeout: 60000,
 		attestation: "none", // We don't need attestation for our use case
@@ -100,12 +88,14 @@ export async function verifyRegistrationResponse(
 	const clientData = parseClientDataJSON(clientDataJSON);
 
 	// Verify client data
-	if (clientData.type !== ClientDataType.Create) {
+	if (clientData.type !== "webauthn.create") {
 		throw new Error("Invalid client data type");
 	}
 
-	// Verify challenge - convert Uint8Array back to base64url string (no padding, matching stored format)
-	const challengeString = encodeBase64urlNoPadding(clientData.challenge);
+	// Verify challenge - normalize to base64url no-padding to match the stored format
+	const challengeString = encodeBase64urlNoPadding(
+		decodeBase64urlIgnorePadding(clientData.challenge),
+	);
 	const challengeData = await challengeStore.get(challengeString);
 	if (!challengeData) {
 		throw new Error("Challenge not found or expired");
@@ -126,24 +116,17 @@ export async function verifyRegistrationResponse(
 		throw new Error(`Invalid origin: ${clientData.origin} not in [${config.origins.join(", ")}]`);
 	}
 
-	// Parse attestation object
-	const attestation = parseAttestationObject(attestationObject);
-
-	// We only support 'none' attestation for simplicity
-	if (attestation.attestationStatement.format !== AttestationStatementFormat.None) {
-		// For other formats, we'd need to verify the attestation statement
-		// For now, we just ignore it and trust the credential
-	}
-
-	const { authenticatorData } = attestation;
+	// Parse attestation object. Registration options request 'none' attestation,
+	// so there is no attestation statement to verify -- we only extract the key.
+	const { authenticatorData } = parseAttestationObject(attestationObject);
 
 	// Verify RP ID hash
-	if (!authenticatorData.verifyRelyingPartyIdHash(config.rpId)) {
+	if (!(await verifyRpIdHash(authenticatorData.rpIdHash, config.rpId))) {
 		throw new Error("Invalid RP ID hash");
 	}
 
 	// Verify flags
-	if (!authenticatorData.userPresent) {
+	if (!authenticatorData.flags.userPresent) {
 		throw new Error("User presence not verified");
 	}
 
@@ -152,49 +135,20 @@ export async function verifyRegistrationResponse(
 		throw new Error("No credential data in attestation");
 	}
 
-	const { credential } = authenticatorData;
+	// Encode the COSE public key into the stored format:
+	// ES256 -> SEC1 uncompressed point, RS256 -> SPKI DER.
+	const { algorithm, publicKey } = coseKeyToStored(authenticatorData.credential.publicKey);
 
-	// Verify algorithm is supported and encode public key
-	// Supports ES256 (ECDSA P-256, stored as SEC1) and RS256 (RSA, stored as PKIX)
-	const algorithm = credential.publicKey.algorithm();
-	let encodedPublicKey: Uint8Array;
-
-	if (algorithm === coseAlgorithmES256) {
-		// Verify EC2 key type for ES256
-		if (credential.publicKey.type() !== COSEKeyType.EC2) {
-			throw new Error("Expected EC2 key type for ES256");
-		}
-		const cosePublicKey = credential.publicKey.ec2();
-		if (cosePublicKey.curve !== coseEllipticCurveP256) {
-			throw new Error("Expected P-256 curve for ES256");
-		}
-		// Encode as SEC1 uncompressed format for storage
-		encodedPublicKey = new ECDSAPublicKey(
-			p256,
-			cosePublicKey.x,
-			cosePublicKey.y,
-		).encodeSEC1Uncompressed();
-	} else if (algorithm === coseAlgorithmRS256) {
-		// Verify RSA key type for RS256
-		if (credential.publicKey.type() !== COSEKeyType.RSA) {
-			throw new Error("Expected RSA key type for RS256");
-		}
-		const cosePublicKey = credential.publicKey.rsa();
-		// Encode as PKIX format for storage
-		encodedPublicKey = new RSAPublicKey(cosePublicKey.n, cosePublicKey.e).encodePKIX();
-	} else {
-		throw new Error(`Unsupported credential algorithm: ${algorithm}`);
-	}
-
-	// Determine device type and backup status
-	// Note: oslo webauthn doesn't expose backup flags, so we default to singleDevice
-	// In practice, most modern passkeys are multi-device (e.g., iCloud Keychain, Google Password Manager)
-	const deviceType: DeviceType = "singleDevice";
-	const backedUp = false;
+	// Backup-eligible credentials sync across devices (iCloud Keychain, Google
+	// Password Manager); backup state reflects whether they currently are.
+	const deviceType: DeviceType = authenticatorData.flags.backupEligible
+		? "multiDevice"
+		: "singleDevice";
+	const backedUp = authenticatorData.flags.backupState;
 
 	return {
 		credentialId: response.id,
-		publicKey: encodedPublicKey,
+		publicKey,
 		algorithm,
 		counter: authenticatorData.signatureCounter,
 		deviceType,

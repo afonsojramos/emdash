@@ -1,34 +1,13 @@
 /**
  * Passkey authentication (credential assertion)
- *
- * Based on oslo webauthn documentation:
- * https://webauthn.oslojs.dev/examples/authentication
  */
 
-import {
-	verifyECDSASignature,
-	p256,
-	decodeSEC1PublicKey,
-	decodePKIXECDSASignature,
-} from "@oslojs/crypto/ecdsa";
-import {
-	decodePKIXRSAPublicKey,
-	verifyRSASSAPKCS1v15Signature,
-	sha256ObjectIdentifier,
-} from "@oslojs/crypto/rsa";
-import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeBase64urlNoPadding, decodeBase64urlIgnorePadding } from "@oslojs/encoding";
-import {
-	parseAuthenticatorData,
-	parseClientDataJSON,
-	ClientDataType,
-	createAssertionSignatureMessage,
-	coseAlgorithmES256,
-	coseAlgorithmRS256,
-} from "@oslojs/webauthn";
 
 import { generateToken } from "../tokens.js";
 import type { Credential, AuthAdapter, User } from "../types.js";
+import { parseAuthenticatorData, parseClientDataJSON } from "./authenticator-data.js";
+import { COSE_ALG_ES256, COSE_ALG_RS256 } from "./cose-key.js";
 import type {
 	AuthenticationOptions,
 	AuthenticationResponse,
@@ -36,6 +15,7 @@ import type {
 	ChallengeStore,
 	PasskeyConfig,
 } from "./types.js";
+import { verifyAssertionSignature, verifyRpIdHash } from "./verify.js";
 
 const CHALLENGE_TTL = 5 * 60 * 1000; // 5 minutes
 
@@ -89,14 +69,6 @@ function parseAuthenticationData(authenticatorData: Uint8Array) {
 	}
 }
 
-function decodeAssertionSignature(signature: Uint8Array) {
-	try {
-		return decodePKIXECDSASignature(signature);
-	} catch {
-		throw invalidPasskeyResponseError();
-	}
-}
-
 /**
  * Generate authentication options for signing in with a passkey
  */
@@ -142,12 +114,14 @@ export async function verifyAuthenticationResponse(
 		decodeAuthenticationResponse(response);
 
 	// Verify client data type
-	if (clientData.type !== ClientDataType.Get) {
+	if (clientData.type !== "webauthn.get") {
 		throw new PasskeyAuthenticationError("invalid_client_data_type", "Invalid client data type");
 	}
 
-	// Verify challenge - convert Uint8Array back to base64url string (no padding, matching stored format)
-	const challengeString = encodeBase64urlNoPadding(clientData.challenge);
+	// Verify challenge - normalize to base64url no-padding to match the stored format
+	const challengeString = encodeBase64urlNoPadding(
+		decodeBase64urlIgnorePadding(clientData.challenge),
+	);
 	const challengeData = await challengeStore.get(challengeString);
 	if (!challengeData) {
 		throw new PasskeyAuthenticationError("challenge_not_found", "Challenge not found or expired");
@@ -175,12 +149,12 @@ export async function verifyAuthenticationResponse(
 	const authData = parseAuthenticationData(authenticatorData);
 
 	// Verify RP ID hash
-	if (!authData.verifyRelyingPartyIdHash(config.rpId)) {
+	if (!(await verifyRpIdHash(authData.rpIdHash, config.rpId))) {
 		throw new PasskeyAuthenticationError("invalid_rp_id_hash", "Invalid RP ID hash");
 	}
 
 	// Verify flags
-	if (!authData.userPresent) {
+	if (!authData.flags.userPresent) {
 		throw new PasskeyAuthenticationError(
 			"user_presence_not_verified",
 			"User presence not verified",
@@ -195,8 +169,12 @@ export async function verifyAuthenticationResponse(
 		);
 	}
 
-	// Create the message that was signed
-	const signatureMessage = createAssertionSignatureMessage(authenticatorData, clientDataJSON);
+	if (credential.algorithm !== COSE_ALG_ES256 && credential.algorithm !== COSE_ALG_RS256) {
+		throw new PasskeyAuthenticationError(
+			"unsupported_algorithm",
+			`Unsupported credential algorithm: ${credential.algorithm}`,
+		);
+	}
 
 	// Ensure public key is a Uint8Array (may come as Buffer from some DB drivers)
 	const publicKeyBytes =
@@ -204,29 +182,18 @@ export async function verifyAuthenticationResponse(
 			? credential.publicKey
 			: new Uint8Array(credential.publicKey);
 
-	// Verify signature based on the stored algorithm
-	let signatureValid = false;
-	const hash = sha256(signatureMessage);
-
-	if (credential.algorithm === coseAlgorithmES256) {
-		// Verify ECDSA signature
-		const ecdsaPublicKey = decodeSEC1PublicKey(p256, publicKeyBytes);
-		const ecdsaSignature = decodeAssertionSignature(signature);
-		signatureValid = verifyECDSASignature(ecdsaPublicKey, hash, ecdsaSignature);
-	} else if (credential.algorithm === coseAlgorithmRS256) {
-		// Verify RSA signature
-		const rsaPublicKey = decodePKIXRSAPublicKey(publicKeyBytes);
-		signatureValid = verifyRSASSAPKCS1v15Signature(
-			rsaPublicKey,
-			sha256ObjectIdentifier,
-			hash,
+	// A malformed signature or stored key surfaces as a failed verification, not a throw.
+	let signatureValid: boolean;
+	try {
+		signatureValid = await verifyAssertionSignature({
+			algorithm: credential.algorithm,
+			publicKey: publicKeyBytes,
+			authenticatorData,
+			clientDataJSON,
 			signature,
-		);
-	} else {
-		throw new PasskeyAuthenticationError(
-			"unsupported_algorithm",
-			`Unsupported credential algorithm: ${credential.algorithm}`,
-		);
+		});
+	} catch {
+		signatureValid = false;
 	}
 
 	if (!signatureValid) {

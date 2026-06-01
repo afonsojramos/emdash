@@ -392,9 +392,7 @@ export function createViteConfig(
 							// Deeper transitive deps
 							"emdash > sanitize-html > parse5",
 							"emdash > @emdash-cms/gutenberg-to-portable-text > @wordpress/block-serialization-default-parser",
-							"emdash > @emdash-cms/auth > @oslojs/crypto/ecdsa",
 							"emdash > @emdash-cms/auth > @oslojs/crypto/sha2",
-							"emdash > @emdash-cms/auth > @oslojs/webauthn",
 							// MCP SDK — server/index.js statically imports ajv (CJS-only).
 							// Pre-bundling converts CJS to ESM so workerd can load it.
 							"emdash > @modelcontextprotocol/sdk > ajv",
