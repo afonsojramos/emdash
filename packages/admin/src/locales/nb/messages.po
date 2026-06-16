@@ -30,8 +30,8 @@ msgstr " (standard)"
 msgid " (opens in new window)"
 msgstr " (åpnes i nytt vindu)"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:792
-#: packages/admin/src/components/MediaPickerModal.tsx:874
+#: packages/admin/src/components/MediaPickerModal.tsx:803
+#: packages/admin/src/components/MediaPickerModal.tsx:886
 msgid " (selected)"
 msgstr " (valgt)"
 
@@ -50,7 +50,7 @@ msgid ": use"
 msgstr ": bruk"
 
 #. placeholder {0}: providers?.find((p) => p.id === selectedItem.providerId)?.name
-#: packages/admin/src/components/MediaPickerModal.tsx:732
+#: packages/admin/src/components/MediaPickerModal.tsx:737
 msgid "(from {0})"
 msgstr "(fra {0})"
 
@@ -105,7 +105,7 @@ msgstr "{0, plural, one {# innholdsoppføring importert} other {# innholdsoppfø
 
 #. placeholder {0}: items.length
 #. placeholder {0}: menu.itemCount ?? 0
-#: packages/admin/src/components/MediaPickerModal.tsx:583
+#: packages/admin/src/components/MediaPickerModal.tsx:588
 #: packages/admin/src/components/MenuList.tsx:217
 msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# oppføring} other {# oppføringer}}"
@@ -255,8 +255,8 @@ msgstr "{0} oppdatert til v{1}"
 
 #. placeholder {0}: item.filename
 #. placeholder {1}: selected ? t` (selected)` : ""
-#: packages/admin/src/components/MediaPickerModal.tsx:792
-#: packages/admin/src/components/MediaPickerModal.tsx:874
+#: packages/admin/src/components/MediaPickerModal.tsx:803
+#: packages/admin/src/components/MediaPickerModal.tsx:886
 msgid "{0}{1}"
 msgstr "{0}{1}"
 
@@ -336,13 +336,13 @@ msgstr "{total, plural, one {# oppføring} other {# oppføringer}}"
 msgid "{total, plural, one {# total} other {# total}}"
 msgstr "{total, plural, one {# totalt} other {# totalt}}"
 
-#: packages/admin/src/components/MediaLibrary.tsx:178
-#: packages/admin/src/components/MediaLibrary.tsx:214
+#: packages/admin/src/components/MediaLibrary.tsx:185
+#: packages/admin/src/components/MediaLibrary.tsx:221
 msgid "{total, plural, one {File uploaded} other {# files uploaded}}"
 msgstr "{total, plural, one {Fil lastet opp} other {# filer lastet opp}}"
 
-#: packages/admin/src/components/MediaLibrary.tsx:183
-#: packages/admin/src/components/MediaLibrary.tsx:219
+#: packages/admin/src/components/MediaLibrary.tsx:190
+#: packages/admin/src/components/MediaLibrary.tsx:226
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, one {Opplasting mislyktes} other {Alle # opplastinger mislyktes}}"
 
@@ -362,8 +362,8 @@ msgstr "{unchangedCount, plural, one {Skjul # uendret} other {Skjul # uendret}}"
 msgid "{unchangedCount, plural, one {Show # unchanged} other {Show # unchanged}}"
 msgstr "{unchangedCount, plural, one {Vis # uendret} other {Vis # uendret}}"
 
-#: packages/admin/src/components/MediaLibrary.tsx:188
-#: packages/admin/src/components/MediaLibrary.tsx:224
+#: packages/admin/src/components/MediaLibrary.tsx:195
+#: packages/admin/src/components/MediaLibrary.tsx:231
 msgid "{uploaded} uploaded, {failed} failed"
 msgstr "{uploaded} lastet opp, {failed} mislyktes"
 
@@ -527,7 +527,7 @@ msgstr "Kontoinformasjon"
 #: packages/admin/src/components/ContentList.tsx:345
 #: packages/admin/src/components/ContentList.tsx:463
 #: packages/admin/src/components/ContentTypeList.tsx:106
-#: packages/admin/src/components/MediaLibrary.tsx:486
+#: packages/admin/src/components/MediaLibrary.tsx:493
 #: packages/admin/src/components/TaxonomyManager.tsx:823
 #: packages/admin/src/routes/byline-schema.tsx:249
 msgid "Actions"
@@ -774,7 +774,7 @@ msgstr "Alle kilder"
 msgid "All statuses"
 msgstr "Alle statuser"
 
-#: packages/admin/src/components/MediaLibrary.tsx:393
+#: packages/admin/src/components/MediaLibrary.tsx:400
 #: packages/admin/src/components/Redirects.tsx:398
 msgid "All types"
 msgstr "Alle typer"
@@ -813,8 +813,8 @@ msgstr "Alt-tekst"
 msgid "Alt Text"
 msgstr "Alt-tekst"
 
-#: packages/admin/src/components/MediaLibrary.tsx:688
-#: packages/admin/src/components/MediaLibrary.tsx:745
+#: packages/admin/src/components/MediaLibrary.tsx:697
+#: packages/admin/src/components/MediaLibrary.tsx:754
 msgid "Alt text set"
 msgstr "Alt-tekst angitt"
 
@@ -961,7 +961,7 @@ msgid "Astro"
 msgstr ""
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:66
-#: packages/admin/src/components/MediaLibrary.tsx:396
+#: packages/admin/src/components/MediaLibrary.tsx:403
 msgid "Audio"
 msgstr "Lyd"
 
@@ -1047,7 +1047,7 @@ msgstr "Autolagring mislyktes"
 msgid "Autosave status"
 msgstr "Status for autolagring"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:657
+#: packages/admin/src/components/MediaPickerModal.tsx:662
 msgid "Available media"
 msgstr "Tilgjengelige medier"
 
@@ -1230,7 +1230,7 @@ msgstr "Kan vise innhold"
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:649
 #: packages/admin/src/components/MediaDetailPanel.tsx:248
-#: packages/admin/src/components/MediaPickerModal.tsx:739
+#: packages/admin/src/components/MediaPickerModal.tsx:744
 #: packages/admin/src/components/MenuEditor.tsx:359
 #: packages/admin/src/components/MenuEditor.tsx:530
 #: packages/admin/src/components/MenuList.tsx:172
@@ -1265,7 +1265,7 @@ msgstr "Avbryt endring av navn"
 msgid "Cannot delete theme sections"
 msgstr "Kan ikke slette temaseksjoner"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:408
+#: packages/admin/src/components/MediaPickerModal.tsx:413
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "Kan ikke fastslå MIME-type fra URL. Bruk en URL som slutter på en gjenkjent bildeendelse (f.eks. .jpg, .png, .webp)."
 
@@ -1406,9 +1406,9 @@ msgstr "Klikk på lenken i e-posten for å logge inn."
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:436
 #: packages/admin/src/components/MediaDetailPanel.tsx:135
 #: packages/admin/src/components/MediaDetailPanel.tsx:137
-#: packages/admin/src/components/MediaPickerModal.tsx:477
-#: packages/admin/src/components/MediaPickerModal.tsx:483
-#: packages/admin/src/components/MediaPickerModal.tsx:487
+#: packages/admin/src/components/MediaPickerModal.tsx:482
+#: packages/admin/src/components/MediaPickerModal.tsx:488
+#: packages/admin/src/components/MediaPickerModal.tsx:492
 #: packages/admin/src/components/MenuEditor.tsx:321
 #: packages/admin/src/components/MenuEditor.tsx:327
 #: packages/admin/src/components/MenuEditor.tsx:331
@@ -1691,7 +1691,7 @@ msgstr "Kopier URL"
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "Kunne ikke kopiere automatisk. Merk URL-en ovenfor og kopier manuelt."
 
-#: packages/admin/src/components/MediaPickerModal.tsx:434
+#: packages/admin/src/components/MediaPickerModal.tsx:439
 msgid "Could not load image from URL"
 msgstr "Kunne ikke laste bilde fra URL"
 
@@ -2382,7 +2382,7 @@ msgid "Dockerfile"
 msgstr ""
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:63
-#: packages/admin/src/components/MediaLibrary.tsx:397
+#: packages/admin/src/components/MediaLibrary.tsx:404
 msgid "Documents"
 msgstr "Dokumenter"
 
@@ -3136,7 +3136,7 @@ msgstr "Kunne ikke laste inn bylines: {0}"
 msgid "Failed to load email settings"
 msgstr "Kunne ikke laste inn e-postinnstillinger"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:417
+#: packages/admin/src/components/MediaPickerModal.tsx:422
 msgid "Failed to load image"
 msgstr "Kunne ikke laste inn bilde"
 
@@ -3429,7 +3429,7 @@ msgid "File from media library"
 msgstr "Fil fra mediebibliotek"
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:206
-#: packages/admin/src/components/MediaLibrary.tsx:483
+#: packages/admin/src/components/MediaLibrary.tsx:490
 msgid "Filename"
 msgstr "Filnavn"
 
@@ -3466,7 +3466,7 @@ msgstr "Filtrer etter kilde"
 msgid "Filter by status"
 msgstr "Filtrer etter status"
 
-#: packages/admin/src/components/MediaLibrary.tsx:399
+#: packages/admin/src/components/MediaLibrary.tsx:406
 #: packages/admin/src/components/Redirects.tsx:399
 msgid "Filter by type"
 msgstr "Filtrer etter type"
@@ -3545,7 +3545,7 @@ msgstr "Google-verifisering"
 msgid "GraphQL"
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:270
+#: packages/admin/src/components/MediaLibrary.tsx:277
 msgid "Grid view"
 msgstr "Rutenettvisning"
 
@@ -3639,7 +3639,7 @@ msgstr "HTML-kilde"
 msgid "https://example.com or /about"
 msgstr "https://example.com eller /about"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:503
+#: packages/admin/src/components/MediaPickerModal.tsx:508
 msgid "https://example.com/image.jpg"
 msgstr "https://example.com/image.jpg"
 
@@ -3685,7 +3685,7 @@ msgstr "Bildeinnstillinger"
 msgid "Image shown when this page is shared on social media"
 msgstr "Bilde som vises når denne siden deles på sosiale medier"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:504
+#: packages/admin/src/components/MediaPickerModal.tsx:509
 msgid "Image URL"
 msgstr "Bilde-URL"
 
@@ -3694,7 +3694,7 @@ msgid "image URLs updated in"
 msgstr "bilde-URL-er oppdatert i"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:61
-#: packages/admin/src/components/MediaLibrary.tsx:394
+#: packages/admin/src/components/MediaLibrary.tsx:401
 msgid "Images"
 msgstr "Bilder"
 
@@ -3789,8 +3789,8 @@ msgstr "Indeksert"
 msgid "Inline Code"
 msgstr "Inline-kode"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:515
-#: packages/admin/src/components/MediaPickerModal.tsx:742
+#: packages/admin/src/components/MediaPickerModal.tsx:520
+#: packages/admin/src/components/MediaPickerModal.tsx:747
 msgid "Insert"
 msgstr "Sett inn"
 
@@ -3823,7 +3823,7 @@ msgstr "Sett inn en tabell"
 msgid "Insert an image"
 msgstr "Sett inn et bilde"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:497
+#: packages/admin/src/components/MediaPickerModal.tsx:502
 msgid "Insert from URL"
 msgstr "Sett inn fra URL"
 
@@ -4071,11 +4071,11 @@ msgstr "La stå tomt for å bruke en søkbar passnøkkel."
 msgid "Leave unassigned"
 msgstr "La stå utildelt"
 
-#: packages/admin/src/components/MediaLibrary.tsx:120
-#: packages/admin/src/components/MediaLibrary.tsx:240
-#: packages/admin/src/components/MediaLibrary.tsx:352
-#: packages/admin/src/components/MediaPickerModal.tsx:198
-#: packages/admin/src/components/MediaPickerModal.tsx:457
+#: packages/admin/src/components/MediaLibrary.tsx:127
+#: packages/admin/src/components/MediaLibrary.tsx:247
+#: packages/admin/src/components/MediaLibrary.tsx:359
+#: packages/admin/src/components/MediaPickerModal.tsx:203
+#: packages/admin/src/components/MediaPickerModal.tsx:462
 msgid "Library"
 msgstr "Bibliotek"
 
@@ -4120,7 +4120,7 @@ msgstr "LinkedIn"
 msgid "Links"
 msgstr "Lenker"
 
-#: packages/admin/src/components/MediaLibrary.tsx:279
+#: packages/admin/src/components/MediaLibrary.tsx:286
 msgid "List view"
 msgstr "Listevisning"
 
@@ -4138,8 +4138,8 @@ msgstr "Last inn mer"
 
 #: packages/admin/src/components/ContentList.tsx:444
 #: packages/admin/src/components/ContentList.tsx:501
-#: packages/admin/src/components/MediaLibrary.tsx:533
-#: packages/admin/src/components/MediaPickerModal.tsx:718
+#: packages/admin/src/components/MediaLibrary.tsx:540
+#: packages/admin/src/components/MediaPickerModal.tsx:723
 #: packages/admin/src/components/users/UserList.tsx:169
 msgid "Load More"
 msgstr "Last inn mer"
@@ -4213,8 +4213,8 @@ msgstr "Laster moduler..."
 #: packages/admin/src/components/ContentList.tsx:501
 #: packages/admin/src/components/ContentPickerModal.tsx:233
 #: packages/admin/src/components/MarketplaceBrowse.tsx:198
-#: packages/admin/src/components/MediaLibrary.tsx:533
-#: packages/admin/src/components/MediaPickerModal.tsx:718
+#: packages/admin/src/components/MediaLibrary.tsx:540
+#: packages/admin/src/components/MediaPickerModal.tsx:723
 #: packages/admin/src/components/PortableTextEditor.tsx:1905
 #: packages/admin/src/components/RegistryBrowse.tsx:143
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:176
@@ -4400,7 +4400,7 @@ msgid "Media import was skipped"
 msgstr "Medieimport ble hoppet over"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:154
-#: packages/admin/src/components/MediaLibrary.tsx:264
+#: packages/admin/src/components/MediaLibrary.tsx:271
 msgid "Media Library"
 msgstr "Mediebibliotek"
 
@@ -4721,8 +4721,8 @@ msgstr "Ingen {0} ennå. Opprett en for å komme i gang."
 msgid "No 404 errors recorded yet."
 msgstr "Ingen 404-feil registrert ennå."
 
-#: packages/admin/src/components/MediaLibrary.tsx:688
-#: packages/admin/src/components/MediaLibrary.tsx:745
+#: packages/admin/src/components/MediaLibrary.tsx:697
+#: packages/admin/src/components/MediaLibrary.tsx:754
 msgid "No alt text"
 msgstr "Ingen alt-tekst"
 
@@ -4852,17 +4852,17 @@ msgstr "Fant ingen samsvarende passkey for denne kontoen."
 msgid "No maximum"
 msgstr "Ingen maksimum"
 
-#: packages/admin/src/components/MediaLibrary.tsx:436
-#: packages/admin/src/components/MediaPickerModal.tsx:641
+#: packages/admin/src/components/MediaLibrary.tsx:443
+#: packages/admin/src/components/MediaPickerModal.tsx:646
 msgid "No media available from this provider"
 msgstr "Ingen medier tilgjengelig fra denne leverandøren"
 
-#: packages/admin/src/components/MediaLibrary.tsx:430
-#: packages/admin/src/components/MediaPickerModal.tsx:635
+#: packages/admin/src/components/MediaLibrary.tsx:437
+#: packages/admin/src/components/MediaPickerModal.tsx:640
 msgid "No media found"
 msgstr "Fant ingen medier"
 
-#: packages/admin/src/components/MediaLibrary.tsx:419
+#: packages/admin/src/components/MediaLibrary.tsx:426
 msgid "No media yet"
 msgstr "Ingen medier ennå"
 
@@ -5073,7 +5073,7 @@ msgstr "Valgfritt verktøytips ved peking"
 msgid "Options (one per line)"
 msgstr "Alternativer (ett per linje)"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:527
+#: packages/admin/src/components/MediaPickerModal.tsx:532
 msgid "or choose from library"
 msgstr "eller velg fra biblioteket"
 
@@ -5279,7 +5279,7 @@ msgstr "Skriv inn en gyldig e-postadresse"
 msgid "Please enter a valid email address"
 msgstr "Skriv inn en gyldig e-postadresse"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:394
+#: packages/admin/src/components/MediaPickerModal.tsx:399
 msgid "Please enter a valid URL"
 msgstr "Skriv inn en gyldig URL"
 
@@ -5398,7 +5398,7 @@ msgstr "Forbereder …"
 
 #: packages/admin/src/components/ContentEditor.tsx:680
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
-#: packages/admin/src/components/MediaLibrary.tsx:482
+#: packages/admin/src/components/MediaLibrary.tsx:489
 msgid "Preview"
 msgstr "Forhåndsvisning"
 
@@ -6072,8 +6072,8 @@ msgstr "Søk i {0}"
 msgid "Search {0}..."
 msgstr "Søk i {0} …"
 
-#: packages/admin/src/components/MediaLibrary.tsx:376
-#: packages/admin/src/components/MediaPickerModal.tsx:573
+#: packages/admin/src/components/MediaLibrary.tsx:383
+#: packages/admin/src/components/MediaPickerModal.tsx:578
 msgid "Search by filename..."
 msgstr "Søk etter filnavn …"
 
@@ -6110,8 +6110,8 @@ msgstr "Søkemotoroptimalisering"
 msgid "Search engine optimization and verification"
 msgstr "Søkemotoroptimalisering og verifisering"
 
-#: packages/admin/src/components/MediaLibrary.tsx:377
-#: packages/admin/src/components/MediaPickerModal.tsx:574
+#: packages/admin/src/components/MediaLibrary.tsx:384
+#: packages/admin/src/components/MediaPickerModal.tsx:579
 msgid "Search media"
 msgstr "Søk i medier"
 
@@ -6150,8 +6150,8 @@ msgstr "Søk i temaer …"
 msgid "Search users"
 msgstr "Søk i brukere"
 
-#: packages/admin/src/components/MediaLibrary.tsx:376
-#: packages/admin/src/components/MediaPickerModal.tsx:573
+#: packages/admin/src/components/MediaLibrary.tsx:383
+#: packages/admin/src/components/MediaPickerModal.tsx:578
 msgid "Search..."
 msgstr "Søk …"
 
@@ -6302,7 +6302,7 @@ msgstr "Velg favicon"
 msgid "Select file"
 msgstr "Velg fil"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:140
+#: packages/admin/src/components/MediaPickerModal.tsx:145
 msgid "Select File"
 msgstr "Velg fil"
 
@@ -6310,7 +6310,7 @@ msgstr "Velg fil"
 msgid "Select image"
 msgstr "Velg bilde"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:140
+#: packages/admin/src/components/MediaPickerModal.tsx:145
 #: packages/admin/src/components/PortableTextEditor.tsx:2503
 #: packages/admin/src/components/PortableTextEditor.tsx:3188
 #: packages/admin/src/components/settings/SeoSettings.tsx:221
@@ -6344,7 +6344,7 @@ msgstr "Velg hvilke innholdstyper som skal importeres."
 msgid "Select..."
 msgstr "Velg …"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:729
+#: packages/admin/src/components/MediaPickerModal.tsx:734
 msgid "Selected:"
 msgstr "Valgt:"
 
@@ -6574,7 +6574,7 @@ msgstr "Nettstedstittel er påkrevd"
 msgid "Site URL"
 msgstr "Nettsteds-URL"
 
-#: packages/admin/src/components/MediaLibrary.tsx:485
+#: packages/admin/src/components/MediaLibrary.tsx:492
 msgid "Size"
 msgstr "Størrelse"
 
@@ -6922,7 +6922,7 @@ msgstr "Temaer"
 msgid "This collection is defined in code. Some settings cannot be changed here. Edit your live.config.ts file to modify the schema."
 msgstr "Denne samlingen er definert i kode. Enkelte innstillinger kan ikke endres her. Rediger live.config.ts-filen for å endre skjemaet."
 
-#: packages/admin/src/components/MediaPickerModal.tsx:413
+#: packages/admin/src/components/MediaPickerModal.tsx:418
 msgid "This field does not accept {sniffedMime} files."
 msgstr "Dette feltet godtar ikke {sniffedMime}-filer."
 
@@ -7156,8 +7156,8 @@ msgstr "Papirkurven er tom."
 msgid "True/false toggle"
 msgstr "Av/på-bryter (sann/usann)"
 
-#: packages/admin/src/components/MediaLibrary.tsx:433
-#: packages/admin/src/components/MediaPickerModal.tsx:638
+#: packages/admin/src/components/MediaLibrary.tsx:440
+#: packages/admin/src/components/MediaPickerModal.tsx:643
 msgid "Try a different search term"
 msgstr "Prøv et annet søkeord"
 
@@ -7206,7 +7206,7 @@ msgstr "Twitter"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:260
 #: packages/admin/src/components/FieldEditor.tsx:571
-#: packages/admin/src/components/MediaLibrary.tsx:484
+#: packages/admin/src/components/MediaLibrary.tsx:491
 #: packages/admin/src/routes/byline-schema.tsx:240
 msgid "Type"
 msgstr "Type"
@@ -7386,11 +7386,11 @@ msgstr "Oppdaterer innholds-URL-er …"
 msgid "Updating..."
 msgstr "Oppdaterer …"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:596
+#: packages/admin/src/components/MediaPickerModal.tsx:601
 msgid "Upload"
 msgstr "Last opp"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:142
+#: packages/admin/src/components/MediaPickerModal.tsx:147
 msgid "Upload a file to get started"
 msgstr "Last opp en fil for å komme i gang"
 
@@ -7398,7 +7398,7 @@ msgstr "Last opp en fil for å komme i gang"
 msgid "Upload an export file"
 msgstr "Last opp en eksportfil"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:143
+#: packages/admin/src/components/MediaPickerModal.tsx:148
 msgid "Upload an image to get started"
 msgstr "Last opp et bilde for å komme i gang"
 
@@ -7416,31 +7416,31 @@ msgstr "Last opp og administrer medier"
 msgid "Upload Export File"
 msgstr "Last opp eksportfil"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:616
+#: packages/admin/src/components/MediaPickerModal.tsx:621
 msgid "Upload failed: {uploadError}"
 msgstr "Opplasting mislyktes: {uploadError}"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:608
+#: packages/admin/src/components/MediaPickerModal.tsx:613
 msgid "Upload file"
 msgstr "Last opp fil"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:144
+#: packages/admin/src/components/MediaPickerModal.tsx:149
 msgid "Upload File"
 msgstr "Last opp fil"
 
-#: packages/admin/src/components/MediaLibrary.tsx:361
+#: packages/admin/src/components/MediaLibrary.tsx:368
 msgid "Upload files"
 msgstr "Last opp filer"
 
-#: packages/admin/src/components/MediaLibrary.tsx:424
+#: packages/admin/src/components/MediaLibrary.tsx:431
 msgid "Upload Files"
 msgstr "Last opp filer"
 
-#: packages/admin/src/components/MediaPickerModal.tsx:144
+#: packages/admin/src/components/MediaPickerModal.tsx:149
 msgid "Upload Image"
 msgstr "Last opp bilde"
 
-#: packages/admin/src/components/MediaLibrary.tsx:421
+#: packages/admin/src/components/MediaLibrary.tsx:428
 msgid "Upload images, videos, and documents to get started."
 msgstr "Last opp bilder, videoer og dokumenter for å komme i gang."
 
@@ -7448,12 +7448,12 @@ msgstr "Last opp bilder, videoer og dokumenter for å komme i gang."
 msgid "Upload Media"
 msgstr "Last opp medier"
 
-#: packages/admin/src/components/MediaLibrary.tsx:435
+#: packages/admin/src/components/MediaLibrary.tsx:442
 msgid "Upload media to get started"
 msgstr "Last opp medier for å komme i gang"
 
 #. placeholder {0}: activeProviderInfo?.name || t`Library`
-#: packages/admin/src/components/MediaLibrary.tsx:352
+#: packages/admin/src/components/MediaLibrary.tsx:359
 msgid "Upload to {0}"
 msgstr "Last opp til {0}"
 
@@ -7471,12 +7471,12 @@ msgstr "Laster opp"
 
 #. placeholder {0}: uploadState.progress.current
 #. placeholder {1}: uploadState.progress.total
-#: packages/admin/src/components/MediaLibrary.tsx:327
+#: packages/admin/src/components/MediaLibrary.tsx:334
 msgid "Uploading {0}/{1}..."
 msgstr "Laster opp {0}/{1} …"
 
-#: packages/admin/src/components/MediaLibrary.tsx:328
-#: packages/admin/src/components/MediaPickerModal.tsx:596
+#: packages/admin/src/components/MediaLibrary.tsx:335
+#: packages/admin/src/components/MediaPickerModal.tsx:601
 msgid "Uploading..."
 msgstr "Laster opp …"
 
@@ -7628,7 +7628,7 @@ msgid "Version {0}"
 msgstr "Versjon {0}"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:67
-#: packages/admin/src/components/MediaLibrary.tsx:395
+#: packages/admin/src/components/MediaLibrary.tsx:402
 msgid "Video"
 msgstr "Video"
 
@@ -7640,7 +7640,7 @@ msgstr "Se status for e-postleverandør og send test-e-poster"
 msgid "View in Marketplace"
 msgstr "Vis i Marketplace"
 
-#: packages/admin/src/components/MediaLibrary.tsx:265
+#: packages/admin/src/components/MediaLibrary.tsx:272
 msgid "View mode"
 msgstr "Visningsmodus"
 
