@@ -1175,6 +1175,14 @@
       "created_at": "2026-06-18T21:30:34Z",
       "repoId": 1198246700,
       "pullRequestNo": 1540
+    },
+    {
+      "name": "ching-kuo",
+      "id": 5622576,
+      "comment_id": 4755447871,
+      "created_at": "2026-06-19T23:29:48Z",
+      "repoId": 1198246700,
+      "pullRequestNo": 1552
     }
   ]
 }
