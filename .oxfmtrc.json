@@ -9,6 +9,8 @@
 		"**/emdash-env.d.ts",
 		"**/worker-configuration.d.ts",
 		"packages/registry-lexicons/src/generated/**",
-		"packages/plugin-cli/schemas/**"
+		"packages/plugin-cli/schemas/**",
+		".github/bot/machine.json",
+		".github/BOT_STATE_MACHINE.md"
 	]
 }
