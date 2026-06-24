@@ -42,7 +42,8 @@ export default defineWorkflow({
 			"",
 			// Truthiness, not `??`: the orchestrator passes "" (not undefined) when
 			// there are no bot comments, and an empty section loses the model's cue.
-			input.botContext?.trim() || "(unavailable; assume the bot has already investigated this issue)",
+			input.botContext?.trim() ||
+				"(unavailable; assume the bot has already investigated this issue)",
 			"",
 			"## Maintainer's reply",
 			"",

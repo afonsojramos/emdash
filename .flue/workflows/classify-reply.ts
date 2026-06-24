@@ -14,7 +14,11 @@ import { defineWorkflow } from "@flue/runtime";
 import * as v from "valibot";
 
 import { withCapacityRetry } from "../lib/capacity.js";
-import { classifier, persistClassifierResult, replyClassificationSchema } from "../lib/classifier.js";
+import {
+	classifier,
+	persistClassifierResult,
+	replyClassificationSchema,
+} from "../lib/classifier.js";
 
 const inputSchema = v.object({
 	issueNumber: v.number(),

@@ -12,7 +12,12 @@ test("currentState reads the single state label", () => {
 });
 
 test("implement works on an untriaged issue (no triage step required)", () => {
-	const d = r.resolve({ labels: [], event: "implement", arg: "add dark mode", actor: "maintainer" });
+	const d = r.resolve({
+		labels: [],
+		event: "implement",
+		arg: "add dark mode",
+		actor: "maintainer",
+	});
 	assert.equal(d.kind, "transition");
 	assert.equal(d.from, "unmanaged");
 	assert.equal(d.to, "working");
@@ -28,7 +33,11 @@ test("repro works on an untriaged issue", () => {
 test("parseCommand is strict: only an exact bare verb is deterministic", () => {
 	assert.deepEqual(r.parseCommand("@emdashbot retry"), { event: "retry", arg: null });
 	assert.deepEqual(r.parseCommand("@emdashbot take over"), { event: "take_over", arg: null });
-	assert.deepEqual(r.parseCommand("@emdashbot confirmed"), { event: "confirm", arg: null }, "alias");
+	assert.deepEqual(
+		r.parseCommand("@emdashbot confirmed"),
+		{ event: "confirm", arg: null },
+		"alias",
+	);
 	// Any extra word routes to the classifier, not a deterministic command.
 	assert.equal(r.parseCommand("@emdashbot hand back please"), null, "extra word -> null");
 	assert.equal(r.parseCommand("@emdashbot implement use a LEFT JOIN"), null, "arg -> classifier");
@@ -56,7 +65,12 @@ test("isDestructive flags decline and take_over only", () => {
 });
 
 test("resolve: blocked accepts implement (kills the old skip sink)", () => {
-	const d = r.resolve({ labels: ["bot:bug", "bot:blocked"], event: "implement", arg: "do X", actor: "maintainer" });
+	const d = r.resolve({
+		labels: ["bot:bug", "bot:blocked"],
+		event: "implement",
+		arg: "do X",
+		actor: "maintainer",
+	});
 	assert.equal(d.kind, "transition");
 	assert.equal(d.to, "working");
 	assert.equal(d.action, "investigate.implement");
@@ -66,13 +80,22 @@ test("resolve: blocked accepts implement (kills the old skip sink)", () => {
 });
 
 test("resolve: in_review accepts revise (PR feedback bridge)", () => {
-	const d = r.resolve({ labels: ["bot:bug", "bot:in-review"], event: "revise", arg: "fix the test", actor: "maintainer" });
+	const d = r.resolve({
+		labels: ["bot:bug", "bot:in-review"],
+		event: "revise",
+		arg: "fix the test",
+		actor: "maintainer",
+	});
 	assert.equal(d.to, "working");
 	assert.equal(d.action, "investigate.revise");
 });
 
 test("resolve: triage implement skips the repro gate (feature lane)", () => {
-	const d = r.resolve({ labels: ["bot:enhancement", "bot:triage"], event: "implement", actor: "maintainer" });
+	const d = r.resolve({
+		labels: ["bot:enhancement", "bot:triage"],
+		event: "implement",
+		actor: "maintainer",
+	});
 	assert.equal(d.to, "working");
 	assert.equal(d.action, "investigate.implement");
 });
@@ -85,12 +108,20 @@ test("resolve: terminals reopen, never dead", () => {
 });
 
 test("resolve: authorization is enforced per event", () => {
-	const d = r.resolve({ labels: ["bot:bug", "bot:blocked"], event: "implement", actor: "reporter" });
+	const d = r.resolve({
+		labels: ["bot:bug", "bot:blocked"],
+		event: "implement",
+		actor: "reporter",
+	});
 	assert.equal(d.kind, "noop", "reporter may not implement");
 });
 
 test("resolve: confirm allowed for reporter", () => {
-	const d = r.resolve({ labels: ["bot:bug", "bot:awaiting-feedback"], event: "confirm", actor: "reporter" });
+	const d = r.resolve({
+		labels: ["bot:bug", "bot:awaiting-feedback"],
+		event: "confirm",
+		actor: "reporter",
+	});
 	assert.equal(d.kind, "transition");
 	assert.equal(d.to, "in_review");
 });
@@ -101,41 +132,72 @@ test("resolve: unknown transition is a no-op, not an error", () => {
 });
 
 test("resolve: status/help are read-only", () => {
-	assert.equal(r.resolve({ labels: ["bot:bug", "bot:working"], event: "status", actor: "reporter" }).kind, "readonly");
+	assert.equal(
+		r.resolve({ labels: ["bot:bug", "bot:working"], event: "status", actor: "reporter" }).kind,
+		"readonly",
+	);
 });
 
 test("invariantProblems flags 0 or >1 of each dimension", () => {
 	assert.deepEqual(r.invariantProblems(["bot:bug", "bot:blocked"]), []);
 	assert.equal(r.invariantProblems(["bot:blocked"]).length, 1, "missing kind");
 	assert.equal(r.invariantProblems(["bot:bug"]).length, 1, "missing state");
-	assert.equal(r.invariantProblems(["bot:bug", "bot:blocked", "bot:working"]).length, 1, "two states");
+	assert.equal(
+		r.invariantProblems(["bot:bug", "bot:blocked", "bot:working"]).length,
+		1,
+		"two states",
+	);
 });
 
 test("resolveComment: bare feedback on a bot PR maps to revise", () => {
 	const labels = ["bot:bug", "bot:in-review"];
-	const d = r.resolveComment({ labels, body: "@emdashbot the test name is wrong, rename it", actor: "maintainer", allowDefault: true });
+	const d = r.resolveComment({
+		labels,
+		body: "@emdashbot the test name is wrong, rename it",
+		actor: "maintainer",
+		allowDefault: true,
+	});
 	assert.equal(d.kind, "transition");
 	assert.equal(d.to, "working");
 	assert.equal(d.action, "investigate.revise");
-	assert.equal(d.arg, "the test name is wrong, rename it", "whole comment becomes the feedback arg");
+	assert.equal(
+		d.arg,
+		"the test name is wrong, rename it",
+		"whole comment becomes the feedback arg",
+	);
 });
 
 test("resolveComment: explicit verb wins over the default", () => {
 	const labels = ["bot:bug", "bot:in-review"];
-	const d = r.resolveComment({ labels, body: "@emdashbot take over", actor: "maintainer", allowDefault: true });
+	const d = r.resolveComment({
+		labels,
+		body: "@emdashbot take over",
+		actor: "maintainer",
+		allowDefault: true,
+	});
 	assert.equal(d.to, "human_owned");
 });
 
 test("resolveComment: the @emdashbot mention is still required", () => {
 	const labels = ["bot:bug", "bot:in-review"];
-	const d = r.resolveComment({ labels, body: "the test name is wrong", actor: "maintainer", allowDefault: true });
+	const d = r.resolveComment({
+		labels,
+		body: "the test name is wrong",
+		actor: "maintainer",
+		allowDefault: true,
+	});
 	assert.equal(d.kind, "noop", "no mention -> inert even on a bot PR");
 	assert.match(d.reason, /mention/);
 });
 
 test("resolveComment: free text in blocked routes to the classifier with safe candidates", () => {
 	const labels = ["bot:bug", "bot:blocked"];
-	const d = r.resolveComment({ labels, body: "@emdashbot please try fixing it in the loader", actor: "maintainer", allowDefault: false });
+	const d = r.resolveComment({
+		labels,
+		body: "@emdashbot please try fixing it in the loader",
+		actor: "maintainer",
+		allowDefault: false,
+	});
 	assert.equal(d.kind, "classify");
 	assert.equal(d.state, "blocked");
 	const events = d.commands.map((c) => c.event);
@@ -146,7 +208,12 @@ test("resolveComment: free text in blocked routes to the classifier with safe ca
 
 test("resolveComment: bare destructive verb still fires deterministically", () => {
 	const labels = ["bot:bug", "bot:blocked"];
-	const d = r.resolveComment({ labels, body: "@emdashbot decline", actor: "maintainer", allowDefault: false });
+	const d = r.resolveComment({
+		labels,
+		body: "@emdashbot decline",
+		actor: "maintainer",
+		allowDefault: false,
+	});
 	assert.equal(d.kind, "transition");
 	assert.equal(d.to, "declined");
 });
@@ -160,7 +227,10 @@ test("outcomeFromResult maps the agent's flat result to an agent.* event", () =>
 		"agent.by_design",
 	);
 	assert.equal(
-		r.outcomeFromResult({ ok: true, result: { skipped: false, reproduced: false, verdict: "bug" } }),
+		r.outcomeFromResult({
+			ok: true,
+			result: { skipped: false, reproduced: false, verdict: "bug" },
+		}),
 		"agent.not_reproduced",
 	);
 	assert.equal(

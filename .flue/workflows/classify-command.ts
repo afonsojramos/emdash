@@ -64,7 +64,10 @@ export default defineWorkflow({
 		});
 
 		const actionList = input.commands
-			.map((c) => `- \`${c.event}\`: ${c.description}${c.arg ? ` (also set \`arg\`: the ${c.arg})` : ""}`)
+			.map(
+				(c) =>
+					`- \`${c.event}\`: ${c.description}${c.arg ? ` (also set \`arg\`: the ${c.arg})` : ""}`,
+			)
 			.join("\n");
 
 		const prompt = [
@@ -112,12 +115,16 @@ export default defineWorkflow({
 					}),
 			},
 		);
-		log.info("classified command", { issueNumber: input.issueNumber, state: input.state, event: res.data.event });
+		log.info("classified command", {
+			issueNumber: input.issueNumber,
+			state: input.state,
+			event: res.data.event,
+		});
 		// `_meta` carries usage for eval sweeps; the orchestrator reads only event/arg.
 		return persistClassifierResult({
 			...res.data,
 			_meta: {
-				model: res.model ? `${res.model.provider}/${res.model.id}` : input.model ?? null,
+				model: res.model ? `${res.model.provider}/${res.model.id}` : (input.model ?? null),
 				tokens: { input: res.usage.input, output: res.usage.output, total: res.usage.totalTokens },
 			},
 		});

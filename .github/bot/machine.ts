@@ -78,7 +78,8 @@ export const STATES: Record<StateId, StateMeta> = {
 		// implement / decline) work here directly -- triage is not a prerequisite.
 		label: "",
 		boardColumn: "(none)",
-		description: "No bot labels yet. An issue nobody has handed to the bot. Entry commands work directly.",
+		description:
+			"No bot labels yet. An issue nobody has handed to the bot. Entry commands work directly.",
 		terminal: false,
 		offeredCommands: ["repro", "implement", "decline"],
 	},
@@ -108,7 +109,8 @@ export const STATES: Record<StateId, StateMeta> = {
 	awaiting_feedback: {
 		label: "bot:awaiting-feedback",
 		boardColumn: "Awaiting feedback",
-		description: "A fix is staged on bot/fix-<n>; waiting for the reporter or a maintainer to confirm or reject.",
+		description:
+			"A fix is staged on bot/fix-<n>; waiting for the reporter or a maintainer to confirm or reject.",
 		terminal: false,
 		offeredCommands: ["confirm", "reject", "retry", "take_over"],
 	},
@@ -124,7 +126,8 @@ export const STATES: Record<StateId, StateMeta> = {
 	human_owned: {
 		label: "bot:human-owned",
 		boardColumn: "Human owned",
-		description: "A maintainer took it over; the bot stays disengaged but the item stays on the board.",
+		description:
+			"A maintainer took it over; the bot stays disengaged but the item stays on the board.",
 		terminal: false,
 		offeredCommands: ["hand_back"],
 	},
@@ -224,7 +227,8 @@ export const EVENTS: Record<EventId, EventMeta> = {
 		labelTriggers: ["bot:repro"],
 	},
 	implement: {
-		description: "Build the described change (feature or directed fix), skipping the bug-repro gate.",
+		description:
+			"Build the described change (feature or directed fix), skipping the bug-repro gate.",
 		actors: ["maintainer"],
 		labelTriggers: ["bot:implement"],
 		arg: "directive",
@@ -235,26 +239,72 @@ export const EVENTS: Record<EventId, EventMeta> = {
 		actors: ["maintainer"],
 		arg: "feedback",
 	},
-	confirm: { description: "Confirm the staged fix works; open a PR.", actors: ["reporter", "maintainer"] },
-	reject: { description: "The staged fix does not work; retry with feedback.", actors: ["reporter", "maintainer"] },
-	decline: { description: "Won't be actioned; move to declined.", actors: ["maintainer"], destructive: true },
+	confirm: {
+		description: "Confirm the staged fix works; open a PR.",
+		actors: ["reporter", "maintainer"],
+	},
+	reject: {
+		description: "The staged fix does not work; retry with feedback.",
+		actors: ["reporter", "maintainer"],
+	},
+	decline: {
+		description: "Won't be actioned; move to declined.",
+		actors: ["maintainer"],
+		destructive: true,
+	},
 	reopen: { description: "Bring a terminal item back into triage.", actors: ["maintainer"] },
-	take_over: { description: "A maintainer takes the item; the bot disengages but stays on the board.", actors: ["maintainer"], destructive: true },
+	take_over: {
+		description: "A maintainer takes the item; the bot disengages but stays on the board.",
+		actors: ["maintainer"],
+		destructive: true,
+	},
 	hand_back: { description: "Return a human-owned item to the bot.", actors: ["maintainer"] },
-	status: { description: "Render the item's current state and available commands.", actors: ["reporter", "maintainer"], readOnly: true },
-	help: { description: "Show the command grammar.", actors: ["reporter", "maintainer"], readOnly: true },
+	status: {
+		description: "Render the item's current state and available commands.",
+		actors: ["reporter", "maintainer"],
+		readOnly: true,
+	},
+	help: {
+		description: "Show the command grammar.",
+		actors: ["reporter", "maintainer"],
+		readOnly: true,
+	},
 	// --- agent results ---
-	"agent.skipped": { description: "Agent skipped (non-bug kind, or repro needs external/prod-only conditions).", actors: ["system"] },
-	"agent.not_reproduced": { description: "Agent could not reproduce the issue.", actors: ["system"] },
-	"agent.by_design": { description: "Agent verified the behaviour as intended.", actors: ["system"] },
-	"agent.reproduced": { description: "Reproduced, but the fix needs a human decision.", actors: ["system"] },
-	"agent.fix_ready": { description: "Reproduced and fixed; a verified change is staged on bot/fix-<n>.", actors: ["system"] },
-	"agent.failed": { description: "Agent run errored or produced no usable result.", actors: ["system"] },
+	"agent.skipped": {
+		description: "Agent skipped (non-bug kind, or repro needs external/prod-only conditions).",
+		actors: ["system"],
+	},
+	"agent.not_reproduced": {
+		description: "Agent could not reproduce the issue.",
+		actors: ["system"],
+	},
+	"agent.by_design": {
+		description: "Agent verified the behaviour as intended.",
+		actors: ["system"],
+	},
+	"agent.reproduced": {
+		description: "Reproduced, but the fix needs a human decision.",
+		actors: ["system"],
+	},
+	"agent.fix_ready": {
+		description: "Reproduced and fixed; a verified change is staged on bot/fix-<n>.",
+		actors: ["system"],
+	},
+	"agent.failed": {
+		description: "Agent run errored or produced no usable result.",
+		actors: ["system"],
+	},
 	// --- PR lifecycle ---
 	"pr.opened": { description: "A bot PR was opened for this item.", actors: ["system"] },
 	"pr.merged": { description: "The bot PR was merged.", actors: ["system"] },
-	"pr.changes_requested": { description: "A reviewer requested changes (review sub-state).", actors: ["system"] },
-	"pr.approved": { description: "A reviewer approved the PR (review sub-state).", actors: ["system"] },
+	"pr.changes_requested": {
+		description: "A reviewer requested changes (review sub-state).",
+		actors: ["system"],
+	},
+	"pr.approved": {
+		description: "A reviewer approved the PR (review sub-state).",
+		actors: ["system"],
+	},
 };
 
 // ---------------------------------------------------------------------------
@@ -288,20 +338,47 @@ export interface Transition {
 export const TRANSITIONS: Transition[] = [
 	// --- entry on an untriaged issue (no triage step required) ---
 	{ from: "unmanaged", event: "repro", to: "working", action: "investigate.repro" },
-	{ from: "unmanaged", event: "implement", to: "working", action: "investigate.implement", note: "implement works straight from an untriaged issue" },
+	{
+		from: "unmanaged",
+		event: "implement",
+		to: "working",
+		action: "investigate.implement",
+		note: "implement works straight from an untriaged issue",
+	},
 	{ from: "unmanaged", event: "decline", to: "declined" },
 
 	// --- entry from triage (the labeled resting state after reopen/hand_back) ---
 	{ from: "triage", event: "repro", to: "working", action: "investigate.repro" },
-	{ from: "triage", event: "implement", to: "working", action: "investigate.implement", note: "enhancement/feature lane -- no repro gate" },
+	{
+		from: "triage",
+		event: "implement",
+		to: "working",
+		action: "investigate.implement",
+		note: "enhancement/feature lane -- no repro gate",
+	},
 	{ from: "triage", event: "decline", to: "declined" },
 
 	// --- agent run outcomes (from working) ---
 	{ from: "working", event: "agent.skipped", to: "blocked", note: "reason: skipped (was a sink)" },
-	{ from: "working", event: "agent.not_reproduced", to: "blocked", note: "reason: not-reproduced (was a sink)" },
+	{
+		from: "working",
+		event: "agent.not_reproduced",
+		to: "blocked",
+		note: "reason: not-reproduced (was a sink)",
+	},
 	{ from: "working", event: "agent.by_design", to: "blocked", note: "reason: by-design" },
-	{ from: "working", event: "agent.reproduced", to: "blocked", note: "reason: fix needs a decision" },
-	{ from: "working", event: "agent.fix_ready", to: "awaiting_feedback", note: "executor pushes bot/fix-<n>; orchestrator asks the reporter to confirm. PR opens on confirm, not here." },
+	{
+		from: "working",
+		event: "agent.reproduced",
+		to: "blocked",
+		note: "reason: fix needs a decision",
+	},
+	{
+		from: "working",
+		event: "agent.fix_ready",
+		to: "awaiting_feedback",
+		note: "executor pushes bot/fix-<n>; orchestrator asks the reporter to confirm. PR opens on confirm, not here.",
+	},
 	{ from: "working", event: "agent.failed", to: "failed" },
 
 	// --- blocked: every reason accepts the same overrides (kills the sinks) ---
@@ -313,15 +390,37 @@ export const TRANSITIONS: Transition[] = [
 
 	// --- awaiting feedback ---
 	{ from: "awaiting_feedback", event: "confirm", to: "in_review", action: "openPr" },
-	{ from: "awaiting_feedback", event: "reject", to: "working", action: "investigate.revise", note: "retry with reporter feedback" },
+	{
+		from: "awaiting_feedback",
+		event: "reject",
+		to: "working",
+		action: "investigate.revise",
+		note: "retry with reporter feedback",
+	},
 	{ from: "awaiting_feedback", event: "retry", to: "working", action: "investigate.repro" },
 	{ from: "awaiting_feedback", event: "take_over", to: "human_owned" },
 
 	// --- in review (the PR bridge) ---
-	{ from: "in_review", event: "pr.opened", to: "in_review", note: "idempotent; sets review sub-state" },
+	{
+		from: "in_review",
+		event: "pr.opened",
+		to: "in_review",
+		note: "idempotent; sets review sub-state",
+	},
 	{ from: "in_review", event: "pr.approved", to: "in_review", note: "review sub-state only" },
-	{ from: "in_review", event: "pr.changes_requested", to: "in_review", note: "review sub-state only" },
-	{ from: "in_review", event: "revise", to: "working", action: "investigate.revise", note: "PR feedback -> agent (was impossible)" },
+	{
+		from: "in_review",
+		event: "pr.changes_requested",
+		to: "in_review",
+		note: "review sub-state only",
+	},
+	{
+		from: "in_review",
+		event: "revise",
+		to: "working",
+		action: "investigate.revise",
+		note: "PR feedback -> agent (was impossible)",
+	},
 	{ from: "in_review", event: "pr.merged", to: "done" },
 	{ from: "in_review", event: "decline", to: "declined", action: "closePr" },
 	{ from: "in_review", event: "take_over", to: "human_owned" },
@@ -389,24 +488,38 @@ export function validateMachine(): MachineProblem[] {
 	const seen = new Set<string>();
 	for (const t of TRANSITIONS) {
 		const key = `${t.from}::${t.event}`;
-		if (seen.has(key)) problems.push({ severity: "error", message: `Non-deterministic: two transitions for ${key}` });
+		if (seen.has(key))
+			problems.push({
+				severity: "error",
+				message: `Non-deterministic: two transitions for ${key}`,
+			});
 		seen.add(key);
-		if (!STATES[t.to]) problems.push({ severity: "error", message: `Transition ${key} targets unknown state ${t.to}` });
+		if (!STATES[t.to])
+			problems.push({
+				severity: "error",
+				message: `Transition ${key} targets unknown state ${t.to}`,
+			});
 	}
 
 	// Unique labels across kinds + states.
 	const labels = [...kindLabels(), ...stateLabels()];
-	if (new Set(labels).size !== labels.length) problems.push({ severity: "error", message: "Duplicate label across kinds/states" });
+	if (new Set(labels).size !== labels.length)
+		problems.push({ severity: "error", message: "Duplicate label across kinds/states" });
 
 	// Every non-terminal state has an outgoing edge.
 	for (const id of stateIds) {
 		const out = TRANSITIONS.filter((t) => t.from === id);
-		if (!STATES[id].terminal && out.length === 0) problems.push({ severity: "error", message: `Non-terminal state "${id}" has no outgoing transition (dead end)` });
+		if (!STATES[id].terminal && out.length === 0)
+			problems.push({
+				severity: "error",
+				message: `Non-terminal state "${id}" has no outgoing transition (dead end)`,
+			});
 	}
 
 	// Every terminal state has a reopen edge.
 	for (const id of stateIds) {
-		if (STATES[id].terminal && !findTransition(id, "reopen")) problems.push({ severity: "error", message: `Terminal state "${id}" has no reopen edge` });
+		if (STATES[id].terminal && !findTransition(id, "reopen"))
+			problems.push({ severity: "error", message: `Terminal state "${id}" has no reopen edge` });
 	}
 
 	// Reachability from the entry state.
@@ -422,12 +535,20 @@ export function validateMachine(): MachineProblem[] {
 		}
 	}
 	for (const id of stateIds) {
-		if (!reachable.has(id)) problems.push({ severity: "error", message: `State "${id}" is unreachable from "${ENTRY_STATE}"` });
+		if (!reachable.has(id))
+			problems.push({
+				severity: "error",
+				message: `State "${id}" is unreachable from "${ENTRY_STATE}"`,
+			});
 	}
 
 	// Every state can reach a terminal (no trap components).
 	for (const id of stateIds) {
-		if (!canReachTerminal(id)) problems.push({ severity: "error", message: `State "${id}" cannot reach any terminal state` });
+		if (!canReachTerminal(id))
+			problems.push({
+				severity: "error",
+				message: `State "${id}" cannot reach any terminal state`,
+			});
 	}
 
 	return problems;

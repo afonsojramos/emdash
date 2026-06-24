@@ -33,7 +33,9 @@ const PRICING: Record<string, { in: number; out: number }> = {
 	"workers-ai/@cf/openai/gpt-oss-120b": { in: 0.35, out: 0.75 },
 };
 
-const SHORTLIST = (process.env.MODELS?.split(",").map((s) => s.trim()).filter(Boolean)) ?? [
+const SHORTLIST = process.env.MODELS?.split(",")
+	.map((s) => s.trim())
+	.filter(Boolean) ?? [
 	"workers-ai/@cf/qwen/qwen3-30b-a3b-fp8",
 	"workers-ai/@cf/moonshotai/kimi-k2.7-code",
 ];
@@ -80,16 +82,23 @@ async function sweepModel(bareId: string): Promise<ModelRow> {
 	let n = 0;
 	const misses: CaseResult[] = [];
 	for (const c of CASES) {
-		const input = { issueNumber: 0, state: c.state, comment: c.comment, commands: commandsFor(c.state), model };
+		const input = {
+			issueNumber: 0,
+			state: c.state,
+			comment: c.comment,
+			commands: commandsFor(c.state),
+			model,
+		};
 		const t0 = performance.now();
 		try {
-			const inv: { result?: { event?: string; _meta?: { tokens?: { input?: number; output?: number } } } } =
-				await withTimeout(
-					client.workflows.invoke("classify-command", { input, wait: "result" }) as Promise<{
-						result?: { event?: string; _meta?: { tokens?: { input?: number; output?: number } } };
-					}>,
-					CALL_TIMEOUT_MS,
-				);
+			const inv: {
+				result?: { event?: string; _meta?: { tokens?: { input?: number; output?: number } } };
+			} = await withTimeout(
+				client.workflows.invoke("classify-command", { input, wait: "result" }) as Promise<{
+					result?: { event?: string; _meta?: { tokens?: { input?: number; output?: number } } };
+				}>,
+				CALL_TIMEOUT_MS,
+			);
 			latency += performance.now() - t0;
 			const r = inv.result ?? {};
 			const got = r.event ?? null;
@@ -167,7 +176,9 @@ for (const r of rows) {
 	for (const [tag, ms] of byTag) {
 		console.log(`  [${tag}]`);
 		for (const m of ms) {
-			const detail = m.error ? `error: ${m.error}` : `expected ${m.case.expected}, got ${m.got ?? "-"}`;
+			const detail = m.error
+				? `error: ${m.error}`
+				: `expected ${m.case.expected}, got ${m.got ?? "-"}`;
 			console.log(`    ${m.case.state}: "${m.case.comment.slice(0, 60)}" -> ${detail}`);
 		}
 	}

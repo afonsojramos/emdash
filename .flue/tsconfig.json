@@ -12,6 +12,13 @@
 		"resolveJsonModule": true,
 		"types": ["node"]
 	},
-	"include": ["app.ts", "workflows/**/*.ts", "lib/**/*.ts", "scripts/**/*.ts", "evals/**/*.ts", "vitest.evals.config.ts"],
+	"include": [
+		"app.ts",
+		"workflows/**/*.ts",
+		"lib/**/*.ts",
+		"scripts/**/*.ts",
+		"evals/**/*.ts",
+		"vitest.evals.config.ts"
+	],
 	"exclude": [".build", "node_modules"]
 }

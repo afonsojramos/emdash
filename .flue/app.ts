@@ -36,11 +36,23 @@ if (account && gateway) {
 			"workers-ai/@cf/openai/gpt-oss-120b": { contextWindow: 128_000, maxTokens: 8_192 },
 			"workers-ai/@cf/openai/gpt-oss-20b": { contextWindow: 128_000, maxTokens: 8_192 },
 			"workers-ai/@cf/google/gemma-4-26b-a4b-it": { contextWindow: 256_000, maxTokens: 8_192 },
-			"workers-ai/@cf/mistralai/mistral-small-3.1-24b-instruct": { contextWindow: 128_000, maxTokens: 8_192 },
+			"workers-ai/@cf/mistralai/mistral-small-3.1-24b-instruct": {
+				contextWindow: 128_000,
+				maxTokens: 8_192,
+			},
 			"workers-ai/@cf/qwen/qwen3-30b-a3b-fp8": { contextWindow: 32_768, maxTokens: 8_192 },
-			"workers-ai/@cf/meta/llama-4-scout-17b-16e-instruct": { contextWindow: 131_000, maxTokens: 8_192 },
-			"workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast": { contextWindow: 24_000, maxTokens: 8_192 },
-			"workers-ai/@cf/ibm-granite/granite-4.0-h-micro": { contextWindow: 131_000, maxTokens: 8_192 },
+			"workers-ai/@cf/meta/llama-4-scout-17b-16e-instruct": {
+				contextWindow: 131_000,
+				maxTokens: 8_192,
+			},
+			"workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
+				contextWindow: 24_000,
+				maxTokens: 8_192,
+			},
+			"workers-ai/@cf/ibm-granite/granite-4.0-h-micro": {
+				contextWindow: 131_000,
+				maxTokens: 8_192,
+			},
 		},
 	});
 }

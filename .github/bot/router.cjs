@@ -31,7 +31,9 @@ function currentState(labelNames) {
 
 /** The single kind ("bug"/...) encoded in a label set, or null. */
 function currentKind(labelNames) {
-	const found = labelNames.filter((l) => KIND_LABELS.includes(l)).map((l) => l.slice("bot:".length));
+	const found = labelNames
+		.filter((l) => KIND_LABELS.includes(l))
+		.map((l) => l.slice("bot:".length));
 	return found.length === 1 ? found[0] : null;
 }
 
@@ -209,8 +211,10 @@ function invariantProblems(labelNames) {
 	const problems = [];
 	const states = labelNames.filter((l) => STATE_LABELS.includes(l));
 	const kinds = labelNames.filter((l) => KIND_LABELS.includes(l));
-	if (states.length !== 1) problems.push(`expected exactly 1 state label, found ${states.length}: [${states.join(", ")}]`);
-	if (kinds.length !== 1) problems.push(`expected exactly 1 kind label, found ${kinds.length}: [${kinds.join(", ")}]`);
+	if (states.length !== 1)
+		problems.push(`expected exactly 1 state label, found ${states.length}: [${states.join(", ")}]`);
+	if (kinds.length !== 1)
+		problems.push(`expected exactly 1 kind label, found ${kinds.length}: [${kinds.join(", ")}]`);
 	return problems;
 }
 

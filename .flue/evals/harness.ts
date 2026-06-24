@@ -30,7 +30,11 @@ export function createClassifyCommandHarness(options?: { baseUrl?: string; token
 				input,
 				wait: "result",
 			});
-			const result = (invocation.result ?? {}) as { event?: string; arg?: string; reasoning?: string };
+			const result = (invocation.result ?? {}) as {
+				event?: string;
+				arg?: string;
+				reasoning?: string;
+			};
 			const output = result.event ?? "none";
 			return {
 				// The classified machine event is the contract under test.

@@ -79,7 +79,13 @@ type InvestigatePayload = v.InferOutput<typeof investigatePayloadSchema>;
 const reproduceResultSchema = v.object({
 	reproduced: v.boolean(),
 	skipped: v.boolean(),
-	approach: v.picklist(["failing-test", "repro-script", "pnpm-command", "agent-browser-only", "none"]),
+	approach: v.picklist([
+		"failing-test",
+		"repro-script",
+		"pnpm-command",
+		"agent-browser-only",
+		"none",
+	]),
 	notes: v.pipe(v.string(), v.minLength(10), v.maxLength(6000)),
 	screenshots: v.array(
 		v.object({
@@ -490,7 +496,12 @@ export default defineWorkflow({
 			"fix",
 			(signal) =>
 				fixSession.skill(fix, {
-					args: { issueContext: issueContext(input), classification, reproduce, diagnose: diagnoseOut },
+					args: {
+						issueContext: issueContext(input),
+						classification,
+						reproduce,
+						diagnose: diagnoseOut,
+					},
 					model: FIX_MODEL,
 					result: fixResultSchema,
 					signal,
@@ -507,7 +518,11 @@ export default defineWorkflow({
 				verdict: verifyOut.verdict,
 				reason: "",
 				attempts: "",
-				notes: [`**Root cause:** ${diagnoseOut.rootCause}`, "", `**Fix attempt abandoned:** ${fixOut.notes}`].join("\n"),
+				notes: [
+					`**Root cause:** ${diagnoseOut.rootCause}`,
+					"",
+					`**Fix attempt abandoned:** ${fixOut.notes}`,
+				].join("\n"),
 				classification,
 				reproduce,
 				diagnose: diagnoseOut,
@@ -526,7 +541,11 @@ export default defineWorkflow({
 			verdict: verifyOut.verdict,
 			reason: "",
 			attempts: "",
-			notes: [`**Root cause:** ${diagnoseOut.rootCause}`, "", `**Fix applied:** ${fixOut.notes}`].join("\n"),
+			notes: [
+				`**Root cause:** ${diagnoseOut.rootCause}`,
+				"",
+				`**Fix applied:** ${fixOut.notes}`,
+			].join("\n"),
 			classification,
 			reproduce,
 			diagnose: diagnoseOut,

@@ -1,20 +1,20 @@
 # emdashbot orchestration
 
 This directory is the orchestration layer for the issue/PR automation bot. It
-owns *which state an item is in and how it moves*. It does **not** own how the
+owns _which state an item is in and how it moves_. It does **not** own how the
 agent reproduces, diagnoses, or fixes -- that is `.flue/`, invoked here as an
 opaque action.
 
 ## Files
 
-| File                   | Role                                                                 |
-| ---------------------- | -------------------------------------------------------------------- |
-| `machine.ts`           | **Single source of truth.** States, events, actors, transitions.     |
-| `machine.json`         | Generated runtime artifact loaded by the workflows. Do not hand-edit. |
-| `../BOT_STATE_MACHINE.md` | Generated docs: diagram, state/transition tables, command grammar. |
-| `generate.ts`          | `machine.ts` -> `machine.json` + docs. `--check` mode for CI.         |
-| `router.cjs`           | Pure transition logic (no GitHub calls). Consumed by `github-script`. |
-| `router.test.cjs`      | `node --test` unit tests for the router.                              |
+| File                      | Role                                                                  |
+| ------------------------- | --------------------------------------------------------------------- |
+| `machine.ts`              | **Single source of truth.** States, events, actors, transitions.      |
+| `machine.json`            | Generated runtime artifact loaded by the workflows. Do not hand-edit. |
+| `../BOT_STATE_MACHINE.md` | Generated docs: diagram, state/transition tables, command grammar.    |
+| `generate.ts`             | `machine.ts` -> `machine.json` + docs. `--check` mode for CI.         |
+| `router.cjs`              | Pure transition logic (no GitHub calls). Consumed by `github-script`. |
+| `router.test.cjs`         | `node --test` unit tests for the router.                              |
 
 Regenerate after editing the spec:
 
@@ -53,26 +53,26 @@ guards and bash label-flips of six workflows.
 ## How the existing agent plugs in (internals untouched)
 
 The agent (`.flue/workflows/investigate.ts`) keeps its exact contract. We change
-only *how it is triggered* and *how its result maps to the next state* -- and that
+only _how it is triggered_ and _how its result maps to the next state_ -- and that
 mapping moves out of bash and into the transition table:
 
-| Agent result (flat gating fields)        | Event fired        | Lands in            |
-| ----------------------------------------- | ------------------ | ------------------- |
-| `skipped === true`                        | `agent.skipped`    | `blocked`           |
-| `!skipped && !reproduced`                 | `agent.not_reproduced` | `blocked`       |
-| `verdict === "intended-behavior"`         | `agent.by_design`  | `blocked`           |
-| `reproduced && !fixed`                    | `agent.reproduced` | `blocked`           |
-| `reproduced && fixed`                     | `agent.fix_ready`  | `awaiting_feedback` |
-| nonzero exit / no result file             | `agent.failed`     | `failed`            |
+| Agent result (flat gating fields) | Event fired            | Lands in            |
+| --------------------------------- | ---------------------- | ------------------- |
+| `skipped === true`                | `agent.skipped`        | `blocked`           |
+| `!skipped && !reproduced`         | `agent.not_reproduced` | `blocked`           |
+| `verdict === "intended-behavior"` | `agent.by_design`      | `blocked`           |
+| `reproduced && !fixed`            | `agent.reproduced`     | `blocked`           |
+| `reproduced && fixed`             | `agent.fix_ready`      | `awaiting_feedback` |
+| nonzero exit / no result file     | `agent.failed`         | `failed`            |
 
 Action ids map to the agent's existing entry modes:
 
-| Action                 | How it invokes the unchanged agent                                  |
-| ---------------------- | ------------------------------------------------------------------- |
-| `investigate.repro`    | dispatch with `{ issueNumber }`                                     |
-| `investigate.implement`| dispatch with `{ issueNumber, maintainerDirective }` (existing flag)|
-| `investigate.revise`   | dispatch with `{ issueNumber, retryContext }` (existing flag)       |
-| `openPr` / `closePr`   | `gh pr create` / `gh pr close` (no agent run)                       |
+| Action                  | How it invokes the unchanged agent                                   |
+| ----------------------- | -------------------------------------------------------------------- |
+| `investigate.repro`     | dispatch with `{ issueNumber }`                                      |
+| `investigate.implement` | dispatch with `{ issueNumber, maintainerDirective }` (existing flag) |
+| `investigate.revise`    | dispatch with `{ issueNumber, retryContext }` (existing flag)        |
+| `openPr` / `closePr`    | `gh pr create` / `gh pr close` (no agent run)                        |
 
 `investigate.implement` and `investigate.revise` reuse `maintainerDirective` /
 `retryContext`, which the agent already supports. The only genuinely new entry
@@ -116,10 +116,10 @@ confirmation-round machinery. See `.flue/workflows/classify-command.ts`.
 Default: `cf-wai/workers-ai/@cf/qwen/qwen3-30b-a3b-fp8`. Picked from a 43-case
 sweep against the labeled dataset in `.flue/evals/cases.ts`:
 
-| model | pass | avg ms | $/1k | errors |
-| --- | --- | --- | --- | --- |
+| model                               | pass        | avg ms | $/1k   | errors                |
+| ----------------------------------- | ----------- | ------ | ------ | --------------------- |
 | `kimi-k2.7-code` (previous default) | 86% (37/43) | 22,140 | $1.993 | 3 (capacity timeouts) |
-| `qwen3-30b-a3b-fp8` (new default) | 84% (36/43) | 4,982 | $0.227 | 0 |
+| `qwen3-30b-a3b-fp8` (new default)   | 84% (36/43) | 4,982  | $0.227 | 0                     |
 
 ~9x cheaper, ~4.4x faster, no capacity timeouts, and 1 case behind on accuracy.
 The qwen3 misses cluster on benign idioms (`"ship the second option"`,
@@ -146,7 +146,7 @@ speak to code-fix quality; that's a separate eval to design).
   (deterministic) -> classify (only for free-text replies) -> `resolve` ->
   label flip + comment -> `repository_dispatch` the agent run.
 - **`.github/workflows/investigate-run.yml`** — the executor: `flue run
-  investigate` on a runner (the toolchain) -> push `bot/fix-<n>` if fixed ->
+investigate` on a runner (the toolchain) -> push `bot/fix-<n>` if fixed ->
   `outcomeFromResult` + `resolve` -> apply the transition. The agent only ever
   holds the read-only `AGENT_GH_TOKEN`; every write uses the app token.
 
@@ -171,17 +171,17 @@ live bot is untouched until it is flipped.
 
 ### Label migration map
 
-| Old                          | New                    |
-| ---------------------------- | ---------------------- |
-| `triage/reproducing`         | `bot:working`          |
-| `triage/reproduced`          | `bot:blocked`          |
-| `triage/by-design`           | `bot:blocked`          |
-| `triage/skipped`             | `bot:blocked`          |
-| `triage/not-reproduced`      | `bot:blocked`          |
-| `triage/failed`              | `bot:failed`           |
-| `triage/awaiting-reporter`   | `bot:awaiting-feedback`|
-| `triage/verified`            | `bot:in-review`        |
-| (none / `bot:repro` trigger) | `bot:triage` + command |
+| Old                          | New                     |
+| ---------------------------- | ----------------------- |
+| `triage/reproducing`         | `bot:working`           |
+| `triage/reproduced`          | `bot:blocked`           |
+| `triage/by-design`           | `bot:blocked`           |
+| `triage/skipped`             | `bot:blocked`           |
+| `triage/not-reproduced`      | `bot:blocked`           |
+| `triage/failed`              | `bot:failed`            |
+| `triage/awaiting-reporter`   | `bot:awaiting-feedback` |
+| `triage/verified`            | `bot:in-review`         |
+| (none / `bot:repro` trigger) | `bot:triage` + command  |
 
 The `review/*` PR labels stay as in-review sub-states on the PR; they roll up to
 `bot:in-review` on the anchoring issue.
