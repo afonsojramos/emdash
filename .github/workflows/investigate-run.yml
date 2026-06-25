@@ -216,9 +216,9 @@ jobs:
           permission-pull-requests: write
 
       # Clean checkout. For revise the apply job lands on bot/fix-<n>; for
-      # repro/implement it lands on main. Note: persist-credentials:true here
-      # is safe because the agent is no longer running. The token only ever
-      # touches the trusted push.
+      # repro/implement it lands on main. persist-credentials is deliberately
+      # false: the token never goes in .git/config; the push step uses
+      # GIT_ASKPASS so it stays in env, not argv or on-disk config.
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -243,32 +243,24 @@ jobs:
           set -euo pipefail
           BRANCH="bot/fix-${ISSUE_NUMBER}"
 
-          # Branch ownership guard: fail CLOSED if we can't inspect the remote.
-          # `--force-with-lease` only protects from changes after our fetch; a
-          # rescue commit pushed BEFORE we ran is fetched then overwritten. We
-          # require every commit not on main to be authored by emdashbot[bot].
+          # Branch ownership guard: refuse to force-push if the remote branch
+          # already exists with anything ahead of base. We cannot prove a
+          # commit is bot-owned from inside git (the author/committer fields
+          # are forgeable; a human can `git commit --author='emdashbot[bot]'`).
+          # The only safe rule is "we own this branch only if it doesn't yet
+          # exist on the remote". For revise, the apply job checked out the
+          # existing bot/fix-<n> and applies a patch on top, so that flow does
+          # NOT depend on a fresh branch.
+          #
+          # The maintainer can clear an orphan bot/fix-<n> manually with
+          # `git push --force origin :bot/fix-<n>` if they want the bot to
+          # take a fresh swing.
           REMOTE_TIP="$(git ls-remote --heads origin "$BRANCH" | awk '{print $1}')"
-          if [ -n "$REMOTE_TIP" ]; then
-            if ! git fetch --no-tags origin "$BRANCH"; then
-              echo "::error::failed to fetch existing $BRANCH; refusing to push (fails closed)"
-              echo "pushed=false" >> "$GITHUB_OUTPUT"
-              echo "reason=fetch-failed" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            if ! AUTHORS=$(git log --format='%H %an' "origin/main..$REMOTE_TIP" 2>&1); then
-              echo "::error::failed to inspect commits on $BRANCH; refusing to push"
-              echo "$AUTHORS"
-              echo "pushed=false" >> "$GITHUB_OUTPUT"
-              echo "reason=log-failed" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            NON_BOT="$(echo "$AUTHORS" | awk '$2 != "emdashbot[bot]" { print $1 }' | head -1)"
-            if [ -n "$NON_BOT" ]; then
-              echo "::warning::refusing to overwrite human commit $NON_BOT on $BRANCH"
-              echo "pushed=false" >> "$GITHUB_OUTPUT"
-              echo "reason=human-commits-on-branch" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
+          if [ -n "$REMOTE_TIP" ] && [ "$MODE" != "revise" ]; then
+            echo "::warning::$BRANCH already exists on origin; refusing to overwrite. Delete it manually to let the bot push a fresh fix."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            echo "reason=branch-exists" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           # Apply the agent's patch. `git apply --check` validates BEFORE we

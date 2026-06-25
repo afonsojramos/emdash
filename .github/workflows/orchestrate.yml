@@ -7,22 +7,24 @@ name: Bot orchestrate
 # calls a Flue classifier for the genuinely fuzzy events (a reporter's free-text
 # reply, a maintainer's free-text directive).
 #
-# Flow per event:
-#   1. route   -- normalize the event, resolve the actor role, read live labels,
-#                 and decide the machine event. Explicit `@emdashbot <verb>` and
-#                 label triggers are deterministic; a free-text reply in
-#                 awaiting-feedback / blocked needs a classifier (step 2).
-#   2. classify-- (conditional) run the cheap Flue classifier to turn a free-text
-#                 reply into an event.
-#   3. apply   -- resolve(state,event) -> flip the single state label, post the
-#                 self-documenting comment, and emit a dispatch payload / open a
-#                 PR for the transition's action.
-#   4. dispatch-- (conditional) repository_dispatch the heavy agent run to the
-#                 executor (investigate-run.yml); the runner has the toolchain.
+# Two-job structure:
 #
-# Gated behind the BOT_STATE_MACHINE_V2 repo variable so it is inert until the
-# bot:* label taxonomy is live and the legacy workflows are retired (see
-# .github/bot/README.md cutover plan).
+#   route (no concurrency): parses the event, resolves the anchoring issue #,
+#     the actor role, and the decision (deterministic event, free-text command
+#     needing classification, readonly, or skip). Emits these as outputs.
+#
+#   apply (concurrency on the anchoring issue): runs the classifier when
+#     needed, then resolve()s against LIVE labels and applies the transition.
+#
+# The two jobs is what unifies PR-comment vs issue-comment concurrency for the
+# SAME anchoring issue: the workflow-level concurrency expression cannot derive
+# the anchor from a PR comment (the bot/fix-<n> ref is only in the API payload),
+# but the apply job CAN read it from the route job's output via needs.*. So a
+# PR comment for PR #200 (anchoring issue #123) and an issue comment for #123
+# both route to the same apply-concurrency group `orchestrate-apply-123`.
+#
+# Gated behind the BOT_STATE_MACHINE_V2 repo variable so it stays inert until
+# the bot:* label taxonomy is live and the legacy workflows retire.
 
 on:
   issues:
@@ -33,43 +35,29 @@ on:
     types: [closed]
   workflow_dispatch:
 
-# Default-deny; the job elevates only what it needs.
 permissions:
   contents: read
 
-concurrency:
-  # Serialize per "thing the event is about", which is the GitHub-payload number
-  # (issue # for issue events, PR # for pull_request_target). This DOES serialize
-  # multiple comments on the same PR or same issue, but it does NOT serialize a
-  # PR comment for PR #200 against an issue comment for the anchoring issue
-  # #123 -- those resolve to different concurrency groups and can race.
-  #
-  # We cannot compute the anchoring issue # in a workflow-level expression (the
-  # bot/fix-<n> ref is only in the API payload at runtime). The defensive cover:
-  # the Apply step re-fetches live labels right before mutating, so if the two
-  # racing runs both got past route, only the first will see a live state the
-  # router can transition from -- the second's resolve() returns noop. The
-  # remaining window is millisecond-scale and not worth a global mutex.
-  group: orchestrate-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: false
-
 jobs:
-  orchestrate:
-    name: Route and apply
+  route:
+    name: Route event
     if: vars.BOT_STATE_MACHINE_V2 == '1' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     permissions:
       contents: read
+    outputs:
+      anchorIssue: ${{ steps.route.outputs.anchorIssue }}
+      payload: ${{ steps.route.outputs.payload }}
+      classify: ${{ steps.route.outputs.classify }}
+      skip: ${{ steps.route.outputs.skip }}
     steps:
-      - name: Checkout (router + bot project)
+      - name: Checkout (router only)
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
-          # No write needed during checkout; the app token below is what we use
-          # for every GitHub write later in the job.
           persist-credentials: false
 
-      - name: Generate app token
+      - name: Generate app token (route is read-only)
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -77,17 +65,11 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: emdash-cms
           repositories: emdash
-          # Narrow scopes. NB: contents:write is required to fire
-          # repository_dispatch (GitHub's API maps `POST /repos/.../dispatches`
-          # to the `contents` permission, not `actions`). This brain never
-          # commits anything itself; only the executor pushes branches.
-          permission-contents: write
+          permission-contents: read
           permission-metadata: read
-          permission-issues: write
-          permission-pull-requests: write
-          permission-actions: write
+          permission-issues: read
+          permission-pull-requests: read
 
-      # --- 1. route: decide the machine event deterministically where possible ---
       - name: Route event
         id: route
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
@@ -113,11 +95,10 @@ jobs:
               actorLogin = context.payload.comment.user.login;
               body = context.payload.comment.body || '';
               if (context.payload.issue.pull_request) {
-                // Comment on a PR: only act on REAL bot PRs. A fork PR or a
-                // human's same-repo branch can both be named `bot/fix-<n>`,
-                // which would let comments route as feedback for the wrong
-                // issue. Three things have to be true: same repo (not fork),
-                // branch name pattern, AND authored by emdashbot[bot].
+                // Comment on a PR: three guards (same repo, branch name
+                // pattern, AND authored by emdashbot[bot]). Fork PRs and
+                // human same-repo branches can both be named bot/fix-<n>;
+                // each alone is forgeable.
                 const prNum = context.payload.issue.number;
                 const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNum });
                 const sameRepo = pr.head.repo && pr.head.repo.full_name === `${owner}/${repo}`;
@@ -133,11 +114,6 @@ jobs:
               }
             } else if (ev === 'pull_request_target' && context.payload.action === 'closed') {
               const pr = context.payload.pull_request;
-              // Three guards (same as the pr_comment path above): same repo,
-              // branch name pattern, AND authored by emdashbot[bot]. A merged
-              // PR matching only the branch name pattern can otherwise come
-              // from a maintainer's same-repo work branch and incorrectly mark
-              // an unrelated issue done.
               const sameRepo = pr.head.repo && pr.head.repo.full_name === `${owner}/${repo}`;
               const m = /^bot\/fix-(\d+)$/.exec(pr.head.ref || '');
               const botAuthored = pr.user && pr.user.login === 'emdashbot[bot]';
@@ -147,11 +123,16 @@ jobs:
               kind = 'pr_merged';
             } else { core.setOutput('skip', 'unhandled-event'); return; }
 
+            // Anchor is the issue number the apply job will key its
+            // concurrency on. This is the single point that unifies PR-comment
+            // and issue-comment serialization for the same item.
+            core.setOutput('anchorIssue', String(issueNumber));
+
             // Live labels (authoritative, never the event snapshot).
             const { data: issue } = await github.rest.issues.get({ owner, repo, issue_number: issueNumber });
             const labels = issue.labels.map((l) => (typeof l === 'string' ? l : l.name));
 
-            // Actor role: maintainer (live write/triage/admin), reporter, or other.
+            // Actor role: maintainer (live write/triage/admin), reporter, other.
             let role = 'other';
             if (actorLogin === issue.user.login) role = 'reporter';
             try {
@@ -163,12 +144,10 @@ jobs:
             const state = router.currentState(labels);
             const out = { issueNumber, prNumber, role, state, labels, actorLogin, body };
 
-            // pr_merged is a system event, not a command.
             if (kind === 'pr_merged') {
               core.setOutput('payload', JSON.stringify({ ...out, event: 'pr.merged', actor: 'system' }));
               return;
             }
-            // Label triggers (bot:repro / bot:implement) on the labeled event.
             if (kind === 'labeled') {
               const added = context.payload.label && context.payload.label.name;
               const map = { 'bot:repro': 'repro', 'bot:implement': 'implement' };
@@ -177,11 +156,6 @@ jobs:
             }
             if (kind === 'opened' || kind === 'reopened') { core.setOutput('skip', 'no-command-on-open'); return; }
 
-            // One call resolves the comment: an exact bare verb -> deterministic
-            // transition (incl. destructive ones); bot-PR free text -> revise;
-            // any other free text -> hand to the intent classifier, constrained
-            // to this state's non-destructive commands. The `@emdashbot` mention
-            // is required (resolveComment returns noop otherwise).
             const isBotPr = prNumber != null;
             const decision = router.resolveComment({ labels, body, actor: role, allowDefault: isBotPr });
             if (decision.kind === 'transition') {
@@ -193,10 +167,9 @@ jobs:
               return;
             }
             if (decision.kind === 'classify') {
-              // The classifier needs OUR bot's last message to resolve refs
-              // like "go with option A". Filtering on c.user.type === 'Bot'
-              // would also pick up Dependabot / Codecov / preview bots and
-              // hand the classifier the wrong context. Match the App login.
+              // The classifier needs OUR bot's last message to resolve references
+              // like "option A". Filtering on type === 'Bot' would pull in
+              // Dependabot/Codecov; match the App login exactly.
               let botContext = '';
               try {
                 const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: issueNumber, per_page: 100 });
@@ -209,19 +182,57 @@ jobs:
             }
             core.setOutput('skip', decision.reason || 'no-op');
 
-      # --- 2. classify (conditional): free-text reply -> event via Flue ---
+  apply:
+    name: Classify + apply
+    needs: route
+    if: needs.route.outputs.payload && !needs.route.outputs.skip
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    # Job-level concurrency keyed on the ANCHORING issue # (computed by route).
+    # This is what unifies PR-comment and issue-comment serialization for the
+    # same item: a PR comment for PR #200 (anchoring #123) and an issue comment
+    # for #123 both land here as `orchestrate-apply-123`.
+    concurrency:
+      group: orchestrate-apply-${{ needs.route.outputs.anchorIssue }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Generate app token (writes)
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: emdash-cms
+          repositories: emdash
+          # Narrow scopes. contents:write is required to fire
+          # repository_dispatch (GitHub maps POST /repos/.../dispatches to
+          # the contents permission, not actions). This brain never commits.
+          permission-contents: write
+          permission-metadata: read
+          permission-issues: write
+          permission-pull-requests: write
+          permission-actions: write
+
+      # --- classify (conditional): free-text reply -> event via Flue ---
       - name: Setup Node
-        if: steps.route.outputs.classify
+        if: needs.route.outputs.classify
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 22
 
       - name: Install pnpm
-        if: steps.route.outputs.classify
+        if: needs.route.outputs.classify
         run: npm i -g pnpm@11.1.3
 
       - name: Build classifier (.flue)
-        if: steps.route.outputs.classify
+        if: needs.route.outputs.classify
         working-directory: .flue
         run: |
           pnpm install --frozen-lockfile=false
@@ -229,51 +240,26 @@ jobs:
 
       - name: Run command classifier
         id: classify
-        if: steps.route.outputs.classify
+        if: needs.route.outputs.classify
         working-directory: .flue
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_GATEWAY_ID: ${{ secrets.CLOUDFLARE_GATEWAY_ID }}
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
-          PAYLOAD: ${{ steps.route.outputs.payload }}
+          PAYLOAD: ${{ needs.route.outputs.payload }}
         run: |
-          # Build the state-aware classifier input from the routed payload (the
-          # candidate commands were chosen by the router; the comment text and
-          # bot context travel as JSON, never interpolated into the command line).
+          # The candidate commands were chosen by the router; the comment text
+          # and bot context travel as JSON, never interpolated into a command.
           jq '{issueNumber: .issueNumber, state: .classify.state, comment: .classify.text,
                botContext: (.botContext // ""), commands: .classify.commands}' \
             <<<"$PAYLOAD" > /tmp/classify-input.json
           CLASSIFY_RESULT_PATH=/tmp/classify-result.json \
             pnpm exec flue run classify-command --target node --input "$(cat /tmp/classify-input.json)" || true
-          # The result file is read directly by the Apply step via fs.readFile.
-          # We deliberately do NOT echo `event=...`/`arg=...` into $GITHUB_OUTPUT
-          # here: the classifier's `arg` is model output shaped by untrusted
-          # comment text, and a newline in it would inject extra `event=...`
-          # lines, overriding the deterministic event we chose. The JSON parser
-          # in the next step gives us a single typed object with no shell.
+          # Read directly via fs.readFile in the apply step; never echo model
+          # output into $GITHUB_OUTPUT (a newline would inject extra outputs).
 
-      # --- 3 + 4. apply the decision and dispatch the agent run if needed ---
-      #
-      # Three things this step does carefully:
-      #
-      #   (a) Reads the classifier result from /tmp/classify-result.json
-      #       directly (not via $GITHUB_OUTPUT). The classifier's `arg` is
-      #       model output shaped by untrusted comment text; routing it
-      #       through shell would let a newline in `arg` inject extra
-      #       `event=...` outputs and override the trusted event. JSON.parse
-      #       gives us a single typed object with no shell.
-      #
-      #   (b) Re-fetches the issue's labels immediately before applying the
-      #       transition. The labels captured in step 1 are stale by the time
-      #       we get here (the executor or a maintainer may have written
-      #       since); re-reading is cheap and removes the cross-workflow race.
-      #
-      #   (c) Performs action side-effects BEFORE writing labels for
-      #       transitions that depend on the side-effect succeeding. The
-      #       openPr -> in_review transition only happens if `gh pulls.create`
-      #       returned a PR; closePr is best-effort but doesn't gate state.
+      # --- apply the decision ---
       - name: Apply decision
-        if: steps.route.outputs.payload && !steps.route.outputs.skip
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.app-token.outputs.token }}
@@ -284,16 +270,19 @@ jobs:
             const repo = context.repo.repo;
             const p = JSON.parse(process.env.PAYLOAD);
 
-            // (a) Pull the classifier result from disk, never the shell env.
+            // Read the classifier result from disk, never the shell env (the
+            // classifier's `arg` is model output shaped by untrusted comment
+            // text; routing it through shell would let a newline inject extra
+            // event=... outputs). JSON.parse gives us a single typed object.
             let cls = null;
-            if (process.env.CLASSIFY === 'true') {
+            if (process.env.CLASSIFY === 'command') {
               try { cls = JSON.parse(fs.readFileSync('/tmp/classify-result.json', 'utf8')); }
               catch { /* missing/corrupt -> treat as 'none' below */ }
             }
 
             // Whitelist the event against the machine's known set; never trust
             // a model-supplied string directly. resolve() will no-op on any
-            // event the current state doesn't allow, so this is belt + braces.
+            // event the current state doesn't allow.
             let event = p.event;
             let arg = p.arg || null;
             if (!event && cls && typeof cls.event === 'string' && cls.event !== 'none' &&
@@ -306,8 +295,9 @@ jobs:
               return;
             }
 
-            // (b) Re-fetch live labels. The route step's snapshot is stale by
-            // now (executor or human label edits between fire and apply).
+            // Re-fetch live labels. The route job's snapshot is stale by now;
+            // re-reading closes most of the cross-job race window (the apply
+            // job-level concurrency closes the rest for the same anchor).
             const { data: live } = await github.rest.issues.get({ owner, repo, issue_number: p.issueNumber });
             const liveLabels = live.labels.map((l) => (typeof l === 'string' ? l : l.name));
 
@@ -319,11 +309,8 @@ jobs:
             }
             if (decision.kind !== 'transition') { core.info(`no-op: ${decision.reason}`); return; }
 
-            // (c) Side-effects with state-gating. The order matters: do the
-            // FALLIBLE writes that the new state depends on BEFORE flipping
-            // labels. If any of these fail, the issue keeps its current state
-            // labels and the user sees an actionable error, rather than the
-            // bot claiming "Moving to in_review" with no PR / no executor run.
+            // Fallible writes BEFORE flipping labels, so a failed side effect
+            // doesn't leave the issue claiming a state that hasn't materialised.
             if (decision.action === 'openPr' && decision.to === 'in_review') {
               try {
                 await github.rest.pulls.create({ owner, repo, title: `fix: address #${p.issueNumber}`,
@@ -340,38 +327,27 @@ jobs:
               try { await github.rest.pulls.update({ owner, repo, pull_number: p.prNumber, state: 'closed' }); }
               catch (e) { core.warning(`PR close failed: ${e.message}`); }
             }
-            // Dispatch the executor BEFORE flipping labels. If the dispatch
-            // fails (transient 5xx, throttle), abort with state unchanged so
-            // the user can `@emdashbot retry` from the original state rather
-            // than being stuck in bot:working with nothing running.
             if (decision.action && decision.action.startsWith('investigate.')) {
-              const mode = decision.action.split('.')[1]; // repro | implement | revise
+              const mode = decision.action.split('.')[1];
               try {
                 await github.rest.repos.createDispatchEvent({ owner, repo, event_type: 'investigate-run',
                   client_payload: { issueNumber: p.issueNumber, mode, directive: arg || null, prNumber: p.prNumber || null } });
               } catch (e) {
                 core.warning(`dispatch failed: ${e.message}; leaving state as-is`);
-                // The retry verb is only valid from states that offer it; from
-                // unmanaged it's a no-op. Suggest "repeat the command" so the
-                // user re-fires whichever entry verb (repro/implement) failed.
                 await github.rest.issues.createComment({ owner, repo, issue_number: p.issueNumber,
                   body: `Couldn't start the agent run: ${e.message}. Please repeat the command.` + router.replyFooter(decision.from) });
                 return;
               }
             }
 
-            // Now flip the labels. Failures here are NOT swallowed: any
-            // unhandled removeLabel error fails the step and leaves the new
-            // state label plus the old one, which the linter will catch on
-            // its next sweep. That's a louder failure than a quiet half-state.
+            // Now flip the labels. removeLabel failures are NOT swallowed;
+            // 404 (concurrent removal) is fine, anything else throws.
             await github.rest.issues.addLabels({ owner, repo, issue_number: p.issueNumber, labels: decision.addLabels });
             for (const l of decision.removeLabels) {
               if (!liveLabels.includes(l)) continue;
               try {
                 await github.rest.issues.removeLabel({ owner, repo, issue_number: p.issueNumber, name: l });
               } catch (e) {
-                // 404 is fine: the label was removed concurrently. Anything
-                // else is real; surface it.
                 if (e.status === 404) continue;
                 core.error(`removeLabel(${l}) failed: ${e.message}; issue ${p.issueNumber} may carry multiple state labels`);
                 throw e;
@@ -381,5 +357,5 @@ jobs:
             await github.rest.issues.createComment({ owner, repo, issue_number: p.issueNumber,
               body: `Moving to \`${decision.to}\`.` + router.replyFooter(decision.to) });
         env:
-          PAYLOAD: ${{ steps.route.outputs.payload }}
-          CLASSIFY: ${{ steps.route.outputs.classify }}
+          PAYLOAD: ${{ needs.route.outputs.payload }}
+          CLASSIFY: ${{ needs.route.outputs.classify }}
