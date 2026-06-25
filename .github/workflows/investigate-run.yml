@@ -70,14 +70,28 @@ jobs:
           permission-issues: read
           permission-metadata: read
 
-      # For revise, check out the existing bot/fix-<n> so the agent updates
-      # it; otherwise check out main. NO credentials persist into .git/config.
+      # Always start on main (the default ref). For revise we attempt to move
+      # to bot/fix-<n> in a separate step that fails gracefully: a missing
+      # branch (deleted, never pushed) must not leave the issue stranded in
+      # bot:working -- the workflow needs to reach the result-application step
+      # so the machine can transition to failed/blocked.
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           fetch-depth: 0
-          ref: ${{ env.MODE == 'revise' && format('bot/fix-{0}', env.ISSUE_NUMBER) || '' }}
+
+      - name: Switch to revise branch
+        id: revise-checkout
+        if: env.MODE == 'revise'
+        run: |
+          BRANCH="bot/fix-${ISSUE_NUMBER}"
+          if git fetch --no-tags origin "$BRANCH" 2>/dev/null && git checkout -B "$BRANCH" "origin/$BRANCH"; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::revise mode requested but $BRANCH not found on origin; the agent run will report not-reproduced/failed"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Fetch issue
         id: issue
@@ -215,8 +229,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      # Clean checkout. For revise the apply job lands on bot/fix-<n>; for
-      # repro/implement it lands on main. persist-credentials is deliberately
+      # Clean checkout. Default to main; the patch-apply step below explicitly
+      # checks out the revise branch (or detects it's missing and falls
+      # through to failure handling). persist-credentials is deliberately
       # false: the token never goes in .git/config; the push step uses
       # GIT_ASKPASS so it stays in env, not argv or on-disk config.
       - name: Checkout
@@ -224,7 +239,23 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-          ref: ${{ env.MODE == 'revise' && format('bot/fix-{0}', env.ISSUE_NUMBER) || '' }}
+
+      - name: Switch to revise branch
+        id: revise-checkout
+        if: env.MODE == 'revise'
+        run: |
+          BRANCH="bot/fix-${ISSUE_NUMBER}"
+          if git fetch --no-tags origin "$BRANCH" 2>/dev/null && git checkout -B "$BRANCH" "origin/$BRANCH"; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            # Branch was deleted between dispatch and apply. The investigate
+            # job will have also failed its checkout, so HAS_PATCH=false; the
+            # apply step here falls through to the result-application step
+            # which transitions to failed/blocked rather than leaving the
+            # issue stranded in bot:working.
+            echo "::warning::revise mode but $BRANCH missing on origin"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download investigate artifacts
         id: download
