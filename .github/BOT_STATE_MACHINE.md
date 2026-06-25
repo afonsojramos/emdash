@@ -46,6 +46,7 @@ stateDiagram-v2
     in_review --> working: revise
     in_review --> done: PR merged
     working --> done: PR merged
+    awaiting_feedback --> done: PR merged
     unmanaged --> triage: reset
     triage --> triage: reset
     working --> triage: reset
@@ -150,6 +151,7 @@ with the valid commands instead of erroring).
 | `in_review` | `revise` | maintainer | `investigate.revise` | `working` | PR feedback -> agent (was impossible) |
 | `in_review` | `pr.merged` | system | — | `done` |  |
 | `working` | `pr.merged` | system | — | `done` | merged mid-revise |
+| `awaiting_feedback` | `pr.merged` | system | — | `done` | merged before confirm |
 | `unmanaged` | `reset` | maintainer | — | `triage` |  |
 | `triage` | `reset` | maintainer | — | `triage` |  |
 | `working` | `reset` | maintainer | — | `triage` |  |

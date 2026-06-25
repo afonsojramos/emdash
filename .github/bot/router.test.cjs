@@ -231,6 +231,19 @@ test("resolve: entry from unmanaged assigns the default kind when none is set", 
 	assert.ok(d.addLabels.includes("bot:bug"), "repro implies bug kind");
 });
 
+test("resolve: entry from triage also replaces a mismatched kind (post-reset)", () => {
+	// After `reset` lands the issue in bot:triage but leaves a stale
+	// bot:enhancement, `repro` from triage should swap to bot:bug.
+	const d = r.resolve({
+		labels: ["bot:enhancement", "bot:triage"],
+		event: "repro",
+		actor: "maintainer",
+	});
+	assert.equal(d.kind, "transition");
+	assert.ok(d.addLabels.includes("bot:bug"));
+	assert.ok(d.removeLabels.includes("bot:enhancement"));
+});
+
 test("resolve: entry from unmanaged replaces a mismatched existing kind", () => {
 	// Issue carries bot:enhancement but no state. `repro` means "treat as a
 	// bug": the verb wins, the existing kind is removed AND the new one added.

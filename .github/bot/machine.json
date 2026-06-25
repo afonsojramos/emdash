@@ -437,6 +437,12 @@
 			"note": "merged mid-revise"
 		},
 		{
+			"from": "awaiting_feedback",
+			"event": "pr.merged",
+			"to": "done",
+			"note": "merged before confirm"
+		},
+		{
 			"from": "unmanaged",
 			"event": "reset",
 			"to": "triage"

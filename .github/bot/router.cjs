@@ -182,13 +182,16 @@ function resolve({ labels, event, arg, actor }) {
 	const toLabel = machine.states[t.to].label;
 	const removeLabels = STATE_LABELS.filter((l) => l !== toLabel);
 
-	// Entry from unmanaged: ensure a kind label is set so the linter invariant
-	// (exactly one kind + one state) holds. If the issue carries no kind, apply
+	// Entry from unmanaged or triage: ensure the kind label matches the verb.
+	// `unmanaged` is the implicit start (no labels); `triage` is the labeled
+	// landing state after `reopen`, `hand_back`, or `reset`, which may carry a
+	// stale kind from a previous lifecycle. If the issue carries no kind, apply
 	// the event's defaultKind. If it carries a DIFFERENT kind than the verb
 	// implies (e.g. `bot:enhancement` + `repro`, which means "treat as a bug"),
 	// the verb wins: drop the mismatched kind and apply the verb's default.
 	const addLabels = [toLabel];
-	if (from === "unmanaged" && meta.defaultKind) {
+	const isEntry = (from === "unmanaged" || from === "triage") && meta.defaultKind;
+	if (isEntry) {
 		const existingKind = currentKind(labels);
 		const wantedKind = meta.defaultKind;
 		if (!existingKind) {

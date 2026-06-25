@@ -294,6 +294,27 @@ jobs:
             exit 0
           fi
 
+          # CI-execution-surface guard: refuse any patch that touches workflow
+          # or action files. The bot push lands on a same-repo bot/fix-<n>
+          # branch, and Actions runs branch workflows with same-repo event
+          # semantics; an agent prompt-injected into adding .github/workflows/
+          # exfil.yml or modifying preview-releases.yml could exfiltrate
+          # secrets or claim elevated GITHUB_TOKEN permissions. The agent
+          # should never have a legitimate reason to touch these files; if a
+          # bona-fide workflow change is needed it has to come from a human PR.
+          PROTECTED_PATHS_RE='^\.github/(workflows|actions)/'
+          # `--summary` prints `create mode`, `delete mode`, `rename from/to`
+          # lines plus the diff headers; `--numstat` gives a clean filename
+          # list of every touched path (before/after for renames).
+          TOUCHED="$(git apply --numstat /tmp/fix.patch 2>/dev/null | awk '{ print $3; print $4 }' | sort -u)"
+          if echo "$TOUCHED" | grep -qE "$PROTECTED_PATHS_RE"; then
+            echo "::error::patch touches protected CI paths (.github/workflows/** or .github/actions/**); refusing"
+            echo "$TOUCHED" | grep -E "$PROTECTED_PATHS_RE" | sed 's/^/  /'
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            echo "reason=patch-touches-ci" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           # Apply the agent's patch. `git apply --check` validates BEFORE we
           # mutate anything; `--whitespace=nowarn` keeps the noisy whitespace
           # warnings out of the run log.
@@ -363,11 +384,14 @@ jobs:
             const state = router.currentState(labels);
 
             // A late agent result must NOT override a deliberate human action
-            // taken while the run was in flight. If a maintainer moved the
-            // issue to a terminal (done/declined) or seized it (human_owned)
-            // or merged the bot PR mid-revise (state already done), drop the
-            // agent result and leave the human's state alone.
-            const inert = new Set(['done', 'declined', 'human_owned']);
+            // taken while the run was in flight. If a maintainer reset the
+            // issue (state: triage), moved it to a terminal (done/declined),
+            // seized it (human_owned), or merged the bot PR mid-revise (done),
+            // drop the agent result and leave the human's state alone. `triage`
+            // is in the inert set: a maintainer running `@emdashbot reset`
+            // during an in-flight run should not be undone by a synthesized
+            // bot:working transition from the late agent result.
+            const inert = new Set(['done', 'declined', 'human_owned', 'triage']);
             if (event.startsWith('agent.') && inert.has(state)) {
               core.info(`apply: agent result arrived but state is "${state}" (set by human action); ignoring`);
               await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber,

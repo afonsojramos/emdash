@@ -299,6 +299,16 @@ jobs:
                 Object.prototype.hasOwnProperty.call(router.machine.events, cls.event)) {
               event = cls.event;
               if (typeof cls.arg === 'string' && cls.arg.length) arg = cls.arg;
+              // If this event's metadata says it carries a free-text arg
+              // (directive / feedback) but the model didn't extract one, fall
+              // back to the full mention text as the arg. The dispatched run
+              // needs something to revise/implement against; an empty arg
+              // would silently drop the reporter's complaint or the
+              // maintainer's directive.
+              const eventMeta = router.machine.events[event];
+              if (eventMeta && eventMeta.arg && !arg) {
+                arg = (p.classify && p.classify.text) || p.body || null;
+              }
             }
             if (!event) {
               core.info(`no event resolved (classifier=${cls?.event || 'n/a'}); leaving issue untouched`);
@@ -350,18 +360,36 @@ jobs:
               }
             }
 
-            // Now flip the labels. removeLabel failures are NOT swallowed;
-            // 404 (concurrent removal) is fine, anything else throws.
-            await github.rest.issues.addLabels({ owner, repo, issue_number: p.issueNumber, labels: decision.addLabels });
-            for (const l of decision.removeLabels) {
-              if (!liveLabels.includes(l)) continue;
-              try {
-                await github.rest.issues.removeLabel({ owner, repo, issue_number: p.issueNumber, name: l });
-              } catch (e) {
-                if (e.status === 404) continue;
-                core.error(`removeLabel(${l}) failed: ${e.message}; issue ${p.issueNumber} may carry multiple state labels`);
-                throw e;
+            // Flip the labels. The side effects above (openPr / dispatch /
+            // closePr) have already succeeded by this point, so a labels-only
+            // failure here is the worst-case desync -- a real PR exists with
+            // the issue still claiming the old state. Retry transient errors
+            // a few times before giving up; 404 (concurrent removal) is fine
+            // and we proceed. Any unrecoverable failure leaves a comment so
+            // the maintainer can fix it with `@emdashbot reset`.
+            const attempt = async (fn) => {
+              let lastErr;
+              for (let i = 0; i < 3; i++) {
+                try { return await fn(); }
+                catch (e) {
+                  if (e.status === 404) return null;
+                  lastErr = e;
+                  if (i < 2) await new Promise((r) => setTimeout(r, 500 * (i + 1)));
+                }
               }
+              throw lastErr;
+            };
+            try {
+              await attempt(() => github.rest.issues.addLabels({ owner, repo, issue_number: p.issueNumber, labels: decision.addLabels }));
+              for (const l of decision.removeLabels) {
+                if (!liveLabels.includes(l)) continue;
+                await attempt(() => github.rest.issues.removeLabel({ owner, repo, issue_number: p.issueNumber, name: l }));
+              }
+            } catch (e) {
+              core.error(`label flip failed after retries: ${e.message}; the side effect (PR/dispatch) already happened`);
+              await github.rest.issues.createComment({ owner, repo, issue_number: p.issueNumber,
+                body: `Side effect for \`${decision.to}\` succeeded but couldn't update labels: ${e.message}. Run \`@emdashbot reset\` and repeat the command.` });
+              throw e;
             }
 
             await github.rest.issues.createComment({ owner, repo, issue_number: p.issueNumber,

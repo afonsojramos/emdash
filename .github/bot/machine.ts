@@ -453,11 +453,13 @@ export const TRANSITIONS: Transition[] = [
 		note: "PR feedback -> agent (was impossible)",
 	},
 	{ from: "in_review", event: "pr.merged", to: "done" },
-	// Maintainer can merge the bot's PR while a revise run is in flight (state
-	// briefly becomes bot:working). Don't lose the merge: working+pr.merged ->
-	// done. The late agent result that follows checks current state in
-	// investigate-run.yml's apply step and no-ops on terminals.
+	// A bot PR can be merged from non-review states too. Keep pr.merged terminal
+	// from every state where the PR may still be open: bot:working (during a
+	// revise run) and bot:awaiting-feedback (right after a revise produced a
+	// new fix and is awaiting reporter confirmation). Late agent results that
+	// arrive after the merge no-op via investigate-run.yml's terminal guard.
 	{ from: "working", event: "pr.merged", to: "done", note: "merged mid-revise" },
+	{ from: "awaiting_feedback", event: "pr.merged", to: "done", note: "merged before confirm" },
 
 	// reset: maintainer recovery from every state, including conflicting/null.
 	// resolve() has a special path for `reset` that ignores currentState.
