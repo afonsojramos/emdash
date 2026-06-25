@@ -138,7 +138,7 @@
 			"defaultKind": "enhancement"
 		},
 		"retry": {
-			"description": "Re-run the last agent action.",
+			"description": "Re-run the bug reproduction pipeline.",
 			"actors": [
 				"maintainer"
 			]
@@ -162,7 +162,8 @@
 			"actors": [
 				"reporter",
 				"maintainer"
-			]
+			],
+			"arg": "feedback"
 		},
 		"decline": {
 			"description": "Won't be actioned; move to declined.",
@@ -190,6 +191,13 @@
 			"actors": [
 				"maintainer"
 			]
+		},
+		"reset": {
+			"description": "Force-reset to triage. Maintainer recovery for conflicting state labels.",
+			"actors": [
+				"maintainer"
+			],
+			"destructive": true
 		},
 		"status": {
 			"description": "Render the item's current state and available commands.",
@@ -421,6 +429,62 @@
 			"from": "in_review",
 			"event": "pr.merged",
 			"to": "done"
+		},
+		{
+			"from": "working",
+			"event": "pr.merged",
+			"to": "done",
+			"note": "merged mid-revise"
+		},
+		{
+			"from": "unmanaged",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "triage",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "working",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "blocked",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "awaiting_feedback",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "in_review",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "human_owned",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "done",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "declined",
+			"event": "reset",
+			"to": "triage"
+		},
+		{
+			"from": "failed",
+			"event": "reset",
+			"to": "triage"
 		},
 		{
 			"from": "in_review",

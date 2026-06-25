@@ -158,6 +158,24 @@ function resolve({ labels, event, arg, actor }) {
 		return { kind: "noop", reason: `actor "${actor}" may not fire "${event}"` };
 	}
 	if (meta.readOnly) return { kind: "readonly", state: from, event };
+	// `reset` is the explicit recovery path: it works even when the item has
+	// conflicting state labels (currentState returned null), so the bot can
+	// repair itself out of a half-applied label swap. Lands on triage and
+	// removes every other state label.
+	if (event === "reset") {
+		const toLabel = machine.states.triage.label;
+		return {
+			kind: "transition",
+			from: from || "conflicting",
+			to: "triage",
+			action: null,
+			addLabel: toLabel,
+			addLabels: [toLabel],
+			removeLabels: STATE_LABELS.filter((l) => l !== toLabel),
+			event,
+			arg: arg || null,
+		};
+	}
 	if (!from) return { kind: "noop", reason: "item has conflicting state labels" };
 	const t = findTransition(from, event);
 	if (!t) return { kind: "noop", reason: `no transition for ${from} + ${event}`, from };

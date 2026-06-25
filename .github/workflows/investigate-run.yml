@@ -362,12 +362,25 @@ jobs:
             const labels = issue.labels.map((l) => (typeof l === 'string' ? l : l.name));
             const state = router.currentState(labels);
 
-            // Recovery: if labels don't include bot:working but we have an
-            // agent.* event, treat as working for the purpose of routing the
-            // result. This handles the dispatch-succeeded-but-flip-failed race
-            // in orchestrate.yml. We use the synthetic state to route, but
-            // remove the REAL orphaned state label so we don't end up with two
-            // state labels on the issue.
+            // A late agent result must NOT override a deliberate human action
+            // taken while the run was in flight. If a maintainer moved the
+            // issue to a terminal (done/declined) or seized it (human_owned)
+            // or merged the bot PR mid-revise (state already done), drop the
+            // agent result and leave the human's state alone.
+            const inert = new Set(['done', 'declined', 'human_owned']);
+            if (event.startsWith('agent.') && inert.has(state)) {
+              core.info(`apply: agent result arrived but state is "${state}" (set by human action); ignoring`);
+              await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber,
+                body: `Agent run completed (\`${event}\`) but the issue is now \`${state}\` by human action; nothing to apply.` });
+              return;
+            }
+
+            // Recovery: if state is not `working` but ALSO not human-terminal
+            // (handled above), this is the dispatch-succeeded-but-flip-failed
+            // race in orchestrate.yml. Synthesize bot:working for the routing
+            // decision; use REAL labels for the remove list so we don't strand
+            // the issue with two state labels. The terminal-state guard above
+            // means we only synthesize over non-terminal, non-human states.
             let effectiveLabels = labels;
             const orphaned = state !== 'working' && event.startsWith('agent.');
             if (orphaned) {
@@ -397,7 +410,17 @@ jobs:
               }
             }
 
-            const notes = result && (result.notes || result.reason || result.attempts);
+            // The agent's `notes` can claim "Fix applied" even when the push
+            // step refused (branch already exists, patch conflict, push 5xx).
+            // If the trusted push step set pushed=false but the agent emitted
+            // success notes, override the body with the push failure reason
+            // so the comment doesn't lie about what happened.
+            let notes = result && (result.notes || result.reason || result.attempts);
+            const claimedFix = result && result.fixed === true;
+            if (claimedFix && !pushed) {
+              const reason = process.env.PUSH_REASON || 'unknown';
+              notes = `Agent staged a fix but the trusted push step did not commit it (\`${reason}\`).`;
+            }
             const ask = decision.to === 'awaiting_feedback'
               ? "\n\nA fix is on `bot/fix-" + issueNumber + "`. Reporter: does this resolve it? Reply `@emdashbot confirm` or `@emdashbot reject`."
               : "";
@@ -405,3 +428,4 @@ jobs:
               body: (notes ? String(notes) : `Run complete (\`${event}\`).`) + ask + router.replyFooter(decision.to) });
         env:
           PUSHED: ${{ steps.push.outputs.pushed }}
+          PUSH_REASON: ${{ steps.push.outputs.reason }}

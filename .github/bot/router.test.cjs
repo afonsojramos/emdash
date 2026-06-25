@@ -206,6 +206,24 @@ test("resolveComment: the @emdashbot mention is still required", () => {
 	assert.match(d.reason, MENTION_TEXT_RE);
 });
 
+test("reset: works even when the item has conflicting state labels", () => {
+	// Two state labels = currentState() returns null; the recovery path must
+	// still fire from `reset` so a maintainer can repair a half-applied swap.
+	const d = r.resolve({
+		labels: ["bot:bug", "bot:working", "bot:blocked"],
+		event: "reset",
+		actor: "maintainer",
+	});
+	assert.equal(d.kind, "transition");
+	assert.equal(d.to, "triage");
+	assert.ok(d.removeLabels.includes("bot:working"));
+	assert.ok(d.removeLabels.includes("bot:blocked"));
+});
+
+test("reset: bare-verb only (destructive) -> not offered to the classifier", () => {
+	assert.equal(r.isDestructive("reset"), true);
+});
+
 test("resolve: entry from unmanaged assigns the default kind when none is set", () => {
 	const d = r.resolve({ labels: [], event: "repro", actor: "maintainer" });
 	assert.equal(d.kind, "transition");

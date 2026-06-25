@@ -172,9 +172,19 @@ jobs:
               // Dependabot/Codecov; match the App login exactly.
               let botContext = '';
               try {
-                const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: issueNumber, per_page: 100 });
-                const ours = comments.filter((c) => c.user && c.user.login === 'emdashbot[bot]');
-                if (ours.length) botContext = ours[ours.length - 1].body || '';
+                // The first page is the OLDEST 100 comments (default sort: asc).
+                // We want the LATEST bot comment; on a long-thread issue,
+                // page 1 misses it entirely. Paginate via the iterator and
+                // keep the most recent emdashbot[bot] body.
+                let latest = '';
+                for await (const page of github.paginate.iterator(
+                  github.rest.issues.listComments, { owner, repo, issue_number: issueNumber, per_page: 100 },
+                )) {
+                  for (const c of page.data) {
+                    if (c.user && c.user.login === 'emdashbot[bot]') latest = c.body || '';
+                  }
+                }
+                botContext = latest;
               } catch { /* best effort */ }
               core.setOutput('classify', 'command');
               core.setOutput('payload', JSON.stringify({ ...out, classify: { state: decision.state, commands: decision.commands, text: decision.text }, botContext }));

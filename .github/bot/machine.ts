@@ -184,6 +184,7 @@ export type CommandVerb =
 	| "reopen"
 	| "take_over"
 	| "hand_back"
+	| "reset"
 	| "status"
 	| "help";
 
@@ -242,7 +243,11 @@ export const EVENTS: Record<EventId, EventMeta> = {
 		arg: "directive",
 		defaultKind: "enhancement",
 	},
-	retry: { description: "Re-run the last agent action.", actors: ["maintainer"] },
+	// NB: `retry` is always wired to `investigate.repro` in the transition
+	// table (we don't persist the previous run's mode), so the user-facing
+	// description has to say what it actually does. After `implement`/`revise`,
+	// re-issue the original command verb instead.
+	retry: { description: "Re-run the bug reproduction pipeline.", actors: ["maintainer"] },
 	revise: {
 		description: "Send review feedback back into the agent to update the open PR branch.",
 		actors: ["maintainer"],
@@ -255,6 +260,10 @@ export const EVENTS: Record<EventId, EventMeta> = {
 	reject: {
 		description: "The staged fix does not work; retry with feedback.",
 		actors: ["reporter", "maintainer"],
+		// The free-text body of the reject reply IS the feedback the revise
+		// agent needs. Mark this so the classifier extracts the whole comment
+		// into `arg`, which then becomes the dispatched run's retryContext.
+		arg: "feedback",
 	},
 	decline: {
 		description: "Won't be actioned; move to declined.",
@@ -272,6 +281,11 @@ export const EVENTS: Record<EventId, EventMeta> = {
 		destructive: true,
 	},
 	hand_back: { description: "Return a human-owned item to the bot.", actors: ["maintainer"] },
+	// Maintainer recovery for a half-applied label swap (multiple state labels
+	// on one issue). Strips every state label and lands on triage. Destructive
+	// only to bot:* state metadata, not to issue content; gated to bare-verb-
+	// only so a misread sentence can't accidentally reset state.
+	reset: { description: "Force-reset to triage. Maintainer recovery for conflicting state labels.", actors: ["maintainer"], destructive: true },
 	status: {
 		description: "Render the item's current state and available commands.",
 		actors: ["reporter", "maintainer"],
@@ -435,6 +449,24 @@ export const TRANSITIONS: Transition[] = [
 		note: "PR feedback -> agent (was impossible)",
 	},
 	{ from: "in_review", event: "pr.merged", to: "done" },
+	// Maintainer can merge the bot's PR while a revise run is in flight (state
+	// briefly becomes bot:working). Don't lose the merge: working+pr.merged ->
+	// done. The late agent result that follows checks current state in
+	// investigate-run.yml's apply step and no-ops on terminals.
+	{ from: "working", event: "pr.merged", to: "done", note: "merged mid-revise" },
+
+	// reset: maintainer recovery from every state, including conflicting/null.
+	// resolve() has a special path for `reset` that ignores currentState.
+	{ from: "unmanaged", event: "reset", to: "triage" },
+	{ from: "triage", event: "reset", to: "triage" },
+	{ from: "working", event: "reset", to: "triage" },
+	{ from: "blocked", event: "reset", to: "triage" },
+	{ from: "awaiting_feedback", event: "reset", to: "triage" },
+	{ from: "in_review", event: "reset", to: "triage" },
+	{ from: "human_owned", event: "reset", to: "triage" },
+	{ from: "done", event: "reset", to: "triage" },
+	{ from: "declined", event: "reset", to: "triage" },
+	{ from: "failed", event: "reset", to: "triage" },
 	{ from: "in_review", event: "decline", to: "declined", action: "closePr" },
 	{ from: "in_review", event: "take_over", to: "human_owned" },
 

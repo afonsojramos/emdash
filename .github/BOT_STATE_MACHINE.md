@@ -45,6 +45,17 @@ stateDiagram-v2
     in_review --> in_review: PR changes requested
     in_review --> working: revise
     in_review --> done: PR merged
+    working --> done: PR merged
+    unmanaged --> triage: reset
+    triage --> triage: reset
+    working --> triage: reset
+    blocked --> triage: reset
+    awaiting_feedback --> triage: reset
+    in_review --> triage: reset
+    human_owned --> triage: reset
+    done --> triage: reset
+    declined --> triage: reset
+    failed --> triage: reset
     in_review --> declined: decline
     in_review --> human_owned: take over
     human_owned --> triage: hand back
@@ -85,14 +96,15 @@ interface is self-documenting. `@emdashbot status` renders the item's position o
 | --- | --- | --- |
 | `@emdashbot repro` (or label `bot:repro`) | maintainer | Reproduce the issue as a bug and attempt a fix. |
 | `@emdashbot implement <directive>` (or label `bot:implement`) | maintainer | Build the described change (feature or directed fix), skipping the bug-repro gate. |
-| `@emdashbot retry` | maintainer | Re-run the last agent action. |
+| `@emdashbot retry` | maintainer | Re-run the bug reproduction pipeline. |
 | `@emdashbot revise <feedback>` | maintainer | Send review feedback back into the agent to update the open PR branch. |
 | `@emdashbot confirm` | reporter, maintainer | Confirm the staged fix works; open a PR. |
-| `@emdashbot reject` | reporter, maintainer | The staged fix does not work; retry with feedback. |
+| `@emdashbot reject <feedback>` | reporter, maintainer | The staged fix does not work; retry with feedback. |
 | `@emdashbot decline` | maintainer | Won't be actioned; move to declined. |
 | `@emdashbot reopen` | maintainer | Bring a terminal item back into triage. |
 | `@emdashbot take over` | maintainer | A maintainer takes the item; the bot disengages but stays on the board. |
 | `@emdashbot hand back` | maintainer | Return a human-owned item to the bot. |
+| `@emdashbot reset` | maintainer | Force-reset to triage. Maintainer recovery for conflicting state labels. |
 | `@emdashbot status` | reporter, maintainer | Render the item's current state and available commands. |
 | `@emdashbot help` | reporter, maintainer | Show the command grammar. |
 
@@ -137,6 +149,17 @@ with the valid commands instead of erroring).
 | `in_review` | `pr.changes_requested` | system | — | `in_review` | review sub-state only |
 | `in_review` | `revise` | maintainer | `investigate.revise` | `working` | PR feedback -> agent (was impossible) |
 | `in_review` | `pr.merged` | system | — | `done` |  |
+| `working` | `pr.merged` | system | — | `done` | merged mid-revise |
+| `unmanaged` | `reset` | maintainer | — | `triage` |  |
+| `triage` | `reset` | maintainer | — | `triage` |  |
+| `working` | `reset` | maintainer | — | `triage` |  |
+| `blocked` | `reset` | maintainer | — | `triage` |  |
+| `awaiting_feedback` | `reset` | maintainer | — | `triage` |  |
+| `in_review` | `reset` | maintainer | — | `triage` |  |
+| `human_owned` | `reset` | maintainer | — | `triage` |  |
+| `done` | `reset` | maintainer | — | `triage` |  |
+| `declined` | `reset` | maintainer | — | `triage` |  |
+| `failed` | `reset` | maintainer | — | `triage` |  |
 | `in_review` | `decline` | maintainer | `closePr` | `declined` |  |
 | `in_review` | `take_over` | maintainer | — | `human_owned` |  |
 | `human_owned` | `hand_back` | maintainer | — | `triage` |  |
