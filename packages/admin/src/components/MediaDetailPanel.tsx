@@ -136,9 +136,9 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 
 				{/* Content */}
 				<KumoSidebar.Content>
-					<div className="space-y-4">
+					<div className="space-y-3">
 						{/* Preview */}
-						<div className="aspect-video overflow-hidden rounded-lg bg-kumo-tint flex items-center justify-center">
+						<div className="flex h-[clamp(7.5rem,22svh,13rem)] items-center justify-center overflow-hidden rounded-lg bg-kumo-tint md:h-[clamp(8rem,24svh,14rem)]">
 							{isImage ? (
 								<img
 									src={item.url}
@@ -163,14 +163,14 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 						</div>
 
 						{/* File Info */}
-						<div className="space-y-3 border-y py-4">
-							<div className="grid grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm">
+						<div className="space-y-2 border-y py-3">
+							<div className="grid min-w-0 grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm leading-5">
 								<HardDrive className="h-4 w-4 text-kumo-subtle" />
 								<span className="text-kumo-subtle">{t`Size:`}</span>
 								<span className="min-w-0 truncate">{formatFileSize(item.size)}</span>
 							</div>
 							{item.width && item.height && (
-								<div className="grid grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm">
+								<div className="grid min-w-0 grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm leading-5">
 									<Ruler className="h-4 w-4 text-kumo-subtle" />
 									<span className="text-kumo-subtle">{t`Dimensions:`}</span>
 									<span className="min-w-0 truncate">
@@ -178,45 +178,49 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 									</span>
 								</div>
 							)}
-							<div className="grid grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm">
+							<div className="grid min-w-0 grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm leading-5">
 								<Calendar className="h-4 w-4 text-kumo-subtle" />
 								<span className="text-kumo-subtle">{t`Uploaded:`}</span>
 								<span className="min-w-0 truncate">{formatDate(item.createdAt)}</span>
 							</div>
-							<div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
-								<LinkSimple className="h-4 w-4 text-kumo-subtle shrink-0" />
-								<span className="text-kumo-subtle shrink-0">{t`URL:`}</span>
+							<div className="grid min-w-0 grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm leading-5">
+								<LinkSimple className="h-4 w-4 text-kumo-subtle" />
+								<span className="text-kumo-subtle">{t`URL:`}</span>
 								<ClipboardText
 									text={fileUrl}
 									size="sm"
-									className="min-w-0 flex-1 basis-48"
+									className="w-full min-w-0 max-w-full"
 									labels={{ copyAction: t`Copy URL` }}
 								/>
 							</div>
 						</div>
 
 						{/* Editable Fields */}
-						<div className="space-y-4">
+						<div className="min-w-0 space-y-3 [&_input]:min-w-0 [&_input]:max-w-full [&_input]:truncate [&_input]:w-full [&_label]:text-sm [&_textarea]:min-w-0 [&_textarea]:max-w-full [&_textarea]:resize-none [&_textarea]:w-full">
 							<Input
 								label={t`Filename`}
+								size="sm"
+								className="w-full min-w-0 max-w-full truncate"
 								value={filename}
 								onChange={(e) => setFilename(e.target.value)}
 								disabled // Filename editing needs backend support
-								description={t`Filename cannot be changed after upload`}
 							/>
 
 							{isImage && (
 								<>
 									<Input
 										label={t`Alt Text`}
+										size="sm"
+										className="w-full min-w-0 max-w-full truncate"
 										value={alt}
 										onChange={(e) => setAlt(e.target.value)}
 										placeholder={t`Describe this image for accessibility`}
-										description={t`Used by screen readers and when image fails to load`}
 									/>
 
 									<InputArea
 										label={t`Caption`}
+										size="sm"
+										className="w-full min-w-0 max-w-full resize-none"
 										value={caption}
 										onChange={(e) => setCaption(e.target.value)}
 										placeholder={t`Optional caption for display`}

@@ -580,7 +580,7 @@ export function MediaLibrary({
 					className="fixed inset-0 z-50 h-svh min-h-0 overflow-hidden"
 					style={
 						{
-							"--sidebar-width": "min(26rem, 100%)",
+							"--sidebar-width": "min(28rem, 100%)",
 							"--sidebar-bg": "var(--color-kumo-base)",
 							height: "100svh",
 							minHeight: 0,
