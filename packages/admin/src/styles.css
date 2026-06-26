@@ -38,8 +38,9 @@
 
 [data-theme="classic"]:not([data-mode="dark"]) {
 	/* Surfaces */
+	--color-kumo-canvas: oklch(98.75% 0 0);
 	--color-kumo-base: #ffffff;
-	--color-kumo-elevated: #f0f0f1;
+	--color-kumo-elevated: oklch(98.75% 0 0);
 	--color-kumo-recessed: #dcdcde;
 	--color-kumo-overlay: #ffffff;
 	--color-kumo-control: #ffffff;
@@ -50,7 +51,7 @@
 	--color-kumo-interact: #c3c4c7;
 
 	/* Borders */
-	--color-kumo-line: #c3c4c7;
+	--color-kumo-line: oklch(14.5% 0 0 / 0.1);
 	--color-kumo-ring: #2271b1;
 
 	/* Text hierarchy */

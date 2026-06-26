@@ -239,6 +239,7 @@ export function resolveNavIcon(name?: string): React.ElementType {
  * LinkProvider maps the href to TanStack Router for client-side navigation.
  */
 function NavMenuLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
+	const { state } = useSidebar();
 	const Icon = item.icon;
 	function IconComponent({ className }: { className?: string }) {
 		return <NavIcon icon={Icon} className={className} />;
@@ -248,7 +249,7 @@ function NavMenuLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
 		<KumoSidebar.MenuButton
 			href={resolveItemPath(item)}
 			active={isActive}
-			tooltip={item.label}
+			tooltip={state === "collapsed" ? item.label : undefined}
 			icon={IconComponent}
 		>
 			{item.label}
@@ -343,6 +344,7 @@ export function SidebarNav({ manifest }: SidebarNavProps) {
 
 	const adminItems: NavItem[] = [
 		{ to: "/content-types", label: t`Content Types`, icon: Database, minRole: ROLE_ADMIN },
+		{ ...BYLINE_SCHEMA_NAV_ITEM, label: t`Byline Schema`, icon: FileText },
 		{ to: "/users", label: t`Users`, icon: Users, minRole: ROLE_ADMIN },
 		{ to: "/plugins-manager", label: t`Plugins`, icon: PuzzlePiece, minRole: ROLE_ADMIN },
 	];

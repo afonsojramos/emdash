@@ -34,12 +34,31 @@ const queryClient = new QueryClient({
 
 // Create the router with query client context
 const router = createAdminRouter(queryClient);
+const ADMIN_BASEPATH = "/_emdash/admin";
+
+function normalizeAdminHref(href: string): string {
+	if (href === ADMIN_BASEPATH) return "/";
+	if (href.startsWith(`${ADMIN_BASEPATH}/`)) return href.slice(ADMIN_BASEPATH.length);
+	if (href.startsWith(`${ADMIN_BASEPATH}?`) || href.startsWith(`${ADMIN_BASEPATH}#`)) {
+		return `/${href.slice(ADMIN_BASEPATH.length)}`;
+	}
+	return href;
+}
+
+function getAnchorHref(destination: string, routerDestination: string): string {
+	if (routerDestination.startsWith("/") && !routerDestination.startsWith("//")) {
+		return `${ADMIN_BASEPATH}${routerDestination === "/" ? "" : routerDestination}`;
+	}
+	return destination;
+}
 
 const KumoRouterLink = React.forwardRef<HTMLAnchorElement, LinkComponentProps>(
 	({ href, to, target, download, children, ...props }, ref) => {
 		const destination = href ?? to ?? "";
-		const isRouterPath = destination.startsWith("/") && !destination.startsWith("//");
-		const shouldUseAnchor = !isRouterPath || target || download != null;
+		const hasSearchOrHash = destination.includes("?") || destination.includes("#");
+		const routerDestination = normalizeAdminHref(destination);
+		const isRouterPath = routerDestination.startsWith("/") && !routerDestination.startsWith("//");
+		const shouldUseAnchor = !isRouterPath || hasSearchOrHash || target || download != null;
 		const linkProps = props as LinkComponentProps & {
 			"aria-current"?: React.AriaAttributes["aria-current"];
 			"data-active"?: boolean | string;
@@ -48,8 +67,12 @@ const KumoRouterLink = React.forwardRef<HTMLAnchorElement, LinkComponentProps>(
 			linkProps["aria-current"] ?? (linkProps["data-active"] ? "page" : undefined);
 
 		if (shouldUseAnchor) {
+			const anchorHref =
+				hasSearchOrHash && !target && download == null
+					? getAnchorHref(destination, routerDestination)
+					: destination;
 			return (
-				<a ref={ref} href={destination} target={target} download={download} {...props}>
+				<a ref={ref} href={anchorHref} target={target} download={download} {...props}>
 					{children}
 				</a>
 			);
@@ -61,7 +84,7 @@ const KumoRouterLink = React.forwardRef<HTMLAnchorElement, LinkComponentProps>(
 				{...(props as Omit<LinkProps, "to" | "children">)}
 				ref={ref}
 				// eslint-disable-next-line typescript/no-unsafe-type-assertion -- Kumo provides runtime hrefs; TanStack requires literal route types.
-				to={destination as "/"}
+				to={routerDestination as "/"}
 				aria-current={ariaCurrent}
 			>
 				{children}
