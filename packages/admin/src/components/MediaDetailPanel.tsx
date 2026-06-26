@@ -5,7 +5,7 @@
  * Opens when clicking an item in the MediaLibrary.
  */
 
-import { Button, ClipboardText, Input, InputArea } from "@cloudflare/kumo";
+import { Button, ClipboardText, Input, InputArea, Sidebar as KumoSidebar } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
 import { X, Trash, Calendar, HardDrive, LinkSimple, Ruler } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +14,6 @@ import * as React from "react";
 import { updateMedia, deleteMedia, type MediaItem } from "../lib/api";
 import { useStableCallback } from "../lib/hooks";
 import { getFileIcon, formatFileSize } from "../lib/media-utils";
-import { cn } from "../lib/utils";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 export interface MediaDetailPanelProps {
@@ -101,6 +100,8 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 
 	// Handle keyboard shortcuts
 	React.useEffect(() => {
+		if (!item) return;
+
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
 				stableOnClose();
@@ -113,7 +114,7 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [stableOnClose, stableHandleSave]);
+	}, [item, stableOnClose, stableHandleSave]);
 
 	if (!item) return null;
 
@@ -123,31 +124,26 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 
 	return (
 		<>
-			<div
-				className={cn(
-					"fixed inset-y-0 end-0 w-96 bg-kumo-base border-s shadow-xl z-50",
-					"flex flex-col",
-				)}
-			>
+			<KumoSidebar aria-label={t`Media details`} contentClassName="whitespace-normal!">
 				{/* Header */}
-				<div className="flex items-center justify-between p-4 border-b">
+				<KumoSidebar.Header className="h-[58px]! justify-between px-4!">
 					<h2 className="font-semibold truncate pe-2">{t`Media Details`}</h2>
 					<Button variant="ghost" shape="square" aria-label={t`Close`} onClick={onClose}>
 						<X className="h-4 w-4" />
 						<span className="sr-only">{t`Close`}</span>
 					</Button>
-				</div>
+				</KumoSidebar.Header>
 
 				{/* Content */}
-				<div className="flex-1 overflow-y-auto">
-					{/* Preview */}
-					<div className="p-4 border-b">
-						<div className="aspect-video bg-kumo-tint rounded-lg overflow-hidden flex items-center justify-center">
+				<KumoSidebar.Content>
+					<div className="space-y-4">
+						{/* Preview */}
+						<div className="aspect-video overflow-hidden rounded-lg bg-kumo-tint flex items-center justify-center">
 							{isImage ? (
 								<img
 									src={item.url}
 									alt={item.alt || item.filename}
-									className="max-h-full max-w-full object-contain"
+									className="h-full max-h-full w-full max-w-full object-contain"
 								/>
 							) : isVideo ? (
 								<video
@@ -165,75 +161,75 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 								</div>
 							)}
 						</div>
-					</div>
 
-					{/* File Info */}
-					<div className="p-4 border-b space-y-3">
-						<div className="flex items-center gap-2 text-sm">
-							<HardDrive className="h-4 w-4 text-kumo-subtle" />
-							<span className="text-kumo-subtle">{t`Size:`}</span>
-							<span>{formatFileSize(item.size)}</span>
-						</div>
-						{item.width && item.height && (
-							<div className="flex items-center gap-2 text-sm">
-								<Ruler className="h-4 w-4 text-kumo-subtle" />
-								<span className="text-kumo-subtle">{t`Dimensions:`}</span>
-								<span>
-									{item.width} × {item.height}
-								</span>
+						{/* File Info */}
+						<div className="space-y-3 border-y py-4">
+							<div className="grid grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm">
+								<HardDrive className="h-4 w-4 text-kumo-subtle" />
+								<span className="text-kumo-subtle">{t`Size:`}</span>
+								<span className="min-w-0 truncate">{formatFileSize(item.size)}</span>
 							</div>
-						)}
-						<div className="flex items-center gap-2 text-sm">
-							<Calendar className="h-4 w-4 text-kumo-subtle" />
-							<span className="text-kumo-subtle">{t`Uploaded:`}</span>
-							<span>{formatDate(item.createdAt)}</span>
+							{item.width && item.height && (
+								<div className="grid grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm">
+									<Ruler className="h-4 w-4 text-kumo-subtle" />
+									<span className="text-kumo-subtle">{t`Dimensions:`}</span>
+									<span className="min-w-0 truncate">
+										{item.width} × {item.height}
+									</span>
+								</div>
+							)}
+							<div className="grid grid-cols-[1rem_auto_minmax(0,1fr)] items-center gap-2 text-sm">
+								<Calendar className="h-4 w-4 text-kumo-subtle" />
+								<span className="text-kumo-subtle">{t`Uploaded:`}</span>
+								<span className="min-w-0 truncate">{formatDate(item.createdAt)}</span>
+							</div>
+							<div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+								<LinkSimple className="h-4 w-4 text-kumo-subtle shrink-0" />
+								<span className="text-kumo-subtle shrink-0">{t`URL:`}</span>
+								<ClipboardText
+									text={fileUrl}
+									size="sm"
+									className="min-w-0 flex-1 basis-48"
+									labels={{ copyAction: t`Copy URL` }}
+								/>
+							</div>
 						</div>
-						<div className="flex items-center gap-2 text-sm">
-							<LinkSimple className="h-4 w-4 text-kumo-subtle shrink-0" />
-							<span className="text-kumo-subtle shrink-0">{t`URL:`}</span>
-							<ClipboardText
-								text={fileUrl}
-								size="sm"
-								className="min-w-0 flex-1"
-								labels={{ copyAction: t`Copy URL` }}
+
+						{/* Editable Fields */}
+						<div className="space-y-4">
+							<Input
+								label={t`Filename`}
+								value={filename}
+								onChange={(e) => setFilename(e.target.value)}
+								disabled // Filename editing needs backend support
+								description={t`Filename cannot be changed after upload`}
 							/>
+
+							{isImage && (
+								<>
+									<Input
+										label={t`Alt Text`}
+										value={alt}
+										onChange={(e) => setAlt(e.target.value)}
+										placeholder={t`Describe this image for accessibility`}
+										description={t`Used by screen readers and when image fails to load`}
+									/>
+
+									<InputArea
+										label={t`Caption`}
+										value={caption}
+										onChange={(e) => setCaption(e.target.value)}
+										placeholder={t`Optional caption for display`}
+										rows={2}
+									/>
+								</>
+							)}
 						</div>
 					</div>
-
-					{/* Editable Fields */}
-					<div className="p-4 space-y-4">
-						<Input
-							label={t`Filename`}
-							value={filename}
-							onChange={(e) => setFilename(e.target.value)}
-							disabled // Filename editing needs backend support
-							description={t`Filename cannot be changed after upload`}
-						/>
-
-						{isImage && (
-							<>
-								<Input
-									label={t`Alt Text`}
-									value={alt}
-									onChange={(e) => setAlt(e.target.value)}
-									placeholder={t`Describe this image for accessibility`}
-									description={t`Used by screen readers and when image fails to load`}
-								/>
-
-								<InputArea
-									label={t`Caption`}
-									value={caption}
-									onChange={(e) => setCaption(e.target.value)}
-									placeholder={t`Optional caption for display`}
-									rows={2}
-								/>
-							</>
-						)}
-					</div>
-				</div>
+				</KumoSidebar.Content>
 
 				{/* Footer */}
-				<div className="p-4 border-t flex items-center justify-between gap-2">
+				<KumoSidebar.Footer className="h-auto! min-h-14 flex-wrap justify-between gap-2 whitespace-normal! px-4! py-3!">
 					<Button
 						variant="destructive"
 						size="sm"
@@ -243,7 +239,7 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 					>
 						{deleteMutation.isPending ? t`Deleting...` : t`Delete`}
 					</Button>
-					<div className="flex gap-2">
+					<div className="flex flex-wrap gap-2">
 						<Button variant="outline" size="sm" onClick={onClose}>
 							{t`Cancel`}
 						</Button>
@@ -255,8 +251,8 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 							{updateMutation.isPending ? t`Saving...` : t`Save`}
 						</Button>
 					</div>
-				</div>
-			</div>
+				</KumoSidebar.Footer>
+			</KumoSidebar>
 
 			<ConfirmDialog
 				open={showDeleteConfirm}

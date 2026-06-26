@@ -1,3 +1,4 @@
+import { Sidebar as KumoSidebar } from "@cloudflare/kumo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -25,6 +26,21 @@ function QueryWrapper({ children }: { children: React.ReactNode }) {
 	return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
 }
 
+function PanelShell({ children, open }: { children: React.ReactNode; open: boolean }) {
+	return (
+		<KumoSidebar.Provider
+			contained
+			open={open}
+			side="right"
+			collapsible="offcanvas"
+			className="h-full"
+		>
+			<section />
+			{children}
+		</KumoSidebar.Provider>
+	);
+}
+
 function renderPanel(props: Partial<React.ComponentProps<typeof MediaDetailPanel>> = {}) {
 	const defaultProps = {
 		item: null as MediaItem | null,
@@ -34,7 +50,9 @@ function renderPanel(props: Partial<React.ComponentProps<typeof MediaDetailPanel
 	};
 	return render(
 		<QueryWrapper>
-			<MediaDetailPanel {...defaultProps} />
+			<PanelShell open={Boolean(defaultProps.item)}>
+				<MediaDetailPanel {...defaultProps} />
+			</PanelShell>
 		</QueryWrapper>,
 	);
 }
@@ -245,7 +263,9 @@ describe("MediaDetailPanel", () => {
 		// Rerender with item2
 		await screen.rerender(
 			<QueryWrapper>
-				<MediaDetailPanel item={item2} onClose={vi.fn()} onDeleted={vi.fn()} />
+				<PanelShell open>
+					<MediaDetailPanel item={item2} onClose={vi.fn()} onDeleted={vi.fn()} />
+				</PanelShell>
 			</QueryWrapper>,
 		);
 

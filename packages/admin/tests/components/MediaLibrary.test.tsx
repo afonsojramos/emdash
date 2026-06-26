@@ -3,6 +3,7 @@ import * as React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { MediaLibrary } from "../../src/components/MediaLibrary";
+import { deleteMedia } from "../../src/lib/api";
 import type { MediaItem } from "../../src/lib/api";
 import { render } from "../utils/render.tsx";
 
@@ -133,6 +134,37 @@ describe("MediaLibrary", () => {
 
 			// MediaDetailPanel should open showing the item details
 			await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+			await expect
+				.element(screen.getByLabelText("Media details"))
+				.toHaveAttribute("data-side", "right");
+			await expect
+				.element(screen.getByLabelText("Media details"))
+				.toHaveAttribute("data-collapsible", "offcanvas");
+			const sidebarWrapper = screen
+				.getByLabelText("Media details")
+				.element()
+				.closest("[data-sidebar-wrapper]");
+			expect(sidebarWrapper).not.toBeNull();
+			expect(sidebarWrapper).toHaveClass("fixed", "inset-0", "z-50", "h-svh");
+		});
+
+		it("deleting from the detail panel does not call the parent delete handler again", async () => {
+			const onDelete = vi.fn();
+			const items = [makeMediaItem({ id: "1", filename: "photo.jpg", alt: "A photo" })];
+			const screen = await renderLibrary({ items, onDelete });
+
+			await screen.getByRole("button", { name: "photo.jpg" }).click();
+			await screen.getByRole("button", { name: "Delete" }).click();
+			await expect.element(screen.getByText("Delete Media?")).toBeInTheDocument();
+
+			const allDeleteButtons = screen.getByRole("button", { name: "Delete" }).all();
+			allDeleteButtons.at(-1)!.element().click();
+
+			await vi.waitFor(() => {
+				expect(deleteMedia).toHaveBeenCalledWith("1");
+			});
+			expect(deleteMedia).toHaveBeenCalledTimes(1);
+			expect(onDelete).not.toHaveBeenCalled();
 		});
 	});
 

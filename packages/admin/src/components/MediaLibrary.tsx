@@ -1,4 +1,4 @@
-import { Button, Input, Loader, Select } from "@cloudflare/kumo";
+import { Button, Input, Loader, Select, Sidebar as KumoSidebar } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { Upload, Image, SquaresFour, List, MagnifyingGlass, Check, X } from "@phosphor-icons/react";
@@ -25,6 +25,8 @@ import {
 } from "../lib/media-utils";
 import { cn } from "../lib/utils";
 import { MediaDetailPanel } from "./MediaDetailPanel";
+
+const MEDIA_DETAIL_SIDEBAR_ANIMATION_MS = 250;
 
 /** Maps a coarse type-filter choice to the media list's `mimeType` filter. */
 function mimeForTypeFilter(value: string): string | string[] | undefined {
@@ -76,6 +78,7 @@ export function MediaLibrary({
 	const { t } = useLingui();
 	const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
 	const [selectedItem, setSelectedItem] = React.useState<MediaItem | null>(null);
+	const [detailPanelOpen, setDetailPanelOpen] = React.useState(false);
 	const [activeProvider, setActiveProvider] = React.useState<string>("local");
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [localTypeFilter, setLocalTypeFilter] = React.useState("all");
@@ -139,10 +142,26 @@ export function MediaLibrary({
 				setSelectedItem(updated);
 			} else {
 				// Item was deleted
+				setDetailPanelOpen(false);
 				setSelectedItem(null);
 			}
 		}
 	}, [items, selectedItem?.id, activeProvider]);
+
+	React.useEffect(() => {
+		if (detailPanelOpen || !selectedItem) return;
+
+		const timeout = window.setTimeout(() => {
+			setSelectedItem(null);
+		}, MEDIA_DETAIL_SIDEBAR_ANIMATION_MS);
+
+		return () => window.clearTimeout(timeout);
+	}, [detailPanelOpen, selectedItem]);
+
+	const openDetailPanel = (item: MediaItem) => {
+		setSelectedItem(item);
+		setDetailPanelOpen(true);
+	};
 
 	// Clear success/error message after a delay
 	React.useEffect(() => {
@@ -265,299 +284,324 @@ export function MediaLibrary({
 	const canSearch = activeProviderInfo?.capabilities.search ?? false;
 
 	return (
-		<div className="space-y-6">
-			{/* Header */}
-			<div className="flex items-center justify-between">
-				<h1 className="text-2xl font-bold">{t`Media Library`}</h1>
-				<div className="flex rounded-md border" role="group" aria-label={t`View mode`}>
-					<Button
-						variant={viewMode === "grid" ? "secondary" : "ghost"}
-						shape="square"
-						onClick={() => setViewMode("grid")}
-						aria-label={t`Grid view`}
-						aria-pressed={viewMode === "grid"}
-					>
-						<SquaresFour className="h-4 w-4" aria-hidden="true" />
-					</Button>
-					<Button
-						variant={viewMode === "list" ? "secondary" : "ghost"}
-						shape="square"
-						onClick={() => setViewMode("list")}
-						aria-label={t`List view`}
-						aria-pressed={viewMode === "list"}
-					>
-						<List className="h-4 w-4" aria-hidden="true" />
-					</Button>
+		<>
+			<section className="min-w-0 flex-1 space-y-6 overflow-y-auto">
+				{/* Header */}
+				<div className="flex items-center justify-between">
+					<h1 className="text-2xl font-bold">{t`Media Library`}</h1>
+					<div className="flex rounded-md border" role="group" aria-label={t`View mode`}>
+						<Button
+							variant={viewMode === "grid" ? "secondary" : "ghost"}
+							shape="square"
+							onClick={() => setViewMode("grid")}
+							aria-label={t`Grid view`}
+							aria-pressed={viewMode === "grid"}
+						>
+							<SquaresFour className="h-4 w-4" aria-hidden="true" />
+						</Button>
+						<Button
+							variant={viewMode === "list" ? "secondary" : "ghost"}
+							shape="square"
+							onClick={() => setViewMode("list")}
+							aria-label={t`List view`}
+							aria-pressed={viewMode === "list"}
+						>
+							<List className="h-4 w-4" aria-hidden="true" />
+						</Button>
+					</div>
 				</div>
-			</div>
 
-			{/* Provider Tabs + Upload */}
-			<div className="flex items-center justify-between gap-4 border-b pb-3">
-				{providerTabs.length > 1 && (
-					<div className="flex gap-2 overflow-x-auto">
-						{providerTabs.map((tab) => (
-							<button
-								key={tab.id}
-								type="button"
-								onClick={() => {
-									setActiveProvider(tab.id);
-									setSelectedItem(null);
-									setSearchQuery("");
+				{/* Provider Tabs + Upload */}
+				<div className="flex items-center justify-between gap-4 border-b pb-3">
+					{providerTabs.length > 1 && (
+						<div className="flex gap-2 overflow-x-auto">
+							{providerTabs.map((tab) => (
+								<button
+									key={tab.id}
+									type="button"
+									onClick={() => {
+										setActiveProvider(tab.id);
+										setDetailPanelOpen(false);
+										setSelectedItem(null);
+										setSearchQuery("");
+									}}
+									className={cn(
+										"flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap",
+										activeProvider === tab.id
+											? "bg-kumo-brand text-white"
+											: "bg-kumo-tint hover:bg-kumo-tint/80 text-kumo-subtle",
+									)}
+								>
+									{tab.icon &&
+										(tab.icon.startsWith("data:") ? (
+											<img src={tab.icon} alt="" className="h-4 w-4" aria-hidden="true" />
+										) : (
+											<span aria-hidden="true">{tab.icon}</span>
+										))}
+									{tab.name}
+								</button>
+							))}
+						</div>
+					)}
+
+					{/* Upload button + status */}
+					<div className="flex items-center gap-3 flex-shrink-0">
+						{/* Upload status feedback */}
+						{uploadState.status === "uploading" && (
+							<div className="flex items-center gap-2 text-sm text-kumo-subtle">
+								<Loader size="sm" />
+								<span>
+									{uploadState.progress && uploadState.progress.total > 1
+										? t`Uploading ${uploadState.progress.current}/${uploadState.progress.total}...`
+										: t`Uploading...`}
+								</span>
+							</div>
+						)}
+						{uploadState.status === "success" && (
+							<div className="flex items-center gap-2 text-sm text-green-600">
+								<Check className="h-4 w-4" />
+								<span>{uploadState.message}</span>
+							</div>
+						)}
+						{uploadState.status === "error" && (
+							<div className="flex items-center gap-2 text-sm text-kumo-danger">
+								<X className="h-4 w-4" />
+								<span>{uploadState.message}</span>
+							</div>
+						)}
+
+						{canUpload && (
+							<>
+								<Button
+									onClick={() => fileInputRef.current?.click()}
+									disabled={uploadState.status === "uploading"}
+									icon={uploadState.status === "uploading" ? <Loader size="sm" /> : <Upload />}
+								>
+									{t`Upload to ${activeProviderInfo?.name || t`Library`}`}
+								</Button>
+								<input
+									ref={fileInputRef}
+									type="file"
+									multiple
+									accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
+									className="sr-only"
+									onChange={handleFileSelect}
+									aria-label={t`Upload files`}
+								/>
+							</>
+						)}
+					</div>
+				</div>
+
+				{/* Search — providers that support it, plus the local library
+			    (filename/extension search + type filter, handled server-side). */}
+				{(canSearch || activeProvider === "local") && (
+					<div className="flex flex-wrap items-center gap-3">
+						<div className="relative max-w-sm flex-1">
+							<MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kumo-subtle" />
+							<Input
+								type="search"
+								placeholder={activeProvider === "local" ? t`Search by filename...` : t`Search...`}
+								aria-label={t`Search media`}
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								maxLength={MEDIA_SEARCH_MAX_LENGTH}
+								className="ps-9"
+							/>
+						</div>
+						{activeProvider === "local" && (
+							<Select
+								value={localTypeFilter}
+								onValueChange={(v) => {
+									const next = v ?? "all";
+									setLocalTypeFilter(next);
+									onLocalMimeFilterChange?.(mimeForTypeFilter(next));
 								}}
-								className={cn(
-									"flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap",
-									activeProvider === tab.id
-										? "bg-kumo-brand text-white"
-										: "bg-kumo-tint hover:bg-kumo-tint/80 text-kumo-subtle",
-								)}
-							>
-								{tab.icon &&
-									(tab.icon.startsWith("data:") ? (
-										<img src={tab.icon} alt="" className="h-4 w-4" aria-hidden="true" />
-									) : (
-										<span aria-hidden="true">{tab.icon}</span>
-									))}
-								{tab.name}
-							</button>
-						))}
+								items={{
+									all: t`All types`,
+									image: t`Images`,
+									video: t`Video`,
+									audio: t`Audio`,
+									document: t`Documents`,
+								}}
+								aria-label={t`Filter by type`}
+							/>
+						)}
 					</div>
 				)}
 
-				{/* Upload button + status */}
-				<div className="flex items-center gap-3 flex-shrink-0">
-					{/* Upload status feedback */}
-					{uploadState.status === "uploading" && (
-						<div className="flex items-center gap-2 text-sm text-kumo-subtle">
-							<Loader size="sm" />
-							<span>
-								{uploadState.progress && uploadState.progress.total > 1
-									? t`Uploading ${uploadState.progress.current}/${uploadState.progress.total}...`
-									: t`Uploading...`}
-							</span>
-						</div>
-					)}
-					{uploadState.status === "success" && (
-						<div className="flex items-center gap-2 text-sm text-green-600">
-							<Check className="h-4 w-4" />
-							<span>{uploadState.message}</span>
-						</div>
-					)}
-					{uploadState.status === "error" && (
-						<div className="flex items-center gap-2 text-sm text-kumo-danger">
-							<X className="h-4 w-4" />
-							<span>{uploadState.message}</span>
-						</div>
-					)}
-
-					{canUpload && (
-						<>
-							<Button
-								onClick={() => fileInputRef.current?.click()}
-								disabled={uploadState.status === "uploading"}
-								icon={uploadState.status === "uploading" ? <Loader size="sm" /> : <Upload />}
-							>
-								{t`Upload to ${activeProviderInfo?.name || t`Library`}`}
-							</Button>
-							<input
-								ref={fileInputRef}
-								type="file"
-								multiple
-								accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx"
-								className="sr-only"
-								onChange={handleFileSelect}
-								aria-label={t`Upload files`}
-							/>
-						</>
-					)}
-				</div>
-			</div>
-
-			{/* Search — providers that support it, plus the local library
-			    (filename/extension search + type filter, handled server-side). */}
-			{(canSearch || activeProvider === "local") && (
-				<div className="flex flex-wrap items-center gap-3">
-					<div className="relative max-w-sm flex-1">
-						<MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kumo-subtle" />
-						<Input
-							type="search"
-							placeholder={activeProvider === "local" ? t`Search by filename...` : t`Search...`}
-							aria-label={t`Search media`}
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							maxLength={MEDIA_SEARCH_MAX_LENGTH}
-							className="ps-9"
-						/>
+				{/* Content */}
+				{/*
+				 * Gate the full-area loader on items being empty so that "Load More"
+				 * (which sets isLoading=true while fetching the next page) does not
+				 * blank out the already-rendered grid. Mirrors the ContentList
+				 * pattern from #135.
+				 */}
+				{currentLoading && currentItems.length === 0 && currentProviderItems.length === 0 ? (
+					<div className="flex items-center justify-center py-12">
+						<Loader />
 					</div>
-					{activeProvider === "local" && (
-						<Select
-							value={localTypeFilter}
-							onValueChange={(v) => {
-								const next = v ?? "all";
-								setLocalTypeFilter(next);
-								onLocalMimeFilterChange?.(mimeForTypeFilter(next));
-							}}
-							items={{
-								all: t`All types`,
-								image: t`Images`,
-								video: t`Video`,
-								audio: t`Audio`,
-								document: t`Documents`,
-							}}
-							aria-label={t`Filter by type`}
-						/>
-					)}
-				</div>
-			)}
+				) : activeProvider === "local" && currentItems.length === 0 ? (
+					<div className="rounded-lg border bg-kumo-base p-12 text-center">
+						<Image className="mx-auto h-12 w-12 text-kumo-subtle" aria-hidden="true" />
+						<h2 className="mt-4 text-lg font-medium">{t`No media yet`}</h2>
+						<p className="mt-2 text-sm text-kumo-subtle">
+							{t`Upload images, videos, and documents to get started.`}
+						</p>
+						<Button
+							className="mt-4"
+							onClick={() => fileInputRef.current?.click()}
+							icon={<Upload />}
+						>
+							{t`Upload Files`}
+						</Button>
+					</div>
+				) : activeProvider !== "local" && currentProviderItems.length === 0 ? (
+					<div className="rounded-lg border bg-kumo-base p-12 text-center">
+						<Image className="mx-auto h-12 w-12 text-kumo-subtle" aria-hidden="true" />
+						<h2 className="mt-4 text-lg font-medium">{t`No media found`}</h2>
+						<p className="mt-2 text-sm text-kumo-subtle">
+							{canSearch && searchQuery
+								? t`Try a different search term`
+								: canUpload
+									? t`Upload media to get started`
+									: t`No media available from this provider`}
+						</p>
+					</div>
+				) : viewMode === "grid" ? (
+					<div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(160px,1fr))]">
+						{activeProvider === "local"
+							? currentItems.map((item) => (
+									<MediaGridItem
+										key={item.id}
+										item={item}
+										selected={selectedItem?.id === item.id}
+										onClick={() => openDetailPanel(item)}
+										onDelete={() => onDelete?.(item.id)}
+									/>
+								))
+							: currentProviderItems.map((item) => (
+									<ProviderGridItem
+										key={item.id}
+										item={item}
+										selected={selectedItem?.id === item.id}
+										onClick={() => {
+											// Merge loaded dimensions if provider didn't return them
+											const dims = loadedDimensions[item.id];
+											const itemWithDims = dims
+												? {
+														...item,
+														width: item.width ?? dims.width,
+														height: item.height ?? dims.height,
+													}
+												: item;
+											openDetailPanel(providerItemToMediaItem(activeProvider, itemWithDims));
+										}}
+										onDimensionsLoaded={(width, height) => {
+											setLoadedDimensions((prev) => ({
+												...prev,
+												[item.id]: { width, height },
+											}));
+										}}
+									/>
+								))}
+					</div>
+				) : (
+					<div className="rounded-md border bg-kumo-base overflow-x-auto">
+						<table className="w-full">
+							<thead>
+								<tr className="border-b bg-kumo-tint/50">
+									<th className="px-4 py-3 text-start text-sm font-medium">{t`Preview`}</th>
+									<th className="px-4 py-3 text-start text-sm font-medium">{t`Filename`}</th>
+									<th className="px-4 py-3 text-start text-sm font-medium">{t`Type`}</th>
+									<th className="px-4 py-3 text-start text-sm font-medium">{t`Size`}</th>
+									<th className="px-4 py-3 text-end text-sm font-medium">{t`Actions`}</th>
+								</tr>
+							</thead>
+							<tbody className="divide-y divide-kumo-line">
+								{activeProvider === "local"
+									? currentItems.map((item) => (
+											<MediaListItem
+												key={item.id}
+												item={item}
+												selected={selectedItem?.id === item.id}
+												onClick={() => openDetailPanel(item)}
+												onDelete={() => onDelete?.(item.id)}
+											/>
+										))
+									: currentProviderItems.map((item) => (
+											<ProviderListItem
+												key={item.id}
+												item={item}
+												selected={selectedItem?.id === item.id}
+												onClick={() => {
+													const dims = loadedDimensions[item.id];
+													const itemWithDims = dims
+														? {
+																...item,
+																width: item.width ?? dims.width,
+																height: item.height ?? dims.height,
+															}
+														: item;
+													openDetailPanel(providerItemToMediaItem(activeProvider, itemWithDims));
+												}}
+												onDimensionsLoaded={(width, height) => {
+													setLoadedDimensions((prev) => ({
+														...prev,
+														[item.id]: { width, height },
+													}));
+												}}
+											/>
+										))}
+							</tbody>
+						</table>
+					</div>
+				)}
 
-			{/* Content */}
-			{/*
-			 * Gate the full-area loader on items being empty so that "Load More"
-			 * (which sets isLoading=true while fetching the next page) does not
-			 * blank out the already-rendered grid. Mirrors the ContentList
-			 * pattern from #135.
-			 */}
-			{currentLoading && currentItems.length === 0 && currentProviderItems.length === 0 ? (
-				<div className="flex items-center justify-center py-12">
-					<Loader />
-				</div>
-			) : activeProvider === "local" && currentItems.length === 0 ? (
-				<div className="rounded-lg border bg-kumo-base p-12 text-center">
-					<Image className="mx-auto h-12 w-12 text-kumo-subtle" aria-hidden="true" />
-					<h2 className="mt-4 text-lg font-medium">{t`No media yet`}</h2>
-					<p className="mt-2 text-sm text-kumo-subtle">
-						{t`Upload images, videos, and documents to get started.`}
-					</p>
-					<Button className="mt-4" onClick={() => fileInputRef.current?.click()} icon={<Upload />}>
-						{t`Upload Files`}
-					</Button>
-				</div>
-			) : activeProvider !== "local" && currentProviderItems.length === 0 ? (
-				<div className="rounded-lg border bg-kumo-base p-12 text-center">
-					<Image className="mx-auto h-12 w-12 text-kumo-subtle" aria-hidden="true" />
-					<h2 className="mt-4 text-lg font-medium">{t`No media found`}</h2>
-					<p className="mt-2 text-sm text-kumo-subtle">
-						{canSearch && searchQuery
-							? t`Try a different search term`
-							: canUpload
-								? t`Upload media to get started`
-								: t`No media available from this provider`}
-					</p>
-				</div>
-			) : viewMode === "grid" ? (
-				<div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(160px,1fr))]">
-					{activeProvider === "local"
-						? currentItems.map((item) => (
-								<MediaGridItem
-									key={item.id}
-									item={item}
-									selected={selectedItem?.id === item.id}
-									onClick={() => setSelectedItem(item)}
-									onDelete={() => onDelete?.(item.id)}
-								/>
-							))
-						: currentProviderItems.map((item) => (
-								<ProviderGridItem
-									key={item.id}
-									item={item}
-									selected={selectedItem?.id === item.id}
-									onClick={() => {
-										// Merge loaded dimensions if provider didn't return them
-										const dims = loadedDimensions[item.id];
-										const itemWithDims = dims
-											? {
-													...item,
-													width: item.width ?? dims.width,
-													height: item.height ?? dims.height,
-												}
-											: item;
-										setSelectedItem(providerItemToMediaItem(activeProvider, itemWithDims));
-									}}
-									onDimensionsLoaded={(width, height) => {
-										setLoadedDimensions((prev) => ({
-											...prev,
-											[item.id]: { width, height },
-										}));
-									}}
-								/>
-							))}
-				</div>
-			) : (
-				<div className="rounded-md border bg-kumo-base overflow-x-auto">
-					<table className="w-full">
-						<thead>
-							<tr className="border-b bg-kumo-tint/50">
-								<th className="px-4 py-3 text-start text-sm font-medium">{t`Preview`}</th>
-								<th className="px-4 py-3 text-start text-sm font-medium">{t`Filename`}</th>
-								<th className="px-4 py-3 text-start text-sm font-medium">{t`Type`}</th>
-								<th className="px-4 py-3 text-start text-sm font-medium">{t`Size`}</th>
-								<th className="px-4 py-3 text-end text-sm font-medium">{t`Actions`}</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-kumo-line">
-							{activeProvider === "local"
-								? currentItems.map((item) => (
-										<MediaListItem
-											key={item.id}
-											item={item}
-											selected={selectedItem?.id === item.id}
-											onClick={() => setSelectedItem(item)}
-											onDelete={() => onDelete?.(item.id)}
-										/>
-									))
-								: currentProviderItems.map((item) => (
-										<ProviderListItem
-											key={item.id}
-											item={item}
-											selected={selectedItem?.id === item.id}
-											onClick={() => {
-												const dims = loadedDimensions[item.id];
-												const itemWithDims = dims
-													? {
-															...item,
-															width: item.width ?? dims.width,
-															height: item.height ?? dims.height,
-														}
-													: item;
-												setSelectedItem(providerItemToMediaItem(activeProvider, itemWithDims));
-											}}
-											onDimensionsLoaded={(width, height) => {
-												setLoadedDimensions((prev) => ({
-													...prev,
-													[item.id]: { width, height },
-												}));
-											}}
-										/>
-									))}
-						</tbody>
-					</table>
-				</div>
-			)}
-
-			{/* Load more (local library only — providers handle pagination internally) */}
-			{activeProvider === "local" && hasMore && onLoadMore && (
-				<div className="flex justify-center">
-					<Button variant="outline" onClick={onLoadMore} disabled={isLoading}>
-						{isLoading ? t`Loading...` : t`Load More`}
-					</Button>
-				</div>
-			)}
+				{/* Load more (local library only — providers handle pagination internally) */}
+				{activeProvider === "local" && hasMore && onLoadMore && (
+					<div className="flex justify-center">
+						<Button variant="outline" onClick={onLoadMore} disabled={isLoading}>
+							{isLoading ? t`Loading...` : t`Load More`}
+						</Button>
+					</div>
+				)}
+			</section>
 
 			{/* Detail Panel */}
 			{selectedItem && (
-				<MediaDetailPanel
-					item={selectedItem}
-					onClose={() => setSelectedItem(null)}
-					onDeleted={() => {
-						if (activeProvider === "local") {
-							onDelete?.(selectedItem.id);
-							onItemUpdated?.();
-						} else {
-							void refetchProviderMedia();
-						}
-					}}
-				/>
+				<KumoSidebar.Provider
+					contained
+					open={detailPanelOpen}
+					onOpenChange={setDetailPanelOpen}
+					side="right"
+					collapsible="offcanvas"
+					animationDuration={MEDIA_DETAIL_SIDEBAR_ANIMATION_MS}
+					className="fixed inset-0 z-50 h-svh min-h-0 overflow-hidden"
+					style={
+						{
+							"--sidebar-width": "min(26rem, 100%)",
+							"--sidebar-bg": "var(--color-kumo-base)",
+							height: "100svh",
+							minHeight: 0,
+						} as React.CSSProperties
+					}
+				>
+					<div className="min-w-0 flex-1" aria-hidden="true" />
+					<MediaDetailPanel
+						item={selectedItem}
+						onClose={() => setDetailPanelOpen(false)}
+						onDeleted={() => {
+							if (activeProvider === "local") {
+								onItemUpdated?.();
+							} else {
+								void refetchProviderMedia();
+							}
+						}}
+					/>
+				</KumoSidebar.Provider>
 			)}
-		</div>
+		</>
 	);
 }
 
