@@ -47,7 +47,14 @@ function normalizeAdminHref(href: string): string {
 
 function getAnchorHref(destination: string, routerDestination: string): string {
 	if (routerDestination.startsWith("/") && !routerDestination.startsWith("//")) {
-		return `${ADMIN_BASEPATH}${routerDestination === "/" ? "" : routerDestination}`;
+		if (
+			routerDestination === "/" ||
+			routerDestination.startsWith("/?") ||
+			routerDestination.startsWith("/#")
+		) {
+			return `${ADMIN_BASEPATH}${routerDestination.slice(1)}`;
+		}
+		return `${ADMIN_BASEPATH}${routerDestination}`;
 	}
 	return destination;
 }
