@@ -436,7 +436,7 @@ export function SidebarNav({ manifest }: SidebarNavProps) {
 
 			<KumoSidebar.Content>
 				{/* Dashboard — standalone */}
-				<KumoSidebar.Group>
+				<KumoSidebar.Group className="mt-2 md:mt-1.5">
 					<KumoSidebar.Menu>
 						<NavMenuLink
 							item={{ to: "/", label: t`Dashboard`, icon: SquaresFour }}
