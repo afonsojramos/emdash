@@ -2,4 +2,4 @@
 "@emdash-cms/admin": patch
 ---
 
-Fixes Kumo style loading order in the admin stylesheet.
+Fixes Kumo style loading and updates the admin sidebar to use Kumo's native collapse and theme behavior.

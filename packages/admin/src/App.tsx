@@ -8,12 +8,12 @@
  * available throughout the app via PluginAdminContext.
  */
 
-import { Toasty } from "@cloudflare/kumo";
+import { LinkProvider, Toasty, type LinkComponentProps } from "@cloudflare/kumo";
 import { i18n } from "@lingui/core";
 import type { Messages } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "@tanstack/react-router";
+import { Link, RouterProvider, type LinkProps } from "@tanstack/react-router";
 import * as React from "react";
 
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -34,6 +34,43 @@ const queryClient = new QueryClient({
 
 // Create the router with query client context
 const router = createAdminRouter(queryClient);
+
+const KumoRouterLink = React.forwardRef<HTMLAnchorElement, LinkComponentProps>(
+	({ href, to, target, download, children, ...props }, ref) => {
+		const destination = href ?? to ?? "";
+		const isRouterPath = destination.startsWith("/") && !destination.startsWith("//");
+		const shouldUseAnchor = !isRouterPath || target || download != null;
+		const linkProps = props as LinkComponentProps & {
+			"aria-current"?: React.AriaAttributes["aria-current"];
+			"data-active"?: boolean | string;
+		};
+		const ariaCurrent =
+			linkProps["aria-current"] ?? (linkProps["data-active"] ? "page" : undefined);
+
+		if (shouldUseAnchor) {
+			return (
+				<a ref={ref} href={destination} target={target} download={download} {...props}>
+					{children}
+				</a>
+			);
+		}
+
+		return (
+			<Link
+				// eslint-disable-next-line typescript/no-unsafe-type-assertion -- Kumo provides runtime hrefs; TanStack requires literal route types.
+				{...(props as Omit<LinkProps, "to" | "children">)}
+				ref={ref}
+				// eslint-disable-next-line typescript/no-unsafe-type-assertion -- Kumo provides runtime hrefs; TanStack requires literal route types.
+				to={destination as "/"}
+				aria-current={ariaCurrent}
+			>
+				{children}
+			</Link>
+		);
+	},
+);
+
+KumoRouterLink.displayName = "KumoRouterLink";
 
 export interface AdminAppProps {
 	/** Plugin admin modules keyed by plugin ID */
@@ -76,7 +113,9 @@ export function AdminApp({
 						<AuthProviderProvider authProviders={authProviders}>
 							<PluginAdminProvider pluginAdmins={pluginAdmins}>
 								<QueryClientProvider client={queryClient}>
-									<RouterProvider router={router} />
+									<LinkProvider component={KumoRouterLink}>
+										<RouterProvider router={router} />
+									</LinkProvider>
 								</QueryClientProvider>
 							</PluginAdminProvider>
 						</AuthProviderProvider>

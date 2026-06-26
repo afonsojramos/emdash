@@ -51,7 +51,6 @@ export function Shell({ children, manifest }: ShellProps) {
 					height: "100svh",
 					minHeight: "0",
 					overflow: "hidden",
-					"--sidebar-width-icon": "53px",
 				} as React.CSSProperties
 			}
 		>
