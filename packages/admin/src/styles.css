@@ -109,6 +109,11 @@ body {
 	color: var(--text-color-kumo-default);
 }
 
+[data-sidebar-popup] {
+	width: var(--sidebar-width);
+	transition-property: transform, translate, opacity !important;
+}
+
 /* Fix text selection contrast */
 ::selection {
 	background-color: var(--color-kumo-interact);
