@@ -18,6 +18,7 @@ import { ConfirmDialog } from "./ConfirmDialog";
 
 export interface MediaDetailPanelProps {
 	item: MediaItem | null;
+	isOpen?: boolean;
 	onClose: () => void;
 	onDeleted?: () => void;
 }
@@ -25,7 +26,12 @@ export interface MediaDetailPanelProps {
 /**
  * Slide-out panel for viewing and editing media metadata
  */
-export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelProps) {
+export function MediaDetailPanel({
+	item,
+	isOpen = true,
+	onClose,
+	onDeleted,
+}: MediaDetailPanelProps) {
 	const { t } = useLingui();
 	const queryClient = useQueryClient();
 
@@ -124,7 +130,12 @@ export function MediaDetailPanel({ item, onClose, onDeleted }: MediaDetailPanelP
 
 	return (
 		<>
-			<KumoSidebar aria-label={t`Media details`} contentClassName="whitespace-normal!">
+			<KumoSidebar
+				aria-label={t`Media details`}
+				className="emdash-media-details-panel"
+				contentClassName="whitespace-normal!"
+				data-media-details-open={isOpen ? "true" : "false"}
+			>
 				{/* Header */}
 				<KumoSidebar.Header className="h-[58px]! justify-between px-4!">
 					<h2 className="font-semibold truncate pe-2">{t`Media Details`}</h2>

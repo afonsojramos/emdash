@@ -27,6 +27,7 @@ import { cn } from "../lib/utils";
 import { MediaDetailPanel } from "./MediaDetailPanel";
 
 const MEDIA_DETAIL_SIDEBAR_ANIMATION_MS = 250;
+const MEDIA_DETAIL_SIDEBAR_EXIT_MS = MEDIA_DETAIL_SIDEBAR_ANIMATION_MS + 50;
 
 /** Maps a coarse type-filter choice to the media list's `mimeType` filter. */
 function mimeForTypeFilter(value: string): string | string[] | undefined {
@@ -153,14 +154,16 @@ export function MediaLibrary({
 
 		const timeout = window.setTimeout(() => {
 			setSelectedItem(null);
-		}, MEDIA_DETAIL_SIDEBAR_ANIMATION_MS);
+		}, MEDIA_DETAIL_SIDEBAR_EXIT_MS);
 
 		return () => window.clearTimeout(timeout);
 	}, [detailPanelOpen, selectedItem]);
 
 	const openDetailPanel = (item: MediaItem) => {
 		setSelectedItem(item);
-		setDetailPanelOpen(true);
+		if (!detailPanelOpen) {
+			window.requestAnimationFrame(() => setDetailPanelOpen(true));
+		}
 	};
 
 	// Clear success/error message after a delay
@@ -572,12 +575,15 @@ export function MediaLibrary({
 			{selectedItem && (
 				<KumoSidebar.Provider
 					contained
-					open={detailPanelOpen}
+					open={Boolean(selectedItem)}
 					onOpenChange={setDetailPanelOpen}
 					side="right"
 					collapsible="offcanvas"
 					animationDuration={MEDIA_DETAIL_SIDEBAR_ANIMATION_MS}
-					className="fixed inset-0 z-50 h-svh min-h-0 overflow-hidden"
+					className={cn(
+						"fixed inset-0 z-50 h-svh min-h-0 overflow-hidden",
+						!detailPanelOpen && "pointer-events-none",
+					)}
 					style={
 						{
 							"--sidebar-width": "min(28rem, 100%)",
@@ -590,6 +596,7 @@ export function MediaLibrary({
 					<div className="min-w-0 flex-1" aria-hidden="true" />
 					<MediaDetailPanel
 						item={selectedItem}
+						isOpen={detailPanelOpen}
 						onClose={() => setDetailPanelOpen(false)}
 						onDeleted={() => {
 							if (activeProvider === "local") {

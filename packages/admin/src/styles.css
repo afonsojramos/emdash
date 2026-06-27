@@ -114,6 +114,25 @@ body {
 	transition-property: transform, translate, opacity !important;
 }
 
+.emdash-media-details-panel {
+	transform: translateX(0);
+	transition-property: transform;
+	transition-duration: var(--sidebar-animation-duration);
+	transition-timing-function: var(--sidebar-easing);
+	will-change: transform;
+}
+
+.emdash-media-details-panel[data-side="right"][data-media-details-open="false"] {
+	pointer-events: none;
+	transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.emdash-media-details-panel {
+		transition: none;
+	}
+}
+
 /* Fix text selection contrast */
 ::selection {
 	background-color: var(--color-kumo-interact);
