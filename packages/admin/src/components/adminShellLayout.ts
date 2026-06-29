@@ -1,0 +1,3 @@
+export const ADMIN_SHELL_HEADER_HEIGHT = "58px";
+export const ADMIN_SHELL_SIDEBAR_ICON_WIDTH = ADMIN_SHELL_HEADER_HEIGHT;
+export const ADMIN_SHELL_BACKGROUND_CLASS = "bg-kumo-elevated";

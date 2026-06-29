@@ -1,17 +1,27 @@
 import cloudflare from "@astrojs/cloudflare";
 import starlight from "@astrojs/starlight";
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
 	site: "https://docs.emdashcms.com",
+	fonts: [
+		{
+			provider: fontProviders.google(),
+			name: "Inter",
+			cssVariable: "--font-sans",
+			weights: [400, 500, 600, 700, 800],
+			fallbacks: ["sans-serif"],
+		},
+	],
 	integrations: [
 		starlight({
 			title: "EmDash",
 			tagline: "The Astro-native CMS",
 			disable404Route: true,
 			components: {
+				Head: "./src/components/Head.astro",
 				SkipLink: "./src/components/SkipLink.astro",
 			},
 			logo: {
