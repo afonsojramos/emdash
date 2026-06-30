@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, expect, it } from "vitest";
 
-import { MediaUsageRepository } from "../../../src/database/repositories/media-usage.js";
+import {
+	MediaUsageRepository,
+	MEDIA_USAGE_INSERT_CHUNK_SIZE,
+	MEDIA_USAGE_INSERT_VALUES_PER_ROW,
+} from "../../../src/database/repositories/media-usage.js";
 import {
 	describeEachDialect,
 	setupForDialect,
@@ -99,6 +103,28 @@ describeEachDialect("MediaUsageRepository", (dialect) => {
 
 		expect((await repo.findCurrentByMediaId("media_live"))[0]?.state).toBe("live");
 		expect((await repo.findCurrentByMediaId("media_draft"))[0]?.state).toBe("draft");
+	});
+
+	it("keeps usage insert batches within D1's bind limit", async () => {
+		expect(MEDIA_USAGE_INSERT_CHUNK_SIZE).toBe(9);
+		expect(MEDIA_USAGE_INSERT_CHUNK_SIZE * MEDIA_USAGE_INSERT_VALUES_PER_ROW).toBeLessThanOrEqual(
+			100,
+		);
+
+		await repo.replaceContentUsage({
+			collection: "posts",
+			contentId: "entry1",
+			contentSlug: "hello",
+			state: "draft",
+			references: Array.from({ length: 10 }, (_, index) => ({
+				...localImageRef(`media_${index}`),
+				fieldPath: `gallery[${index}]`,
+			})),
+		});
+
+		for (let index = 0; index < 10; index++) {
+			expect(await repo.findCurrentByMediaId(`media_${index}`)).toHaveLength(1);
+		}
 	});
 
 	it("empty replacements clear current usage for that source", async () => {

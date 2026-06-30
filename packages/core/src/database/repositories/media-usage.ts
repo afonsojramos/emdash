@@ -6,7 +6,11 @@ import { chunks } from "../../utils/chunks.js";
 import type { Database, MediaUsageSourceTable, MediaUsageTable } from "../types.js";
 import { validateIdentifier } from "../validate.js";
 
-const INSERT_CHUNK_SIZE = 10;
+const D1_BIND_PARAMETER_LIMIT = 100;
+export const MEDIA_USAGE_INSERT_VALUES_PER_ROW = 11;
+export const MEDIA_USAGE_INSERT_CHUNK_SIZE = Math.floor(
+	D1_BIND_PARAMETER_LIMIT / MEDIA_USAGE_INSERT_VALUES_PER_ROW,
+);
 
 export type MediaUsageState = "live" | "draft";
 
@@ -74,7 +78,7 @@ export class MediaUsageRepository {
 		}));
 
 		if (usageRows.length > 0) {
-			for (const batch of chunks(usageRows, INSERT_CHUNK_SIZE)) {
+			for (const batch of chunks(usageRows, MEDIA_USAGE_INSERT_CHUNK_SIZE)) {
 				await this.db.insertInto("_emdash_media_usage").values(batch).execute();
 			}
 		}
