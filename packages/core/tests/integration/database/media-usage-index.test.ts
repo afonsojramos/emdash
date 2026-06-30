@@ -1,7 +1,11 @@
 import { sql } from "kysely";
 import { afterEach, beforeEach, expect, it } from "vitest";
 
+import { ContentRepository } from "../../../src/database/repositories/content.js";
+import { MediaUsageRepository } from "../../../src/database/repositories/media-usage.js";
+import { MediaRepository } from "../../../src/database/repositories/media.js";
 import type { Database } from "../../../src/database/types.js";
+import { SchemaRegistry } from "../../../src/schema/registry.js";
 import {
 	describeEachDialect,
 	setupForDialect,
@@ -104,5 +108,34 @@ describeEachDialect("Media usage index schema", (dialect) => {
 		await up(ctx.db);
 		const rows = await ctx.db.selectFrom("_emdash_media_usage_sources").selectAll().execute();
 		expect(Array.isArray(rows)).toBe(true);
+	});
+
+	it("backfills existing content usage when migration runs", async () => {
+		const registry = new SchemaRegistry(ctx.db);
+		await registry.createCollection({ slug: "articles", label: "Articles" });
+		await registry.createField("articles", { slug: "title", label: "Title", type: "string" });
+		await registry.createField("articles", { slug: "hero", label: "Hero", type: "image" });
+
+		const media = await new MediaRepository(ctx.db).create({
+			filename: "hero.jpg",
+			mimeType: "image/jpeg",
+			storageKey: "hero.jpg",
+		});
+		const content = await new ContentRepository(ctx.db).create({
+			type: "articles",
+			slug: "migration-backfill",
+			status: "published",
+			data: { title: "Migration Backfill", hero: { id: media.id, provider: "local" } },
+		});
+
+		const { down, up } = await import("../../../src/database/migrations/046_media_usage_index.js");
+		await down(ctx.db);
+		await up(ctx.db);
+
+		const usage = await new MediaUsageRepository(ctx.db).findCurrentByMediaId(media.id);
+		expect(usage).toHaveLength(1);
+		expect(usage[0]?.contentId).toBe(content.id);
+		expect(usage[0]?.state).toBe("live");
+		expect(usage[0]?.fieldPath).toBe("hero");
 	});
 });

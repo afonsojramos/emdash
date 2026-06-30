@@ -519,6 +519,14 @@ export class SchemaRegistry {
 				await this.syncSearchState(collectionSlug, trx);
 			}
 
+			if (
+				input.required &&
+				input.defaultValue !== undefined &&
+				isMediaUsageIndexedFieldType(input.type)
+			) {
+				await replaceCollectionMediaUsage(trx, collectionSlug);
+			}
+
 			return field;
 		});
 	}

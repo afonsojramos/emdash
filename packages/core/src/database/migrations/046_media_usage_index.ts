@@ -1,6 +1,8 @@
-import type { Kysely } from "kysely";
+import { sql, type Kysely } from "kysely";
 
+import { replaceCollectionMediaUsage } from "../../media/usage-index.js";
 import { currentTimestamp } from "../dialect-helpers.js";
+import type { Database } from "../types.js";
 
 /**
  * Media usage index.
@@ -89,9 +91,22 @@ export async function up(db: Kysely<unknown>): Promise<void> {
 		.on("_emdash_media_usage")
 		.columns(["source_key", "generation"])
 		.execute();
+
+	await backfillExistingContentMediaUsage(db);
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
 	await db.schema.dropTable("_emdash_media_usage").ifExists().execute();
 	await db.schema.dropTable("_emdash_media_usage_sources").ifExists().execute();
+}
+
+async function backfillExistingContentMediaUsage(db: Kysely<unknown>): Promise<void> {
+	const collections = await sql<{ slug: string }>`
+		SELECT slug FROM _emdash_collections
+	`.execute(db);
+
+	for (const collection of collections.rows) {
+		// eslint-disable-next-line typescript/no-unsafe-type-assertion -- migration runs against Kysely<unknown>, runtime helper needs the generated DB type
+		await replaceCollectionMediaUsage(db as Kysely<Database>, collection.slug);
+	}
 }

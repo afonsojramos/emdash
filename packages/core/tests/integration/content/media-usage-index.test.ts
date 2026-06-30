@@ -508,6 +508,27 @@ describeEachDialect("content media usage indexing", (dialect) => {
 		expect(await usageRepo.findCurrentByMediaId(fileMedia.id)).toHaveLength(1);
 	});
 
+	it("indexes existing rows when adding a media field with a default value", async () => {
+		const created = await handleContentCreate(ctx.db, "posts", {
+			slug: "default-media-field",
+			data: { title: "Default Media Field" },
+		});
+		expect(created.success).toBe(true);
+
+		await new SchemaRegistry(ctx.db).createField("posts", {
+			slug: "default_hero",
+			label: "Default Hero",
+			type: "image",
+			required: true,
+			defaultValue: { id: mediaA.id, provider: "local" },
+		});
+
+		const mediaAUsage = await usageRepo.findCurrentByMediaId(mediaA.id);
+		expect(mediaAUsage).toHaveLength(1);
+		expect(mediaAUsage[0]?.contentId).toBe(created.data.item.id);
+		expect(mediaAUsage[0]?.fieldPath).toBe("default_hero");
+	});
+
 	it("clears usage when a media-bearing field changes to a non-media type", async () => {
 		const created = await createPostWithMedia(mediaA.id);
 		if (!created.success) throw new Error("create failed");
