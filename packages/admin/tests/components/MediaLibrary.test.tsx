@@ -11,7 +11,7 @@ import { render } from "../utils/render.tsx";
 // Constants
 // ---------------------------------------------------------------------------
 
-const UPLOAD_CTA_PATTERN = /Upload images, videos, and documents/;
+const UPLOAD_CTA_PATTERN = /Upload images, videos, and documents to keep reusable assets/;
 const UPLOAD_TO_LIBRARY_PATTERN = /Upload to Library/;
 const UPLOAD_FILES_PATTERN = /Upload Files/;
 
@@ -231,7 +231,7 @@ describe("MediaLibrary", () => {
 	describe("empty state", () => {
 		it("shows upload CTA when no items", async () => {
 			const screen = await renderLibrary({ items: [] });
-			await expect.element(screen.getByText("No media yet")).toBeInTheDocument();
+			await expect.element(screen.getByText("Your media library is empty")).toBeInTheDocument();
 			await expect.element(screen.getByText(UPLOAD_CTA_PATTERN)).toBeInTheDocument();
 			await expect
 				.element(screen.getByRole("button", { name: UPLOAD_FILES_PATTERN }))
@@ -243,7 +243,7 @@ describe("MediaLibrary", () => {
 		it("displays loading state", async () => {
 			const screen = await renderLibrary({ isLoading: true });
 			// When loading, neither empty state nor items are shown
-			expect(screen.getByText("No media yet").query()).toBeNull();
+			expect(screen.getByText("Your media library is empty").query()).toBeNull();
 		});
 	});
 

@@ -1,7 +1,16 @@
 import { Button, Input, Loader, Select, Tabs } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { Upload, Image, SquaresFour, List, MagnifyingGlass, Check, X } from "@phosphor-icons/react";
+import {
+	Upload,
+	Images,
+	SquaresFour,
+	List,
+	MagnifyingGlass,
+	Check,
+	X,
+} from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -284,6 +293,11 @@ export function MediaLibrary({
 	const resultCount =
 		activeProvider === "local" ? currentItems.length : currentProviderItems.length;
 	const hasActiveQuery = searchQuery.trim() !== "" || localTypeFilter !== "all";
+	const clearLocalQuery = () => {
+		setSearchQuery("");
+		setLocalTypeFilter("all");
+		onLocalMimeFilterChange?.(mimeForTypeFilter("all"));
+	};
 	const showToolbar = resultCount > 0 || hasActiveQuery;
 
 	return (
@@ -374,10 +388,10 @@ export function MediaLibrary({
 			{/* Toolbar: search + type filter (start) · result count + view toggle (end).
 			    Local library search/filter is handled server-side. */}
 			{showToolbar && (
-				<div className="flex flex-wrap items-center justify-between gap-3">
-					<div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+				<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+					<div className="flex min-w-0 items-center gap-3">
 						{(canSearch || activeProvider === "local") && (
-							<div className="relative w-full max-w-xs">
+							<div className="relative min-w-0 flex-1 sm:w-72 sm:flex-none">
 								<MagnifyingGlass className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kumo-subtle" />
 								<Input
 									type="search"
@@ -409,7 +423,7 @@ export function MediaLibrary({
 							/>
 						)}
 					</div>
-					<div className="flex flex-shrink-0 items-center gap-3">
+					<div className="flex flex-shrink-0 items-center justify-between gap-3 sm:justify-end">
 						{resultCount > 0 && (
 							<span className="text-sm text-kumo-subtle" aria-live="polite">
 								{plural(resultCount, { one: "# item", other: "# items" })}
@@ -452,28 +466,63 @@ export function MediaLibrary({
 					<Loader />
 				</div>
 			) : activeProvider === "local" && currentItems.length === 0 ? (
-				<div className="rounded-lg border bg-kumo-base p-12 text-center">
-					<Image className="mx-auto h-12 w-12 text-kumo-subtle" aria-hidden="true" />
-					<h2 className="mt-4 text-lg font-medium">{t`No media yet`}</h2>
-					<p className="mt-2 text-sm text-kumo-subtle">
-						{t`Upload images, videos, and documents to get started.`}
-					</p>
-					<Button className="mt-4" onClick={() => fileInputRef.current?.click()} icon={<Upload />}>
-						{t`Upload Files`}
-					</Button>
-				</div>
+					hasActiveQuery ? (
+					<MediaEmptyState
+						hero={MagnifyingGlass}
+						title={t`No matching media`}
+						description={
+							searchQuery.trim()
+								? t`Try another filename, or clear your search and filters.`
+								: t`Try a broader media type or clear your filters.`
+						}
+						action={
+							<Button variant="outline" onClick={clearLocalQuery}>
+								{searchQuery.trim() ? t`Clear search` : t`Clear filters`}
+							</Button>
+						}
+					/>
+				) : (
+					<MediaEmptyState
+						hero={Images}
+						title={t`Your media library is empty`}
+						description={t`Upload images, videos, and documents to keep reusable assets in one place.`}
+						action={
+							<Button onClick={() => fileInputRef.current?.click()} icon={<Upload />}>
+								{t`Upload Files`}
+							</Button>
+						}
+					/>
+				)
 			) : activeProvider !== "local" && currentProviderItems.length === 0 ? (
-				<div className="rounded-lg border bg-kumo-base p-12 text-center">
-					<Image className="mx-auto h-12 w-12 text-kumo-subtle" aria-hidden="true" />
-					<h2 className="mt-4 text-lg font-medium">{t`No media found`}</h2>
-					<p className="mt-2 text-sm text-kumo-subtle">
-						{canSearch && searchQuery
-							? t`Try a different search term`
-							: canUpload
-								? t`Upload media to get started`
-								: t`No media available from this provider`}
-					</p>
-				</div>
+				canSearch && searchQuery.trim() ? (
+					<MediaEmptyState
+						hero={MagnifyingGlass}
+						title={t`No matching media`}
+						description={t`Try another filename or clear your search.`}
+						action={
+							<Button variant="outline" onClick={() => setSearchQuery("")}>
+								{t`Clear search`}
+							</Button>
+						}
+					/>
+				) : canUpload ? (
+					<MediaEmptyState
+						hero={Images}
+						title={t`Your media library is empty`}
+						description={t`Upload media to keep reusable assets in one place.`}
+						action={
+							<Button onClick={() => fileInputRef.current?.click()} icon={<Upload />}>
+								{t`Upload Files`}
+							</Button>
+						}
+					/>
+				) : (
+					<MediaEmptyState
+						hero={Images}
+						title={t`No media found`}
+						description={t`No media available from this provider.`}
+					/>
+				)
 			) : viewMode === "grid" ? (
 				<div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(160px,1fr))]">
 					{activeProvider === "local"
@@ -584,6 +633,50 @@ export function MediaLibrary({
 					onDeleted={onItemUpdated}
 				/>
 			)}
+		</div>
+	);
+}
+
+/** Single-chip illustration: solid tinted circle + darker icon, decorative. */
+function MediaEmptyIllustration({ hero: Hero }: { hero: Icon }) {
+	return (
+		<div
+			className="flex items-center justify-center"
+			style={{
+				width: "5rem",
+				height: "5rem",
+				minWidth: "5rem",
+				minHeight: "5rem",
+				borderRadius: "9999px",
+				backgroundColor: "var(--color-kumo-info-tint)",
+			}}
+			aria-hidden="true"
+		>
+			<Hero size={36} className="text-kumo-brand" aria-hidden="true" />
+		</div>
+	);
+}
+
+interface MediaEmptyStateProps {
+	hero: Icon;
+	title: string;
+	description: string;
+	action?: React.ReactNode;
+}
+
+/** Centered empty / no-results panel with the media illustration. */
+function MediaEmptyState({ hero, title, description, action }: MediaEmptyStateProps) {
+	return (
+		<div
+			className="flex flex-col items-center rounded-lg border bg-kumo-base px-6 py-20 text-center"
+			style={{ gap: "1.5rem" }}
+		>
+			<MediaEmptyIllustration hero={hero} />
+			<div className="flex flex-col items-center" style={{ gap: "0.75rem" }}>
+				<h2 className="text-2xl font-semibold leading-none tracking-tight">{title}</h2>
+				<p className="max-w-md text-base leading-6 text-kumo-subtle">{description}</p>
+			</div>
+			{action && <div style={{ marginTop: "0.25rem" }}>{action}</div>}
 		</div>
 	);
 }
