@@ -135,6 +135,38 @@ describe("MediaLibrary", () => {
 			await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
 		});
 
+		it("opens the detail dialog on an animation frame so Kumo entry animation runs", async () => {
+			let openFrame: FrameRequestCallback | undefined;
+			const requestAnimationFrameSpy = vi
+				.spyOn(window, "requestAnimationFrame")
+				.mockImplementation((callback) => {
+					openFrame = callback;
+					return 1;
+				});
+			const cancelAnimationFrameSpy = vi
+				.spyOn(window, "cancelAnimationFrame")
+				.mockImplementation(() => undefined);
+
+			try {
+				const items = [makeMediaItem({ id: "1", filename: "photo.jpg", alt: "A photo" })];
+				const screen = await renderLibrary({ items });
+
+				await screen.getByRole("button", { name: "photo.jpg" }).click();
+
+				expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
+				await expect
+					.element(screen.getByText("Media Details"), { timeout: 100 })
+					.not.toBeInTheDocument();
+
+				openFrame?.(performance.now());
+
+				await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+			} finally {
+				requestAnimationFrameSpy.mockRestore();
+				cancelAnimationFrameSpy.mockRestore();
+			}
+		});
+
 		it("preserves unsaved alt text when the media list refetches the same item", async () => {
 			const item = makeMediaItem({ id: "1", filename: "photo.jpg", alt: "Server alt" });
 			const screen = await renderLibrary({ items: [item] });

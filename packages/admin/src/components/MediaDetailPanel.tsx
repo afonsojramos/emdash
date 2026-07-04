@@ -5,9 +5,9 @@
  * Opens when clicking an item in the MediaLibrary.
  */
 
-import { Button, ClipboardText, Dialog, Input, InputArea } from "@cloudflare/kumo";
+import { Button, ClipboardText, Dialog, Input, InputArea, Tooltip } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
-import { X, Trash, Calendar, HardDrive, LinkSimple, Ruler } from "@phosphor-icons/react";
+import { X, Trash, Calendar, HardDrive, LinkSimple, Ruler, Info } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -111,6 +111,10 @@ export function MediaDetailPanel({
 	const isConfirmOpen = showDeleteConfirm || showDiscardConfirm;
 	const publicFileUrl =
 		!isProviderAsset && item.url ? new URL(item.url, window.location.origin).href : "";
+	const filenameHelp = t`Filename cannot be changed after upload`;
+	const filenameHelpLabel = t`Why can't this be changed?`;
+	const altTextHelp = t`Used by screen readers and when image fails to load`;
+	const altTextHelpLabel = t`Why is this important?`;
 
 	const updateMutation = useMutation({
 		mutationFn: (data: { alt?: string; caption?: string }) => updateMedia(item.id, data),
@@ -195,7 +199,7 @@ export function MediaDetailPanel({
 				<Dialog
 					size="xl"
 					className="flex flex-col overflow-hidden p-0"
-					style={{ width: "min(94vw, 72rem)", height: "min(88dvh, 48rem)" }}
+					style={{ width: "min(94vw, 72rem)", maxHeight: "min(88dvh, 48rem)" }}
 				>
 					<div
 						className="flex shrink-0 items-start justify-between gap-4 border-b border-kumo-line"
@@ -305,24 +309,62 @@ export function MediaDetailPanel({
 							)}
 
 							<div className="space-y-4">
-								<Input
-									label={t`Filename`}
-									value={filename}
-									onChange={(event) => setFilename(event.target.value)}
-									disabled
-									description={t`Filename cannot be changed after upload`}
-								/>
+								<div className="w-full space-y-2">
+									<div className="flex items-center gap-1.5">
+										<span className="text-sm font-medium text-kumo-default">{t`Filename`}</span>
+										<Tooltip
+											content={filenameHelp}
+											delay={0}
+											closeDelay={0}
+											render={
+												<button
+													type="button"
+													className="inline-flex cursor-help rounded-full text-kumo-subtle hover:text-kumo-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kumo-brand"
+													aria-label={filenameHelpLabel}
+												>
+													<Info className="h-4 w-4" aria-hidden="true" />
+												</button>
+											}
+										/>
+									</div>
+									<Input
+										aria-label={t`Filename`}
+										value={filename}
+										onChange={(event) => setFilename(event.target.value)}
+										disabled
+										className="w-full bg-kumo-tint text-kumo-subtle"
+									/>
+								</div>
 
 								{canEditMetadata && (
 									<>
-										<Input
-											label={t`Alt Text`}
-											value={alt}
-											onChange={(event) => setAlt(event.target.value)}
-											placeholder={t`Describe this image for accessibility`}
-											description={t`Used by screen readers and when image fails to load`}
-											disabled={isSaving}
-										/>
+										<div className="w-full space-y-2">
+											<div className="flex items-center gap-1.5">
+												<span className="text-sm font-medium text-kumo-default">{t`Alt Text`}</span>
+												<Tooltip
+													content={altTextHelp}
+													delay={0}
+													closeDelay={0}
+													render={
+														<button
+															type="button"
+															className="inline-flex cursor-help rounded-full text-kumo-subtle hover:text-kumo-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kumo-brand"
+															aria-label={altTextHelpLabel}
+														>
+															<Info className="h-4 w-4" aria-hidden="true" />
+														</button>
+													}
+												/>
+											</div>
+											<Input
+												aria-label={t`Alt Text`}
+												value={alt}
+												onChange={(event) => setAlt(event.target.value)}
+												placeholder={t`Describe this image for accessibility`}
+												disabled={isSaving}
+												className="w-full"
+											/>
+										</div>
 
 										<InputArea
 											label={t`Caption`}
@@ -363,7 +405,12 @@ export function MediaDetailPanel({
 								{canEditMetadata ? t`Cancel` : t`Close`}
 							</Button>
 							{canEditMetadata && (
-								<Button size="sm" onClick={handleSave} disabled={!hasChanges || isBusy}>
+								<Button
+									variant="primary"
+									size="sm"
+									onClick={handleSave}
+									disabled={!hasChanges || isBusy}
+								>
 									{isSaving ? t`Saving...` : t`Save`}
 								</Button>
 							)}

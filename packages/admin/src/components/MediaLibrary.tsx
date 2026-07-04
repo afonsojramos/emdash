@@ -79,6 +79,7 @@ export function MediaLibrary({
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [localTypeFilter, setLocalTypeFilter] = React.useState("all");
 	const mediaHeadingRef = React.useRef<HTMLHeadingElement>(null);
+	const detailOpenFrameRef = React.useRef<number | null>(null);
 	// Debounced filename search reported up for the local library's server query.
 	const debouncedSearch = useDebouncedValue(searchQuery, 300);
 	React.useEffect(() => {
@@ -131,14 +132,31 @@ export function MediaLibrary({
 		return providers?.find((p) => p.id === activeProvider);
 	}, [activeProvider, providers, t]);
 
-	const openDetail = React.useCallback((item: MediaItem) => {
-		setDetailItem(item);
-		setIsDetailOpen(true);
+	const cancelPendingDetailOpen = React.useCallback(() => {
+		if (detailOpenFrameRef.current === null) return;
+		window.cancelAnimationFrame(detailOpenFrameRef.current);
+		detailOpenFrameRef.current = null;
 	}, []);
 
+	React.useEffect(() => cancelPendingDetailOpen, [cancelPendingDetailOpen]);
+
+	const openDetail = React.useCallback(
+		(item: MediaItem) => {
+			cancelPendingDetailOpen();
+			setIsDetailOpen(false);
+			setDetailItem(item);
+			detailOpenFrameRef.current = window.requestAnimationFrame(() => {
+				detailOpenFrameRef.current = null;
+				setIsDetailOpen(true);
+			});
+		},
+		[cancelPendingDetailOpen],
+	);
+
 	const closeDetail = React.useCallback(() => {
+		cancelPendingDetailOpen();
 		setIsDetailOpen(false);
-	}, []);
+	}, [cancelPendingDetailOpen]);
 
 	const handleDetailClosed = React.useCallback(() => {
 		setDetailItem(null);
@@ -302,6 +320,7 @@ export function MediaLibrary({
 								key={tab.id}
 								type="button"
 								onClick={() => {
+									cancelPendingDetailOpen();
 									setActiveProvider(tab.id);
 									setIsDetailOpen(false);
 									setDetailItem(null);

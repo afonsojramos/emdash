@@ -108,7 +108,11 @@ describe("MediaDetailPanel", () => {
 
 		expect(body.className).toContain("grid-cols-1");
 		expect(body.className).toContain("md:grid-cols-2");
-		expect(dialog.style.height).toBe("min(88dvh, 48rem)");
+		expect(dialog.style.height).toBe("");
+		expect(dialog.style.maxHeight).toBe("min(88dvh, 48rem)");
+		expect(dialog.className).toContain("data-starting-style:scale-90");
+		expect(dialog.className).toContain("data-starting-style:opacity-0");
+		expect(dialog.style.transitionProperty).toBe("scale, opacity");
 		expect(header.style.padding).toBe("1.25rem 2rem");
 		expect(previewColumn.contains(fileFacts)).toBe(true);
 		expect(detailsColumn.contains(fileFacts)).toBe(false);
@@ -138,6 +142,10 @@ describe("MediaDetailPanel", () => {
 		const screen = await renderPanel({ item });
 		const altInput = screen.getByLabelText("Alt Text");
 		await expect.element(altInput).toBeInTheDocument();
+		expect(altInput.element().className).toContain("w-full");
+		await expect
+			.element(screen.getByRole("button", { name: "Why is this important?" }))
+			.toBeInTheDocument();
 		await altInput.fill("New alt text");
 		await expect.element(altInput).toHaveValue("New alt text");
 	});
@@ -162,11 +170,16 @@ describe("MediaDetailPanel", () => {
 			.not.toBeInTheDocument();
 	});
 
-	it("filename input is disabled", async () => {
+	it("filename input is disabled with tooltip help", async () => {
 		const item = makeImageItem();
 		const screen = await renderPanel({ item });
 		const filenameInput = screen.getByLabelText("Filename");
 		await expect.element(filenameInput).toBeDisabled();
+		expect(filenameInput.element().className).toContain("bg-kumo-tint");
+		expect(filenameInput.element().className).toContain("w-full");
+		await expect
+			.element(screen.getByRole("button", { name: "Why can't this be changed?" }))
+			.toBeInTheDocument();
 	});
 
 	it("save button is disabled when no changes", async () => {
