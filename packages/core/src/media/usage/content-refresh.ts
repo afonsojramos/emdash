@@ -478,7 +478,7 @@ async function withContentUsageLock<T>(
 	}
 }
 
-async function withContentUsageCollectionLock<T>(
+export async function withContentUsageCollectionLock<T>(
 	collectionSlug: string,
 	fn: () => Promise<T>,
 ): Promise<T> {

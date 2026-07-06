@@ -19,6 +19,7 @@ import type {
 	MediaUsageSourceTable,
 	MediaUsageTable,
 } from "../types.js";
+import { validateIdentifier } from "../validate.js";
 import { decodeCursor, encodeCursor, type FindManyResult } from "./types.js";
 
 type DatabaseExecutor = Kysely<Database> | Transaction<Database>;
@@ -107,6 +108,10 @@ export interface MediaUsageGuardedReplaceResult {
 export interface MediaUsageGuardedDeleteResult {
 	deleted: boolean;
 	source: MediaUsageSource | null;
+}
+
+export interface MediaUsageGuardedAbsentDeleteResult extends MediaUsageGuardedDeleteResult {
+	contentPresent: boolean;
 }
 
 export interface MediaUsageGuardedAttemptResult {
@@ -522,6 +527,37 @@ export class MediaUsageRepository {
 		};
 	}
 
+	async deleteSourceIfMatchingContentAbsent(
+		sourceKey: string,
+		expectedSource: MediaUsageSource,
+		collectionSlug: string,
+		contentId: string,
+	): Promise<MediaUsageGuardedAbsentDeleteResult> {
+		validateIdentifier(collectionSlug, "collection slug");
+		const tableName = `ec_${collectionSlug}`;
+		let deleted = false;
+		await withTransaction(this.db, async (trx) => {
+			const result = await trx
+				.deleteFrom("_emdash_media_usage_sources")
+				.where("source_key", "=", sourceKey)
+				.where(this.sourceMatchExpression(expectedSource))
+				.where(
+					sql<boolean>`NOT EXISTS (SELECT 1 FROM ${sql.ref(tableName)} WHERE id = ${contentId})`,
+				)
+				.executeTakeFirst();
+			deleted = Number(result.numDeletedRows ?? 0) > 0;
+			if (!deleted) return;
+			await trx.deleteFrom("_emdash_media_usage").where("source_key", "=", sourceKey).execute();
+		});
+		const contentPresent = deleted ? false : await this.contentRowExists(tableName, contentId);
+
+		return {
+			deleted,
+			contentPresent,
+			source: deleted || contentPresent ? null : await this.findSource(sourceKey),
+		};
+	}
+
 	async deleteSources(sourceKeys: readonly string[]): Promise<number> {
 		return this.deleteSourceKeys(sourceKeys);
 	}
@@ -554,6 +590,17 @@ export class MediaUsageRepository {
 			deleted += await this.deleteSourceKeys(sourceRows.map((row) => row.source_key));
 		}
 		return deleted;
+	}
+
+	async findCollectionContentSources(collectionSlug: string): Promise<MediaUsageSource[]> {
+		const rows = await this.db
+			.selectFrom("_emdash_media_usage_sources")
+			.selectAll()
+			.where("source_type", "=", "content")
+			.where("collection_slug", "=", collectionSlug)
+			.orderBy("source_key", "asc")
+			.execute();
+		return rows.map((row) => rowToSource(row));
 	}
 
 	async deleteOrphanOccurrencesOlderThan(cutoff: string, limit: number): Promise<number> {
@@ -985,6 +1032,16 @@ export class MediaUsageRepository {
 		value: number | null,
 	) {
 		return value === null ? eb(column, "is", null) : eb(column, "=", value);
+	}
+
+	private async contentRowExists(tableName: string, contentId: string): Promise<boolean> {
+		const result = await sql<{ id: string }>`
+			SELECT id
+			FROM ${sql.ref(tableName)}
+			WHERE id = ${contentId}
+			LIMIT 1
+		`.execute(this.db);
+		return result.rows.length > 0;
 	}
 
 	private buildSourceRow(source: MediaUsageSourceInput, generation: string, now: string) {
