@@ -7,7 +7,11 @@ import {
 } from "../../database/repositories/media-usage.js";
 import type { Database } from "../../database/types.js";
 import { validateIdentifier } from "../../database/validate.js";
-import { loadContentMediaUsageFields, MediaUsageFieldDiscoveryError } from "./content-fields.js";
+import {
+	loadContentMediaUsageFields,
+	MediaUsageFieldDiscoveryError,
+	type ContentMediaUsageFieldDiscovery,
+} from "./content-fields.js";
 import {
 	CONTENT_MEDIA_USAGE_ADAPTER_ID,
 	CONTENT_MEDIA_USAGE_COLLECTION_SCOPE,
@@ -209,10 +213,10 @@ async function repairScannedContentSources(
 		lastErrorCode: null,
 	};
 
-	await loadContentMediaUsageFields(db, scan.collectionSlug);
+	const fieldDiscovery = await loadContentMediaUsageFields(db, scan.collectionSlug);
 
 	for (const contentId of scan.contentIds) {
-		await repairContentSource(db, repo, scan.collectionSlug, contentId, counts);
+		await repairContentSource(db, repo, scan.collectionSlug, contentId, fieldDiscovery, counts);
 	}
 
 	await reconcileOrphanedContentSources(db, repo, scan.collectionSlug, counts);
@@ -224,11 +228,17 @@ async function repairContentSource(
 	repo: MediaUsageRepository,
 	collectionSlug: string,
 	contentId: string,
+	fieldDiscovery: ContentMediaUsageFieldDiscovery,
 	counts: RepairCounts,
 ): Promise<void> {
 	const sourceKeys = buildContentSourceKeys(collectionSlug, contentId);
 	const observedSources = await repo.findSources(sourceKeys);
-	const snapshotsResult = await loadContentMediaUsageSnapshots(db, collectionSlug, contentId);
+	const snapshotsResult = await loadContentMediaUsageSnapshots(
+		db,
+		collectionSlug,
+		contentId,
+		fieldDiscovery,
+	);
 	if (!snapshotsResult.success) {
 		counts.lastErrorCode = snapshotsResult.error;
 		if (snapshotsResult.source) {
