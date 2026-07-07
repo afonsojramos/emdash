@@ -114,7 +114,13 @@ export const GET: APIRoute = async ({ params, request, locals, redirect }) => {
 
 		const stateStore = createOAuthStateStore(emdash.db);
 
-		const { url: authUrl } = await createAuthorizationUrl(config, provider, stateStore);
+		// When the flow starts from an invite link, carry the invite token so the
+		// callback can complete the invite for a matching, verified email.
+		const inviteToken = url.searchParams.get("invite") ?? undefined;
+
+		const { url: authUrl } = await createAuthorizationUrl(config, provider, stateStore, {
+			inviteToken,
+		});
 
 		return redirect(authUrl);
 	} catch (error) {
