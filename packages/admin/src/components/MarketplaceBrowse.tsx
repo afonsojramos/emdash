@@ -326,7 +326,7 @@ export function AuditBadge({ verdict }: { verdict: "pass" | "warn" | "fail" }) {
 	if (verdict === "warn") {
 		return (
 			<span
-				className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs bg-warning/10 text-warning"
+				className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs bg-kumo-warning/10 text-kumo-warning"
 				title={t`Security audit flagged concerns`}
 			>
 				<Warning className="h-3 w-3" />
