@@ -7,6 +7,7 @@ import {
 	type ContentMediaUsageRepairAllResult,
 	type ContentMediaUsageRepairCollectionResult,
 } from "../../media/usage/content-repair.js";
+import { ErrorCode } from "../errors.js";
 import type { MediaUsageRepairRequest, MediaUsageRepairResponse } from "../schemas/media-usage.js";
 import type { ApiResult } from "../types.js";
 
@@ -30,7 +31,7 @@ export async function handleMediaUsageRepair(
 			return {
 				success: false,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "Invalid media usage repair request",
 				},
 			};
@@ -42,7 +43,7 @@ export async function handleMediaUsageRepair(
 		return {
 			success: false,
 			error: {
-				code: "MEDIA_USAGE_REPAIR_ERROR",
+				code: ErrorCode.MEDIA_USAGE_REPAIR_ERROR,
 				message: "Failed to repair media usage",
 			},
 		};

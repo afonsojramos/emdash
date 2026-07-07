@@ -731,7 +731,10 @@ function buildMediaPaths(maxUploadSize: number) {
 				description:
 					"Repairs content media usage indexes for one collection or all collections. The request succeeds with HTTP 200 when a structured repair result is produced; inspect `data.status` because it may be `failed` or `stale`.",
 				tags: ["Media"],
-				requestBody: { content: { [JSON_CONTENT]: { schema: mediaUsageRepairBody } } },
+				requestBody: {
+					required: true,
+					content: { [JSON_CONTENT]: { schema: mediaUsageRepairBody } },
+				},
 				responses: {
 					"200": {
 						description: "Media usage repair result",
