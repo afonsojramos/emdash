@@ -4,7 +4,6 @@ import { useLingui } from "@lingui/react/macro";
 import {
 	Plus,
 	Upload,
-	ArrowRight,
 	CircleDashed,
 	CheckCircle,
 	PencilSimple,
@@ -19,6 +18,7 @@ import type { CollectionStats, DashboardStats, RecentItem } from "../lib/api/das
 import { fetchDashboardStats } from "../lib/api/dashboard";
 import { usePluginWidget } from "../lib/plugin-context";
 import { formatRelativeTime } from "../lib/utils";
+import { ArrowNext } from "./ArrowIcons";
 import { RouterLinkButton } from "./RouterLinkButton";
 import { SandboxedPluginWidget } from "./SandboxedPluginWidget";
 
@@ -230,7 +230,7 @@ function CollectionList({
 											variant="secondary"
 											label={t`Drafts`}
 										/>
-										<ArrowRight
+										<ArrowNext
 											className="h-3.5 w-3.5 text-kumo-subtle opacity-0 transition-opacity group-hover:opacity-100"
 											aria-hidden="true"
 										/>
