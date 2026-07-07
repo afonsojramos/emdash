@@ -168,7 +168,7 @@ function CollectionList({
 						))}
 					</div>
 				) : collections.length === 0 ? (
-					<p className="text-sm text-kumo-subtle">{t`No collections configured`}</p>
+					<p className="px-3 text-sm text-kumo-subtle">{t`No collections configured`}</p>
 				) : (
 					<div className="space-y-1">
 						{collections.map((col) => {
@@ -250,7 +250,7 @@ function RecentActivity({ items, loading }: { items: RecentItem[]; loading: bool
 						))}
 					</div>
 				) : items.length === 0 ? (
-					<p className="text-sm text-kumo-subtle">{t`No recent activity`}</p>
+					<p className="px-3 text-sm text-kumo-subtle">{t`No recent activity`}</p>
 				) : (
 					<div className="space-y-1">
 						{items.map((item) => (
@@ -360,11 +360,14 @@ function PluginWidgetCard({
 				<h2 className="px-3">{widget.title || widget.id}</h2>
 			</LayerCard.Secondary>
 			<LayerCard.Primary className="flex-1">
-				{WidgetComponent ? (
-					<WidgetComponent />
-				) : (
-					<SandboxedPluginWidget pluginId={widget.pluginId} widgetId={widget.id} />
-				)}
+				{/* px-3 aligns the widget body with the heading and the other cards' content */}
+				<div className="px-3">
+					{WidgetComponent ? (
+						<WidgetComponent />
+					) : (
+						<SandboxedPluginWidget pluginId={widget.pluginId} widgetId={widget.id} />
+					)}
+				</div>
 			</LayerCard.Primary>
 		</LayerCard>
 	);
