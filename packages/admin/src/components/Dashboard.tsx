@@ -155,11 +155,12 @@ function CollectionList({
 	const { t } = useLingui();
 
 	return (
-		<LayerCard>
+		<LayerCard className="h-full">
 			<LayerCard.Secondary>
-				<h2>{t`Content`}</h2>
+				{/* px-3 matches the row Link inset below so the heading aligns with row text */}
+				<h2 className="px-3">{t`Content`}</h2>
 			</LayerCard.Secondary>
-			<LayerCard.Primary>
+			<LayerCard.Primary className="flex-1">
 				{loading ? (
 					<div className="space-y-3">
 						{[1, 2, 3].map((i) => (
