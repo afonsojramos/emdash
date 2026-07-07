@@ -356,7 +356,8 @@ function PluginWidgetCard({
 	return (
 		<LayerCard className="h-full">
 			<LayerCard.Secondary>
-				<h2>{widget.title || widget.id}</h2>
+				{/* px-3 matches the Content/Recent Activity card headings for cross-card alignment */}
+				<h2 className="px-3">{widget.title || widget.id}</h2>
 			</LayerCard.Secondary>
 			<LayerCard.Primary className="flex-1">
 				{WidgetComponent ? (
