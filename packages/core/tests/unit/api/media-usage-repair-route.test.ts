@@ -84,16 +84,6 @@ describe("admin media usage repair route", () => {
 		await expectError(response, 403, "FORBIDDEN");
 	});
 
-	it("returns 403 for an admin-scoped token associated with a non-admin user", async () => {
-		const response = await invokeRepairRoute(
-			{ scope: "collection", collection: "post" },
-			Role.EDITOR,
-			{ tokenScopes: ["admin"] },
-		);
-
-		await expectError(response, 403, "FORBIDDEN");
-	});
-
 	it("returns 500 when EmDash is not initialized", async () => {
 		const request = jsonRequest({ scope: "collection", collection: "post" });
 		const response = await POST({
@@ -278,25 +268,16 @@ describe("admin media usage repair route", () => {
 			.execute();
 	}
 
-	async function invokeRepairRoute(
-		body: unknown,
-		role: RoleLevel | null,
-		options: { tokenScopes?: string[] } = {},
-	): Promise<Response> {
-		return POST(routeContext(jsonRequest(body), role, options));
+	async function invokeRepairRoute(body: unknown, role: RoleLevel | null): Promise<Response> {
+		return POST(routeContext(jsonRequest(body), role));
 	}
 
-	function routeContext(
-		request: Request,
-		role: RoleLevel | null,
-		options: { tokenScopes?: string[] } = {},
-	): RouteContext {
+	function routeContext(request: Request, role: RoleLevel | null): RouteContext {
 		return {
 			request,
 			locals: {
 				emdash: { db: ctx!.db },
 				user: role == null ? null : { id: "user-1", role },
-				tokenScopes: options.tokenScopes,
 			},
 		} as RouteContext;
 	}

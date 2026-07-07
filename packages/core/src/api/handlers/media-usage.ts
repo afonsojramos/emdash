@@ -37,7 +37,8 @@ export async function handleMediaUsageRepair(
 		}
 
 		return { success: true, data: toMediaUsageRepairResponse(result) };
-	} catch {
+	} catch (error) {
+		console.error("[media-usage] repair failed:", error);
 		return {
 			success: false,
 			error: {
