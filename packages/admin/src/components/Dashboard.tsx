@@ -48,9 +48,9 @@ export function Dashboard({ manifest }: DashboardProps) {
 				<QuickActions manifest={manifest} />
 			</div>
 
-			{isError ? (
-				<DashboardDataError />
-			) : (
+			{isError && <DashboardDataError />}
+
+			{(!isError || stats) && (
 				<>
 					<SummaryMetrics stats={stats} loading={isLoading} />
 
