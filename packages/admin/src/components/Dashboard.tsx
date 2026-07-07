@@ -1,3 +1,4 @@
+import { LayerCard } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import {
@@ -7,7 +8,6 @@ import {
 	CircleDashed,
 	CheckCircle,
 	PencilSimple,
-	CalendarBlank,
 	Image,
 	Users,
 } from "@phosphor-icons/react";
@@ -44,7 +44,7 @@ export function Dashboard({ manifest }: DashboardProps) {
 				<QuickActions manifest={manifest} />
 			</div>
 
-			<StatusBar stats={stats} loading={isLoading} />
+			<SummaryMetrics stats={stats} loading={isLoading} />
 
 			{/* Collections + Recent activity */}
 			<div className="grid gap-6 lg:grid-cols-2">
@@ -89,55 +89,53 @@ function QuickActions({ manifest }: { manifest: AdminManifest }) {
 	);
 }
 
-// --- Status bar ---
+// --- Summary metrics ---
 
-function StatusBar({ stats, loading }: { stats?: DashboardStats; loading: boolean }) {
+function SummaryMetrics({ stats, loading }: { stats?: DashboardStats; loading: boolean }) {
 	if (loading) {
-		return <div className="flex h-9 animate-pulse rounded-lg border bg-kumo-tint" />;
+		return (
+			<div className="grid gap-4 sm:grid-cols-3">
+				{[1, 2, 3].map((i) => (
+					<div key={i} className="h-[76px] animate-pulse rounded-lg bg-kumo-tint" />
+				))}
+			</div>
+		);
 	}
 
 	if (!stats) return null;
 
 	const totalDrafts = stats.collections.reduce((sum, c) => sum + c.draft, 0);
-	const totalScheduled = stats.collections.reduce(
-		(sum, c) => sum + (c.total - c.published - c.draft),
-		0,
-	);
 
-	const indicators = [
-		totalDrafts > 0 && {
+	const metrics: Array<{ icon: React.ElementType; label: string; value: number }> = [
+		{
 			icon: PencilSimple,
-			label: plural(totalDrafts, { one: "# draft", other: "# drafts" }),
-			className: "text-amber-700 dark:text-amber-400",
-		},
-		totalScheduled > 0 && {
-			icon: CalendarBlank,
-			label: plural(totalScheduled, { one: "# scheduled", other: "# scheduled" }),
-			className: "text-blue-600 dark:text-blue-400",
+			label: plural(totalDrafts, { one: "Draft", other: "Drafts" }),
+			value: totalDrafts,
 		},
 		{
 			icon: Image,
-			label: plural(stats.mediaCount, { one: "# media file", other: "# media files" }),
-			className: "text-kumo-subtle",
+			label: plural(stats.mediaCount, { one: "Media file", other: "Media files" }),
+			value: stats.mediaCount,
 		},
 		{
 			icon: Users,
-			label: plural(stats.userCount, { one: "# user", other: "# users" }),
-			className: "text-kumo-subtle",
+			label: plural(stats.userCount, { one: "User", other: "Users" }),
+			value: stats.userCount,
 		},
-	].filter(Boolean) as Array<{
-		icon: React.ElementType;
-		label: string;
-		className: string;
-	}>;
+	];
 
 	return (
-		<div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border bg-kumo-base px-4 py-2 text-sm">
-			{indicators.map((ind) => (
-				<span key={ind.label} className={`inline-flex items-center gap-1.5 ${ind.className}`}>
-					<ind.icon className="h-3.5 w-3.5" aria-hidden="true" />
-					{ind.label}
-				</span>
+		<div className="grid gap-4 sm:grid-cols-3">
+			{metrics.map((metric) => (
+				<LayerCard key={metric.label}>
+					<LayerCard.Secondary className="flex items-center gap-2 text-kumo-subtle">
+						<metric.icon className="h-4 w-4" aria-hidden="true" />
+						<span>{metric.label}</span>
+					</LayerCard.Secondary>
+					<LayerCard.Primary className="text-2xl font-semibold tabular-nums">
+						{metric.value}
+					</LayerCard.Primary>
+				</LayerCard>
 			))}
 		</div>
 	);
