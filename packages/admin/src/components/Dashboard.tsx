@@ -5,7 +5,6 @@ import {
 	Plus,
 	Upload,
 	ArrowRight,
-	CircleDashed,
 	CheckCircle,
 	PencilSimple,
 	Image,
@@ -237,58 +236,65 @@ function RecentActivity({ items, loading }: { items: RecentItem[]; loading: bool
 	const { t } = useLingui();
 
 	return (
-		<div className="rounded-lg border bg-kumo-base p-4 sm:p-6">
-			<h2 className="mb-4 text-lg font-semibold">{t`Recent Activity`}</h2>
-			{loading ? (
-				<div className="space-y-3">
-					{[1, 2, 3, 4, 5].map((i) => (
-						<div key={i} className="h-10 animate-pulse rounded-md bg-kumo-tint" />
-					))}
-				</div>
-			) : items.length === 0 ? (
-				<p className="text-sm text-kumo-subtle">{t`No recent activity`}</p>
-			) : (
-				<div className="space-y-1">
-					{items.map((item) => (
-						<Link
-							key={`${item.collection}-${item.id}`}
-							to="/content/$collection/$id"
-							params={{ collection: item.collection, id: item.id }}
-							className="group flex items-center justify-between gap-2 rounded-md px-3 py-2 hover:bg-kumo-tint"
-						>
-							<div className="flex min-w-0 items-center gap-2">
-								<StatusDot status={item.status} />
-								<span className="truncate font-medium">
+		<LayerCard className="h-full">
+			<LayerCard.Secondary>
+				{/* px-3 matches the row Link inset below so the heading aligns with row text */}
+				<h2 className="px-3">{t`Recent Activity`}</h2>
+			</LayerCard.Secondary>
+			<LayerCard.Primary className="flex-1">
+				{loading ? (
+					<div className="space-y-3">
+						{[1, 2, 3, 4, 5].map((i) => (
+							<div key={i} className="h-10 animate-pulse rounded-md bg-kumo-tint" />
+						))}
+					</div>
+				) : items.length === 0 ? (
+					<p className="text-sm text-kumo-subtle">{t`No recent activity`}</p>
+				) : (
+					<div className="space-y-1">
+						{items.map((item) => (
+							<Link
+								key={`${item.collection}-${item.id}`}
+								to="/content/$collection/$id"
+								params={{ collection: item.collection, id: item.id }}
+								className="group flex items-center gap-2 rounded-md px-3 py-2 hover:bg-kumo-tint"
+							>
+								<StatusBadge status={item.status} />
+								<span className="min-w-0 flex-1 truncate font-medium">
 									{item.title || item.slug || t`Untitled`}
 								</span>
 								<span className="hidden shrink-0 text-xs text-kumo-subtle sm:inline">
 									{item.collectionLabel}
 								</span>
-							</div>
-							<span className="shrink-0 text-xs text-kumo-subtle">
-								{formatRelativeTime(item.updatedAt)}
-							</span>
-						</Link>
-					))}
-				</div>
-			)}
-		</div>
+								<span className="shrink-0 text-xs text-kumo-subtle">
+									{formatRelativeTime(item.updatedAt)}
+								</span>
+							</Link>
+						))}
+					</div>
+				)}
+			</LayerCard.Primary>
+		</LayerCard>
 	);
 }
 
-function StatusDot({ status }: { status: string }) {
-	const colors: Record<string, string> = {
-		published: "text-green-500",
-		draft: "text-amber-500",
-		scheduled: "text-blue-500",
+type BadgeVariant = NonNullable<React.ComponentProps<typeof Badge>["variant"]>;
+
+function StatusBadge({ status }: { status: string }) {
+	const { t } = useLingui();
+
+	const map: Record<string, { variant: BadgeVariant; label: string }> = {
+		published: { variant: "success", label: t`Published` },
+		draft: { variant: "secondary", label: t`Draft` },
+		scheduled: { variant: "outline", label: t`Scheduled` },
+		pending: { variant: "secondary", label: t`Pending` },
+		private: { variant: "neutral", label: t`Private` },
+		archived: { variant: "outline", label: t`Archived` },
 	};
-	const Icon = status === "published" ? CheckCircle : CircleDashed;
-	return (
-		<Icon
-			className={`h-3.5 w-3.5 shrink-0 ${colors[status] ?? "text-kumo-subtle"}`}
-			aria-label={status}
-		/>
-	);
+
+	const entry = map[status] ?? { variant: "neutral", label: t`Status: ${status}` };
+
+	return <Badge variant={entry.variant}>{entry.label}</Badge>;
 }
 
 // --- Plugin widgets ---
