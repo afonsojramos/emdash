@@ -103,14 +103,35 @@ describe("acceptInviteViaOAuth", () => {
 		expect(await adapter.getUserByEmail("someone-else@example.com")).toBeNull();
 	});
 
-	it("rejects when the provider has not verified the email", async () => {
+	it("rejects with a distinct code when the provider has not verified the email", async () => {
 		const token = await invite("invitee@example.com");
 
 		await expect(
 			acceptInviteViaOAuth(adapter, "google", makeProfile({ emailVerified: false }), token),
-		).rejects.toMatchObject({ code: "invite_email_mismatch" });
+		).rejects.toMatchObject({ code: "invite_email_unverified" });
 
 		expect(await adapter.getUserByEmail("invitee@example.com")).toBeNull();
+	});
+
+	it("consumes the invite token when linking to a pre-existing account", async () => {
+		const token = await invite("invitee@example.com");
+		// A user with the invited email is created another way after the invite is
+		// issued (e.g. an admin-created user or a passkey-accept race).
+		await adapter.createUser({
+			email: "invitee@example.com",
+			name: "Invitee",
+			role: Role.AUTHOR,
+			emailVerified: true,
+		});
+
+		const user = await acceptInviteViaOAuth(adapter, "google", makeProfile(), token);
+		expect(user.email).toBe("invitee@example.com");
+		expect(await adapter.getOAuthAccount("google", "google-123")).not.toBeNull();
+
+		// Single-use: the linked-and-consumed token cannot be replayed.
+		await expect(
+			acceptInviteViaOAuth(adapter, "google", makeProfile({ id: "google-777" }), token),
+		).rejects.toMatchObject({ code: "invite_invalid" });
 	});
 
 	it("rejects an invalid or unknown invite token", async () => {

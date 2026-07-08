@@ -7,6 +7,7 @@ import { encodeBase64urlNoPadding } from "@oslojs/encoding";
 import { z } from "zod";
 
 import { completeInvite, InviteError, validateInvite } from "../invite.js";
+import { hashToken } from "../tokens.js";
 import type { AuthAdapter, User, RoleLevel } from "../types.js";
 import { github, fetchGitHubEmail } from "./providers/github.js";
 import { google } from "./providers/google.js";
@@ -152,7 +153,7 @@ export async function acceptInviteViaOAuth(
 
 	if (!profile.emailVerified) {
 		throw new OAuthError(
-			"invite_email_mismatch",
+			"invite_email_unverified",
 			"Cannot accept invite: email not verified by provider",
 		);
 	}
@@ -164,18 +165,20 @@ export async function acceptInviteViaOAuth(
 		);
 	}
 
-	// Already linked (e.g. a retried callback): return the existing user.
+	// Already linked (e.g. a retried callback): consume the invite and return.
 	const existingAccount = await adapter.getOAuthAccount(providerName, profile.id);
 	if (existingAccount) {
 		const user = await adapter.getUserById(existingAccount.userId);
 		if (!user) {
 			throw new OAuthError("user_not_found", "Linked user not found");
 		}
+		await adapter.deleteToken(hashToken(inviteToken));
 		return user;
 	}
 
 	// The invited email already belongs to a user (invite already accepted, or a
-	// pre-existing account): link the OAuth account rather than failing.
+	// pre-existing account): link the OAuth account and consume the invite rather
+	// than failing, so the single-use token cannot be replayed.
 	const existingUser = await adapter.getUserByEmail(profile.email);
 	if (existingUser) {
 		await adapter.createOAuthAccount({
@@ -183,6 +186,7 @@ export async function acceptInviteViaOAuth(
 			providerAccountId: profile.id,
 			userId: existingUser.id,
 		});
+		await adapter.deleteToken(hashToken(inviteToken));
 		return existingUser;
 	}
 
@@ -418,7 +422,8 @@ export class OAuthError extends Error {
 			| "user_not_found"
 			| "signup_not_allowed"
 			| "invite_invalid"
-			| "invite_email_mismatch",
+			| "invite_email_mismatch"
+			| "invite_email_unverified",
 		message: string,
 	) {
 		super(message);
