@@ -129,11 +129,6 @@ msgstr "{0, plural, few {# أخطاء في الوسائط} many {# خطأً في
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, few {# ملفات وسائط تم استيرادها} other {# ملف وسائط تم استيراده}}"
 
-#. placeholder {0}: stats.mediaCount
-#: packages/admin/src/components/Dashboard.tsx:123
-msgid "{0, plural, one {# media file} other {# media files}}"
-msgstr "{0, plural, few {# ملفات وسائط} other {# ملف وسائط}}"
-
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2255
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -180,15 +175,20 @@ msgstr ""
 msgid "{0, plural, one {# taxonomy created} other {# taxonomies created}}"
 msgstr ""
 
-#. placeholder {0}: stats.userCount
-#: packages/admin/src/components/Dashboard.tsx:128
-msgid "{0, plural, one {# user} other {# users}}"
-msgstr "{0, plural, few {# مستخدمين} many {# مستخدمًا} other {# مستخدم}}"
-
 #. placeholder {0}: fields.length
 #: packages/admin/src/components/ContentTypeEditor.tsx:576
 msgid "{0, plural, one {field} other {fields}}"
 msgstr "{0, plural, zero {حقول} one {حقل} two {حقلان} few {# حقول} many {# حقلًا} other {# حقل}}"
+
+#. placeholder {0}: stats.mediaCount
+#: packages/admin/src/components/Dashboard.tsx:160
+msgid "{0, plural, one {Media file} other {Media files}}"
+msgstr ""
+
+#. placeholder {0}: stats.userCount
+#: packages/admin/src/components/Dashboard.tsx:165
+msgid "{0, plural, one {User} other {Users}}"
+msgstr ""
 
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
@@ -374,13 +374,13 @@ msgstr "{total, plural, one {تم رفع الملف} few {تم رفع # ملفا
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, one {فشل الرفع} other {جميع عمليات الرفع الـ # فشلت}}"
 
-#: packages/admin/src/components/Dashboard.tsx:113
-msgid "{totalDrafts, plural, one {# draft} other {# drafts}}"
-msgstr "{totalDrafts, plural, few {# مسودات} many {# مسودةً} other {# مسودة}}"
+#: packages/admin/src/components/Dashboard.tsx:146
+msgid "{totalDrafts, plural, one {Draft} other {Drafts}}"
+msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:118
-msgid "{totalScheduled, plural, one {# scheduled} other {# scheduled}}"
-msgstr "{totalScheduled, plural, other {تم جدولة #}}"
+#: packages/admin/src/components/Dashboard.tsx:153
+msgid "{totalScheduled, plural, one {Scheduled} other {Scheduled}}"
+msgstr ""
 
 #: packages/admin/src/components/RevisionHistory.tsx:349
 msgid "{unchangedCount, plural, one {Hide # unchanged} other {Hide # unchanged}}"
@@ -981,6 +981,7 @@ msgid "archived"
 msgstr "مؤرشف"
 
 #: packages/admin/src/components/ContentList.tsx:546
+#: packages/admin/src/components/Dashboard.tsx:350
 msgid "Archived"
 msgstr ""
 
@@ -1640,7 +1641,7 @@ msgstr "متصل {0}"
 #: packages/admin/src/components/AdminCommandPalette.tsx:365
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:293
-#: packages/admin/src/components/Dashboard.tsx:164
+#: packages/admin/src/components/Dashboard.tsx:220
 #: packages/admin/src/components/PortableTextEditor.tsx:2211
 #: packages/admin/src/components/SectionEditor.tsx:194
 #: packages/admin/src/components/Sidebar.tsx:451
@@ -1768,6 +1769,10 @@ msgstr "نسخ الرابط"
 #: packages/admin/src/components/users/InviteUserModal.tsx:138
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "تعذّر النسخ تلقائيًا. يرجى تحديد الرابط أعلاه ونسخه يدويًا."
+
+#: packages/admin/src/components/Dashboard.tsx:84
+msgid "Could not load dashboard data"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:439
 msgid "Could not load image from URL"
@@ -2043,7 +2048,7 @@ msgstr "داكن"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:131
 #: packages/admin/src/components/ContentTypeList.tsx:246
-#: packages/admin/src/components/Dashboard.tsx:42
+#: packages/admin/src/components/Dashboard.tsx:50
 #: packages/admin/src/components/Sidebar.tsx:312
 #: packages/admin/src/components/Sidebar.tsx:442
 msgid "Dashboard"
@@ -2524,6 +2529,7 @@ msgstr "مسودة"
 #: packages/admin/src/components/ContentEditor.tsx:858
 #: packages/admin/src/components/ContentList.tsx:544
 #: packages/admin/src/components/ContentPickerModal.tsx:212
+#: packages/admin/src/components/Dashboard.tsx:346
 msgid "Draft"
 msgstr "مسودة"
 
@@ -2532,7 +2538,7 @@ msgid "draft, published, or archived"
 msgstr "مسودة، منشورة، أو مؤرشفة"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:71
-#: packages/admin/src/components/Dashboard.tsx:188
+#: packages/admin/src/components/Dashboard.tsx:251
 msgid "Drafts"
 msgstr "المسودات"
 
@@ -3110,7 +3116,7 @@ msgstr ""
 msgid "Failed to fetch collection"
 msgstr "فشل جلب المجموعة"
 
-#: packages/admin/src/lib/api/dashboard.ts:41
+#: packages/admin/src/lib/api/dashboard.ts:42
 msgid "Failed to fetch dashboard stats"
 msgstr ""
 
@@ -4921,7 +4927,7 @@ msgstr "لم يُعثر على كُتّاب"
 msgid "No bylines selected."
 msgstr "لم يتم اختيار أي كاتب."
 
-#: packages/admin/src/components/Dashboard.tsx:172
+#: packages/admin/src/components/Dashboard.tsx:226
 msgid "No collections configured"
 msgstr "لم يتم تهيئة مجموعات"
 
@@ -4933,7 +4939,7 @@ msgstr "لا توجد تعليقات في انتظار الإشراف."
 msgid "No comments match your search."
 msgstr "لا توجد تعليقات مطابقة لبحثك."
 
-#: packages/admin/src/components/SandboxedPluginWidget.tsx:80
+#: packages/admin/src/components/SandboxedPluginWidget.tsx:82
 msgid "No content"
 msgstr "لا يوجد محتوى"
 
@@ -5094,7 +5100,7 @@ msgstr "لا يوجد معاينة"
 msgid "No public URL available"
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:236
+#: packages/admin/src/components/Dashboard.tsx:304
 msgid "No recent activity"
 msgstr "لا يوجد نشاط حديث"
 
@@ -5435,6 +5441,7 @@ msgid "pending"
 msgstr "معلّق"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:197
+#: packages/admin/src/components/Dashboard.tsx:348
 msgid "Pending"
 msgstr "معلّق"
 
@@ -5636,6 +5643,10 @@ msgstr "لقطة الشاشة السابقة"
 msgid "Primary Navigation"
 msgstr "التنقل الرئيسي"
 
+#: packages/admin/src/components/Dashboard.tsx:349
+msgid "Private"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:176
 msgid "Provider:"
 msgstr "المزود:"
@@ -5657,7 +5668,8 @@ msgstr "منشور"
 #: packages/admin/src/components/ContentList.tsx:543
 #: packages/admin/src/components/ContentList.tsx:552
 #: packages/admin/src/components/ContentPickerModal.tsx:209
-#: packages/admin/src/components/Dashboard.tsx:187
+#: packages/admin/src/components/Dashboard.tsx:245
+#: packages/admin/src/components/Dashboard.tsx:345
 #: packages/admin/src/router.tsx:868
 msgid "Published"
 msgstr "منشور"
@@ -5732,7 +5744,7 @@ msgstr "القراءة"
 msgid "Ready"
 msgstr "جاهز"
 
-#: packages/admin/src/components/Dashboard.tsx:228
+#: packages/admin/src/components/Dashboard.tsx:298
 msgid "Recent Activity"
 msgstr "النشاط الأخير"
 
@@ -5775,6 +5787,10 @@ msgstr "مرجع"
 #: packages/admin/src/components/settings/GeneralSettings.tsx:228
 msgid "Referenced favicon unavailable."
 msgstr "أيقونة الموقع المرجعية غير متاحة."
+
+#: packages/admin/src/components/Dashboard.tsx:85
+msgid "Refresh the page or try again."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:78
 msgid "Register"
@@ -6208,6 +6224,7 @@ msgstr "مجدول"
 
 #: packages/admin/src/components/ContentEditor.tsx:859
 #: packages/admin/src/components/ContentList.tsx:545
+#: packages/admin/src/components/Dashboard.tsx:347
 #: packages/admin/src/router.tsx:926
 msgid "Scheduled"
 msgstr "مجدول"
@@ -6928,6 +6945,10 @@ msgstr "الحالة"
 msgid "Status code"
 msgstr "رمز الحالة"
 
+#: packages/admin/src/components/Dashboard.tsx:357
+msgid "Status: {status}"
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:293
 msgid "Stored per locale — each translation of a byline gets its own value."
 msgstr ""
@@ -7135,7 +7156,7 @@ msgstr "قسم مظهر"
 msgid "Theme-provided sections cannot be deleted. Edit the section to create a custom copy, then delete that."
 msgstr "لا يمكن حذف الأقسام المزودة من مظهر. قم بتعديل القسم لإنشاء نسخة مخصصة، ثم احذفها."
 
-#: packages/admin/src/components/ThemeToggle.tsx:32
+#: packages/admin/src/components/ThemeToggle.tsx:33
 msgid "Theme: {label}"
 msgstr "المظهر: {label}"
 
@@ -7300,8 +7321,8 @@ msgstr "للإختيار"
 msgid "Toggle header row"
 msgstr "تبديل صف الرأس"
 
-#: packages/admin/src/components/ThemeToggle.tsx:30
-#: packages/admin/src/components/ThemeToggle.tsx:41
+#: packages/admin/src/components/ThemeToggle.tsx:31
+#: packages/admin/src/components/ThemeToggle.tsx:42
 msgid "Toggle theme (current: {label})"
 msgstr "تبديل المظهر (الحالي: {label})"
 
@@ -7552,7 +7573,7 @@ msgstr "غير مجدول"
 msgid "Unsupported widget element type: {0}"
 msgstr "نوع عنصر واجهة غير مدعوم: {0}"
 
-#: packages/admin/src/components/Dashboard.tsx:249
+#: packages/admin/src/components/Dashboard.tsx:317
 msgid "Untitled"
 msgstr "بدون عنوان"
 
@@ -7686,7 +7707,7 @@ msgstr "رفع صورة"
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:89
+#: packages/admin/src/components/Dashboard.tsx:111
 msgid "Upload Media"
 msgstr "رفع وسائط"
 

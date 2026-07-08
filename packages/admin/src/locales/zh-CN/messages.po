@@ -125,11 +125,6 @@ msgstr "{0, plural, one {# 个媒体错误} other {# 个媒体错误}}"
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, one {# 个媒体文件已导入} other {# 个媒体文件已导入}}"
 
-#. placeholder {0}: stats.mediaCount
-#: packages/admin/src/components/Dashboard.tsx:123
-msgid "{0, plural, one {# media file} other {# media files}}"
-msgstr "{0, plural, one {# 个媒体文件} other {# 个媒体文件}}"
-
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2255
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -176,15 +171,20 @@ msgstr ""
 msgid "{0, plural, one {# taxonomy created} other {# taxonomies created}}"
 msgstr ""
 
-#. placeholder {0}: stats.userCount
-#: packages/admin/src/components/Dashboard.tsx:128
-msgid "{0, plural, one {# user} other {# users}}"
-msgstr "{0, plural, one {# 位用户} other {# 位用户}}"
-
 #. placeholder {0}: fields.length
 #: packages/admin/src/components/ContentTypeEditor.tsx:576
 msgid "{0, plural, one {field} other {fields}}"
 msgstr "{0, plural, one {# 个字段} other {# 个字段}}"
+
+#. placeholder {0}: stats.mediaCount
+#: packages/admin/src/components/Dashboard.tsx:160
+msgid "{0, plural, one {Media file} other {Media files}}"
+msgstr ""
+
+#. placeholder {0}: stats.userCount
+#: packages/admin/src/components/Dashboard.tsx:165
+msgid "{0, plural, one {User} other {Users}}"
+msgstr ""
 
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
@@ -370,13 +370,13 @@ msgstr "{total, plural, one {文件已上传} other {# 个文件已上传}}"
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, one {上传失败} other {全部 # 个上传失败}}"
 
-#: packages/admin/src/components/Dashboard.tsx:113
-msgid "{totalDrafts, plural, one {# draft} other {# drafts}}"
-msgstr "{totalDrafts, plural, one {# 篇草稿} other {# 篇草稿}}"
+#: packages/admin/src/components/Dashboard.tsx:146
+msgid "{totalDrafts, plural, one {Draft} other {Drafts}}"
+msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:118
-msgid "{totalScheduled, plural, one {# scheduled} other {# scheduled}}"
-msgstr "{totalScheduled, plural, one {# 个定时发布} other {# 个定时发布}}"
+#: packages/admin/src/components/Dashboard.tsx:153
+msgid "{totalScheduled, plural, one {Scheduled} other {Scheduled}}"
+msgstr ""
 
 #: packages/admin/src/components/RevisionHistory.tsx:349
 msgid "{unchangedCount, plural, one {Hide # unchanged} other {Hide # unchanged}}"
@@ -977,6 +977,7 @@ msgid "archived"
 msgstr "已归档"
 
 #: packages/admin/src/components/ContentList.tsx:546
+#: packages/admin/src/components/Dashboard.tsx:350
 msgid "Archived"
 msgstr "已归档"
 
@@ -1636,7 +1637,7 @@ msgstr "已连接 {0}"
 #: packages/admin/src/components/AdminCommandPalette.tsx:365
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:293
-#: packages/admin/src/components/Dashboard.tsx:164
+#: packages/admin/src/components/Dashboard.tsx:220
 #: packages/admin/src/components/PortableTextEditor.tsx:2211
 #: packages/admin/src/components/SectionEditor.tsx:194
 #: packages/admin/src/components/Sidebar.tsx:451
@@ -1764,6 +1765,10 @@ msgstr "复制 URL"
 #: packages/admin/src/components/users/InviteUserModal.tsx:138
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "无法自动复制。请选择上面的 URL 并手动复制。"
+
+#: packages/admin/src/components/Dashboard.tsx:84
+msgid "Could not load dashboard data"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:439
 msgid "Could not load image from URL"
@@ -2039,7 +2044,7 @@ msgstr "深色"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:131
 #: packages/admin/src/components/ContentTypeList.tsx:246
-#: packages/admin/src/components/Dashboard.tsx:42
+#: packages/admin/src/components/Dashboard.tsx:50
 #: packages/admin/src/components/Sidebar.tsx:312
 #: packages/admin/src/components/Sidebar.tsx:442
 msgid "Dashboard"
@@ -2520,6 +2525,7 @@ msgstr "草稿"
 #: packages/admin/src/components/ContentEditor.tsx:858
 #: packages/admin/src/components/ContentList.tsx:544
 #: packages/admin/src/components/ContentPickerModal.tsx:212
+#: packages/admin/src/components/Dashboard.tsx:346
 msgid "Draft"
 msgstr "草稿"
 
@@ -2528,7 +2534,7 @@ msgid "draft, published, or archived"
 msgstr "草稿、已发布或已归档"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:71
-#: packages/admin/src/components/Dashboard.tsx:188
+#: packages/admin/src/components/Dashboard.tsx:251
 msgid "Drafts"
 msgstr "草稿"
 
@@ -3109,7 +3115,7 @@ msgstr "获取认证模式失败"
 msgid "Failed to fetch collection"
 msgstr "获取合集失败"
 
-#: packages/admin/src/lib/api/dashboard.ts:41
+#: packages/admin/src/lib/api/dashboard.ts:42
 msgid "Failed to fetch dashboard stats"
 msgstr "获取仪表盘统计数据失败"
 
@@ -4920,7 +4926,7 @@ msgstr "未找到署名"
 msgid "No bylines selected."
 msgstr "未选择任何署名。"
 
-#: packages/admin/src/components/Dashboard.tsx:172
+#: packages/admin/src/components/Dashboard.tsx:226
 msgid "No collections configured"
 msgstr "未配置任何合集"
 
@@ -4932,7 +4938,7 @@ msgstr "暂无待审核评论。"
 msgid "No comments match your search."
 msgstr "暂无评论符合您的搜索。"
 
-#: packages/admin/src/components/SandboxedPluginWidget.tsx:80
+#: packages/admin/src/components/SandboxedPluginWidget.tsx:82
 msgid "No content"
 msgstr "无内容"
 
@@ -5093,7 +5099,7 @@ msgstr "无预览"
 msgid "No public URL available"
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:236
+#: packages/admin/src/components/Dashboard.tsx:304
 msgid "No recent activity"
 msgstr "暂无最近活动"
 
@@ -5434,6 +5440,7 @@ msgid "pending"
 msgstr "待处理"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:197
+#: packages/admin/src/components/Dashboard.tsx:348
 msgid "Pending"
 msgstr "待处理"
 
@@ -5635,6 +5642,10 @@ msgstr "上一张截图"
 msgid "Primary Navigation"
 msgstr "主导航"
 
+#: packages/admin/src/components/Dashboard.tsx:349
+msgid "Private"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:176
 msgid "Provider:"
 msgstr "提供商："
@@ -5656,7 +5667,8 @@ msgstr "已发布"
 #: packages/admin/src/components/ContentList.tsx:543
 #: packages/admin/src/components/ContentList.tsx:552
 #: packages/admin/src/components/ContentPickerModal.tsx:209
-#: packages/admin/src/components/Dashboard.tsx:187
+#: packages/admin/src/components/Dashboard.tsx:245
+#: packages/admin/src/components/Dashboard.tsx:345
 #: packages/admin/src/router.tsx:868
 msgid "Published"
 msgstr "已发布"
@@ -5731,7 +5743,7 @@ msgstr "阅读"
 msgid "Ready"
 msgstr "就绪"
 
-#: packages/admin/src/components/Dashboard.tsx:228
+#: packages/admin/src/components/Dashboard.tsx:298
 msgid "Recent Activity"
 msgstr "最近活动"
 
@@ -5774,6 +5786,10 @@ msgstr "引用"
 #: packages/admin/src/components/settings/GeneralSettings.tsx:228
 msgid "Referenced favicon unavailable."
 msgstr "引用的网站图标无法使用。"
+
+#: packages/admin/src/components/Dashboard.tsx:85
+msgid "Refresh the page or try again."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:78
 msgid "Register"
@@ -6207,6 +6223,7 @@ msgstr "已定时"
 
 #: packages/admin/src/components/ContentEditor.tsx:859
 #: packages/admin/src/components/ContentList.tsx:545
+#: packages/admin/src/components/Dashboard.tsx:347
 #: packages/admin/src/router.tsx:926
 msgid "Scheduled"
 msgstr "已定时"
@@ -6927,6 +6944,10 @@ msgstr "状态"
 msgid "Status code"
 msgstr "状态码"
 
+#: packages/admin/src/components/Dashboard.tsx:357
+msgid "Status: {status}"
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:293
 msgid "Stored per locale — each translation of a byline gets its own value."
 msgstr "按语言环境存储 — 署名的每个翻译都有各自的值。"
@@ -7134,7 +7155,7 @@ msgstr "主题区块"
 msgid "Theme-provided sections cannot be deleted. Edit the section to create a custom copy, then delete that."
 msgstr "主题提供的区块无法删除。编辑区块以创建自定义副本，然后删除该副本。"
 
-#: packages/admin/src/components/ThemeToggle.tsx:32
+#: packages/admin/src/components/ThemeToggle.tsx:33
 msgid "Theme: {label}"
 msgstr "主题：{label}"
 
@@ -7299,8 +7320,8 @@ msgstr "选择"
 msgid "Toggle header row"
 msgstr "切换表头行"
 
-#: packages/admin/src/components/ThemeToggle.tsx:30
-#: packages/admin/src/components/ThemeToggle.tsx:41
+#: packages/admin/src/components/ThemeToggle.tsx:31
+#: packages/admin/src/components/ThemeToggle.tsx:42
 msgid "Toggle theme (current: {label})"
 msgstr "切换主题（当前：{label}）"
 
@@ -7551,7 +7572,7 @@ msgstr "已取消安排"
 msgid "Unsupported widget element type: {0}"
 msgstr "不支持的小部件元素类型：{0}"
 
-#: packages/admin/src/components/Dashboard.tsx:249
+#: packages/admin/src/components/Dashboard.tsx:317
 msgid "Untitled"
 msgstr "无标题"
 
@@ -7685,7 +7706,7 @@ msgstr "上传图片"
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:89
+#: packages/admin/src/components/Dashboard.tsx:111
 msgid "Upload Media"
 msgstr "上传媒体"
 

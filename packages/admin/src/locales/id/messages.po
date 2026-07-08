@@ -125,11 +125,6 @@ msgstr "{0, plural, other {# kesalahan media}}"
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, other {# file media diimpor}}"
 
-#. placeholder {0}: stats.mediaCount
-#: packages/admin/src/components/Dashboard.tsx:123
-msgid "{0, plural, one {# media file} other {# media files}}"
-msgstr "{0, plural, other {# file media}}"
-
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2255
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -176,15 +171,20 @@ msgstr ""
 msgid "{0, plural, one {# taxonomy created} other {# taxonomies created}}"
 msgstr ""
 
-#. placeholder {0}: stats.userCount
-#: packages/admin/src/components/Dashboard.tsx:128
-msgid "{0, plural, one {# user} other {# users}}"
-msgstr "{0, plural, other {# pengguna}}"
-
 #. placeholder {0}: fields.length
 #: packages/admin/src/components/ContentTypeEditor.tsx:576
 msgid "{0, plural, one {field} other {fields}}"
 msgstr "{0} bidang"
+
+#. placeholder {0}: stats.mediaCount
+#: packages/admin/src/components/Dashboard.tsx:160
+msgid "{0, plural, one {Media file} other {Media files}}"
+msgstr ""
+
+#. placeholder {0}: stats.userCount
+#: packages/admin/src/components/Dashboard.tsx:165
+msgid "{0, plural, one {User} other {Users}}"
+msgstr ""
 
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
@@ -370,13 +370,13 @@ msgstr "{total, plural, other {# file terunggah}}"
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, other {Semua # unggahan gagal}}"
 
-#: packages/admin/src/components/Dashboard.tsx:113
-msgid "{totalDrafts, plural, one {# draft} other {# drafts}}"
-msgstr "{totalDrafts, plural, other {# draf}}"
+#: packages/admin/src/components/Dashboard.tsx:146
+msgid "{totalDrafts, plural, one {Draft} other {Drafts}}"
+msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:118
-msgid "{totalScheduled, plural, one {# scheduled} other {# scheduled}}"
-msgstr "{totalScheduled, plural, other {# terjadwal}}"
+#: packages/admin/src/components/Dashboard.tsx:153
+msgid "{totalScheduled, plural, one {Scheduled} other {Scheduled}}"
+msgstr ""
 
 #: packages/admin/src/components/RevisionHistory.tsx:349
 msgid "{unchangedCount, plural, one {Hide # unchanged} other {Hide # unchanged}}"
@@ -977,6 +977,7 @@ msgid "archived"
 msgstr "diarsipkan"
 
 #: packages/admin/src/components/ContentList.tsx:546
+#: packages/admin/src/components/Dashboard.tsx:350
 msgid "Archived"
 msgstr "Diarsipkan"
 
@@ -1636,7 +1637,7 @@ msgstr "Terhubung {0}"
 #: packages/admin/src/components/AdminCommandPalette.tsx:365
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:293
-#: packages/admin/src/components/Dashboard.tsx:164
+#: packages/admin/src/components/Dashboard.tsx:220
 #: packages/admin/src/components/PortableTextEditor.tsx:2211
 #: packages/admin/src/components/SectionEditor.tsx:194
 #: packages/admin/src/components/Sidebar.tsx:451
@@ -1764,6 +1765,10 @@ msgstr "Salin URL"
 #: packages/admin/src/components/users/InviteUserModal.tsx:138
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "Tidak dapat menyalin otomatis. Silakan pilih URL di atas dan salin secara manual."
+
+#: packages/admin/src/components/Dashboard.tsx:84
+msgid "Could not load dashboard data"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:439
 msgid "Could not load image from URL"
@@ -2039,7 +2044,7 @@ msgstr "Gelap"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:131
 #: packages/admin/src/components/ContentTypeList.tsx:246
-#: packages/admin/src/components/Dashboard.tsx:42
+#: packages/admin/src/components/Dashboard.tsx:50
 #: packages/admin/src/components/Sidebar.tsx:312
 #: packages/admin/src/components/Sidebar.tsx:442
 msgid "Dashboard"
@@ -2520,6 +2525,7 @@ msgstr "draf"
 #: packages/admin/src/components/ContentEditor.tsx:858
 #: packages/admin/src/components/ContentList.tsx:544
 #: packages/admin/src/components/ContentPickerModal.tsx:212
+#: packages/admin/src/components/Dashboard.tsx:346
 msgid "Draft"
 msgstr "Draf"
 
@@ -2528,7 +2534,7 @@ msgid "draft, published, or archived"
 msgstr "draf, dipublikasikan, atau diarsipkan"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:71
-#: packages/admin/src/components/Dashboard.tsx:188
+#: packages/admin/src/components/Dashboard.tsx:251
 msgid "Drafts"
 msgstr "Draf"
 
@@ -3109,7 +3115,7 @@ msgstr "Gagal mengambil mode autentikasi"
 msgid "Failed to fetch collection"
 msgstr "Gagal mengambil koleksi"
 
-#: packages/admin/src/lib/api/dashboard.ts:41
+#: packages/admin/src/lib/api/dashboard.ts:42
 msgid "Failed to fetch dashboard stats"
 msgstr "Gagal mengambil statistik dasbor"
 
@@ -4920,7 +4926,7 @@ msgstr "Tidak ada byline ditemukan"
 msgid "No bylines selected."
 msgstr "Tidak ada kredit penulis yang dipilih."
 
-#: packages/admin/src/components/Dashboard.tsx:172
+#: packages/admin/src/components/Dashboard.tsx:226
 msgid "No collections configured"
 msgstr "Tidak ada koleksi yang dikonfigurasi"
 
@@ -4932,7 +4938,7 @@ msgstr "Tidak ada komentar yang menunggu moderasi."
 msgid "No comments match your search."
 msgstr "Tidak ada komentar yang cocok dengan pencarian Anda."
 
-#: packages/admin/src/components/SandboxedPluginWidget.tsx:80
+#: packages/admin/src/components/SandboxedPluginWidget.tsx:82
 msgid "No content"
 msgstr "Tidak ada konten"
 
@@ -5093,7 +5099,7 @@ msgstr "Tidak ada pratinjau"
 msgid "No public URL available"
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:236
+#: packages/admin/src/components/Dashboard.tsx:304
 msgid "No recent activity"
 msgstr "Tidak ada aktivitas terbaru"
 
@@ -5434,6 +5440,7 @@ msgid "pending"
 msgstr "tertunda"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:197
+#: packages/admin/src/components/Dashboard.tsx:348
 msgid "Pending"
 msgstr "Tertunda"
 
@@ -5635,6 +5642,10 @@ msgstr "Tangkapan layar sebelumnya"
 msgid "Primary Navigation"
 msgstr "Navigasi Utama"
 
+#: packages/admin/src/components/Dashboard.tsx:349
+msgid "Private"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:176
 msgid "Provider:"
 msgstr "Penyedia:"
@@ -5656,7 +5667,8 @@ msgstr "dipublikasikan"
 #: packages/admin/src/components/ContentList.tsx:543
 #: packages/admin/src/components/ContentList.tsx:552
 #: packages/admin/src/components/ContentPickerModal.tsx:209
-#: packages/admin/src/components/Dashboard.tsx:187
+#: packages/admin/src/components/Dashboard.tsx:245
+#: packages/admin/src/components/Dashboard.tsx:345
 #: packages/admin/src/router.tsx:868
 msgid "Published"
 msgstr "Dipublikasikan"
@@ -5731,7 +5743,7 @@ msgstr "Membaca"
 msgid "Ready"
 msgstr "Siap"
 
-#: packages/admin/src/components/Dashboard.tsx:228
+#: packages/admin/src/components/Dashboard.tsx:298
 msgid "Recent Activity"
 msgstr "Aktivitas Terbaru"
 
@@ -5774,6 +5786,10 @@ msgstr "Referensi"
 #: packages/admin/src/components/settings/GeneralSettings.tsx:228
 msgid "Referenced favicon unavailable."
 msgstr "Favicon yang dirujuk tidak tersedia."
+
+#: packages/admin/src/components/Dashboard.tsx:85
+msgid "Refresh the page or try again."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:78
 msgid "Register"
@@ -6207,6 +6223,7 @@ msgstr "terjadwal"
 
 #: packages/admin/src/components/ContentEditor.tsx:859
 #: packages/admin/src/components/ContentList.tsx:545
+#: packages/admin/src/components/Dashboard.tsx:347
 #: packages/admin/src/router.tsx:926
 msgid "Scheduled"
 msgstr "Terjadwal"
@@ -6927,6 +6944,10 @@ msgstr "Status"
 msgid "Status code"
 msgstr "Kode status"
 
+#: packages/admin/src/components/Dashboard.tsx:357
+msgid "Status: {status}"
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:293
 msgid "Stored per locale — each translation of a byline gets its own value."
 msgstr "Disimpan per lokal - setiap terjemahan byline memiliki nilainya sendiri."
@@ -7134,7 +7155,7 @@ msgstr "Bagian Tema"
 msgid "Theme-provided sections cannot be deleted. Edit the section to create a custom copy, then delete that."
 msgstr "Bagian yang disediakan tema tidak dapat dihapus. Edit bagian untuk membuat salinan kustom, lalu hapus salinan tersebut."
 
-#: packages/admin/src/components/ThemeToggle.tsx:32
+#: packages/admin/src/components/ThemeToggle.tsx:33
 msgid "Theme: {label}"
 msgstr "Tema: {label}"
 
@@ -7299,8 +7320,8 @@ msgstr "untuk memilih"
 msgid "Toggle header row"
 msgstr "Alihkan baris header"
 
-#: packages/admin/src/components/ThemeToggle.tsx:30
-#: packages/admin/src/components/ThemeToggle.tsx:41
+#: packages/admin/src/components/ThemeToggle.tsx:31
+#: packages/admin/src/components/ThemeToggle.tsx:42
 msgid "Toggle theme (current: {label})"
 msgstr "Ganti tema (saat ini: {label})"
 
@@ -7551,7 +7572,7 @@ msgstr "Tidak dijadwalkan"
 msgid "Unsupported widget element type: {0}"
 msgstr "Tipe elemen widget tidak didukung: {0}"
 
-#: packages/admin/src/components/Dashboard.tsx:249
+#: packages/admin/src/components/Dashboard.tsx:317
 msgid "Untitled"
 msgstr "Tanpa Judul"
 
@@ -7685,7 +7706,7 @@ msgstr "Unggah Gambar"
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:89
+#: packages/admin/src/components/Dashboard.tsx:111
 msgid "Upload Media"
 msgstr "Unggah Media"
 

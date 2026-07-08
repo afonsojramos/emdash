@@ -125,11 +125,6 @@ msgstr "{0, plural, one {#개 미디어 오류} other {#개 미디어 오류}}"
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, one {#개 미디어 파일 가져옴} other {#개 미디어 파일 가져옴}}"
 
-#. placeholder {0}: stats.mediaCount
-#: packages/admin/src/components/Dashboard.tsx:123
-msgid "{0, plural, one {# media file} other {# media files}}"
-msgstr "{0, plural, one {#개 미디어 파일} other {#개 미디어 파일}}"
-
 #. placeholder {0}: result.menus.created
 #: packages/admin/src/components/WordPressImport.tsx:2255
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
@@ -176,14 +171,19 @@ msgstr ""
 msgid "{0, plural, one {# taxonomy created} other {# taxonomies created}}"
 msgstr ""
 
-#. placeholder {0}: stats.userCount
-#: packages/admin/src/components/Dashboard.tsx:128
-msgid "{0, plural, one {# user} other {# users}}"
-msgstr "{0, plural, one {#명 사용자} other {#명 사용자}}"
-
 #. placeholder {0}: fields.length
 #: packages/admin/src/components/ContentTypeEditor.tsx:576
 msgid "{0, plural, one {field} other {fields}}"
+msgstr ""
+
+#. placeholder {0}: stats.mediaCount
+#: packages/admin/src/components/Dashboard.tsx:160
+msgid "{0, plural, one {Media file} other {Media files}}"
+msgstr ""
+
+#. placeholder {0}: stats.userCount
+#: packages/admin/src/components/Dashboard.tsx:165
+msgid "{0, plural, one {User} other {Users}}"
 msgstr ""
 
 #. placeholder {0}: envLabel(m.key)
@@ -370,13 +370,13 @@ msgstr "{total, plural, one {파일 업로드 완료} other {파일 #개 업로�
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, one {업로드 실패} other {업로드 #개 모두 실패}}"
 
-#: packages/admin/src/components/Dashboard.tsx:113
-msgid "{totalDrafts, plural, one {# draft} other {# drafts}}"
-msgstr "{totalDrafts, plural, one {초안 #개} other {초안 #개}}"
+#: packages/admin/src/components/Dashboard.tsx:146
+msgid "{totalDrafts, plural, one {Draft} other {Drafts}}"
+msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:118
-msgid "{totalScheduled, plural, one {# scheduled} other {# scheduled}}"
-msgstr "{totalScheduled, plural, one {예약 #개} other {예약 #개}}"
+#: packages/admin/src/components/Dashboard.tsx:153
+msgid "{totalScheduled, plural, one {Scheduled} other {Scheduled}}"
+msgstr ""
 
 #: packages/admin/src/components/RevisionHistory.tsx:349
 msgid "{unchangedCount, plural, one {Hide # unchanged} other {Hide # unchanged}}"
@@ -977,6 +977,7 @@ msgid "archived"
 msgstr "보관된"
 
 #: packages/admin/src/components/ContentList.tsx:546
+#: packages/admin/src/components/Dashboard.tsx:350
 msgid "Archived"
 msgstr ""
 
@@ -1636,7 +1637,7 @@ msgstr "연결됨 {0}"
 #: packages/admin/src/components/AdminCommandPalette.tsx:365
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:293
-#: packages/admin/src/components/Dashboard.tsx:164
+#: packages/admin/src/components/Dashboard.tsx:220
 #: packages/admin/src/components/PortableTextEditor.tsx:2211
 #: packages/admin/src/components/SectionEditor.tsx:194
 #: packages/admin/src/components/Sidebar.tsx:451
@@ -1764,6 +1765,10 @@ msgstr ""
 #: packages/admin/src/components/users/InviteUserModal.tsx:138
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "자동으로 복사할 수 없습니다. 위의 URL을 선택하고 수동으로 복사하세요."
+
+#: packages/admin/src/components/Dashboard.tsx:84
+msgid "Could not load dashboard data"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:439
 msgid "Could not load image from URL"
@@ -2039,7 +2044,7 @@ msgstr "어두운 테마"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:131
 #: packages/admin/src/components/ContentTypeList.tsx:246
-#: packages/admin/src/components/Dashboard.tsx:42
+#: packages/admin/src/components/Dashboard.tsx:50
 #: packages/admin/src/components/Sidebar.tsx:312
 #: packages/admin/src/components/Sidebar.tsx:442
 msgid "Dashboard"
@@ -2520,6 +2525,7 @@ msgstr "초안"
 #: packages/admin/src/components/ContentEditor.tsx:858
 #: packages/admin/src/components/ContentList.tsx:544
 #: packages/admin/src/components/ContentPickerModal.tsx:212
+#: packages/admin/src/components/Dashboard.tsx:346
 msgid "Draft"
 msgstr "초안"
 
@@ -2528,7 +2534,7 @@ msgid "draft, published, or archived"
 msgstr "초안, 게시 또는 보관"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:71
-#: packages/admin/src/components/Dashboard.tsx:188
+#: packages/admin/src/components/Dashboard.tsx:251
 msgid "Drafts"
 msgstr "초안"
 
@@ -3106,7 +3112,7 @@ msgstr ""
 msgid "Failed to fetch collection"
 msgstr ""
 
-#: packages/admin/src/lib/api/dashboard.ts:41
+#: packages/admin/src/lib/api/dashboard.ts:42
 msgid "Failed to fetch dashboard stats"
 msgstr ""
 
@@ -4917,7 +4923,7 @@ msgstr ""
 msgid "No bylines selected."
 msgstr "선택된 작성자가 없습니다."
 
-#: packages/admin/src/components/Dashboard.tsx:172
+#: packages/admin/src/components/Dashboard.tsx:226
 msgid "No collections configured"
 msgstr "구성된 컬렉션이 없습니다."
 
@@ -4929,7 +4935,7 @@ msgstr "검토를 기다리는 댓글이 없습니다."
 msgid "No comments match your search."
 msgstr "검색어와 일치하는 댓글이 없습니다."
 
-#: packages/admin/src/components/SandboxedPluginWidget.tsx:80
+#: packages/admin/src/components/SandboxedPluginWidget.tsx:82
 msgid "No content"
 msgstr ""
 
@@ -5090,7 +5096,7 @@ msgstr "미리보기 없음"
 msgid "No public URL available"
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:236
+#: packages/admin/src/components/Dashboard.tsx:304
 msgid "No recent activity"
 msgstr "최근 활동 없음"
 
@@ -5428,6 +5434,7 @@ msgid "pending"
 msgstr "보류 중"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:197
+#: packages/admin/src/components/Dashboard.tsx:348
 msgid "Pending"
 msgstr "보류 중"
 
@@ -5629,6 +5636,10 @@ msgstr "이전 스크린샷"
 msgid "Primary Navigation"
 msgstr "기본 탐색"
 
+#: packages/admin/src/components/Dashboard.tsx:349
+msgid "Private"
+msgstr ""
+
 #: packages/admin/src/components/settings/EmailSettings.tsx:176
 msgid "Provider:"
 msgstr "공급자:"
@@ -5650,7 +5661,8 @@ msgstr "게시됨"
 #: packages/admin/src/components/ContentList.tsx:543
 #: packages/admin/src/components/ContentList.tsx:552
 #: packages/admin/src/components/ContentPickerModal.tsx:209
-#: packages/admin/src/components/Dashboard.tsx:187
+#: packages/admin/src/components/Dashboard.tsx:245
+#: packages/admin/src/components/Dashboard.tsx:345
 #: packages/admin/src/router.tsx:868
 msgid "Published"
 msgstr "게시됨"
@@ -5725,7 +5737,7 @@ msgstr "읽기 설정"
 msgid "Ready"
 msgstr "준비 완료"
 
-#: packages/admin/src/components/Dashboard.tsx:228
+#: packages/admin/src/components/Dashboard.tsx:298
 msgid "Recent Activity"
 msgstr "최근 활동"
 
@@ -5767,6 +5779,10 @@ msgstr "참조"
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:228
 msgid "Referenced favicon unavailable."
+msgstr ""
+
+#: packages/admin/src/components/Dashboard.tsx:85
+msgid "Refresh the page or try again."
 msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:78
@@ -6201,6 +6217,7 @@ msgstr "예약됨"
 
 #: packages/admin/src/components/ContentEditor.tsx:859
 #: packages/admin/src/components/ContentList.tsx:545
+#: packages/admin/src/components/Dashboard.tsx:347
 #: packages/admin/src/router.tsx:926
 msgid "Scheduled"
 msgstr "예약됨"
@@ -6921,6 +6938,10 @@ msgstr "상태"
 msgid "Status code"
 msgstr "상태 코드"
 
+#: packages/admin/src/components/Dashboard.tsx:357
+msgid "Status: {status}"
+msgstr ""
+
 #: packages/admin/src/components/BylineFieldEditor.tsx:293
 msgid "Stored per locale — each translation of a byline gets its own value."
 msgstr ""
@@ -7128,7 +7149,7 @@ msgstr "테마 섹션"
 msgid "Theme-provided sections cannot be deleted. Edit the section to create a custom copy, then delete that."
 msgstr "테마가 제공되는 섹션은 삭제할 수 없습니다. 섹션을 편집하여 사용자 지정 복사본을 만든 다음 삭제하세요."
 
-#: packages/admin/src/components/ThemeToggle.tsx:32
+#: packages/admin/src/components/ThemeToggle.tsx:33
 msgid "Theme: {label}"
 msgstr "테마: {label}"
 
@@ -7293,8 +7314,8 @@ msgstr "선택"
 msgid "Toggle header row"
 msgstr ""
 
-#: packages/admin/src/components/ThemeToggle.tsx:30
-#: packages/admin/src/components/ThemeToggle.tsx:41
+#: packages/admin/src/components/ThemeToggle.tsx:31
+#: packages/admin/src/components/ThemeToggle.tsx:42
 msgid "Toggle theme (current: {label})"
 msgstr "테마 전환(현재: {label})"
 
@@ -7545,7 +7566,7 @@ msgstr ""
 msgid "Unsupported widget element type: {0}"
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:249
+#: packages/admin/src/components/Dashboard.tsx:317
 msgid "Untitled"
 msgstr "제목 없음"
 
@@ -7679,7 +7700,7 @@ msgstr "이미지 업로드"
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:89
+#: packages/admin/src/components/Dashboard.tsx:111
 msgid "Upload Media"
 msgstr "미디어 업로드"
 
