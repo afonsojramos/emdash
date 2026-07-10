@@ -301,7 +301,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 อักขระ"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:255
+#: packages/admin/src/lib/api/marketplace.ts:256
 msgid "{base} to: {0}"
 msgstr "{base} เป็น: {0}"
 
@@ -557,8 +557,8 @@ msgstr ""
 msgid "Access Denied"
 msgstr "การเข้าถึงถูกปฏิเสธ"
 
-#: packages/admin/src/lib/api/marketplace.ts:224
-#: packages/admin/src/lib/api/marketplace.ts:232
+#: packages/admin/src/lib/api/marketplace.ts:225
+#: packages/admin/src/lib/api/marketplace.ts:233
 msgid "Access your media library"
 msgstr "เข้าถึงไลบรารีมีเดียของคุณ"
 
@@ -1969,7 +1969,7 @@ msgid "Create your passkey"
 msgstr "สร้าง Passkey ของคุณ"
 
 #: packages/admin/src/lib/api/marketplace.ts:223
-#: packages/admin/src/lib/api/marketplace.ts:231
+#: packages/admin/src/lib/api/marketplace.ts:232
 msgid "Create, update, and delete content"
 msgstr "สร้าง อัปเดต และลบเนื้อหา"
 
@@ -4463,13 +4463,13 @@ msgstr "ใช้ได้เฉพาะตัวอักษรพิมพ์
 msgid "Main Sidebar"
 msgstr "แถบด้านข้างหลัก"
 
-#: packages/admin/src/lib/api/marketplace.ts:227
-#: packages/admin/src/lib/api/marketplace.ts:235
+#: packages/admin/src/lib/api/marketplace.ts:228
+#: packages/admin/src/lib/api/marketplace.ts:236
 msgid "Make network requests"
 msgstr "ส่งคำขอเครือข่าย"
 
-#: packages/admin/src/lib/api/marketplace.ts:228
-#: packages/admin/src/lib/api/marketplace.ts:236
+#: packages/admin/src/lib/api/marketplace.ts:229
+#: packages/admin/src/lib/api/marketplace.ts:237
 msgid "Make network requests to any host (unrestricted)"
 msgstr "ส่งคำขอเครือข่ายไปยังโฮสต์ใดก็ได้ (ไม่จำกัด)"
 
@@ -5775,15 +5775,19 @@ msgstr "อ่านไฟล์มีเดีย"
 msgid "Read site settings"
 msgstr "อ่านการตั้งค่าเว็บไซต์"
 
-#: packages/admin/src/lib/api/marketplace.ts:226
-#: packages/admin/src/lib/api/marketplace.ts:234
+#: packages/admin/src/lib/api/marketplace.ts:227
+#: packages/admin/src/lib/api/marketplace.ts:235
 msgid "Read user accounts"
 msgstr "อ่านบัญชีผู้ใช้"
 
 #: packages/admin/src/lib/api/marketplace.ts:222
-#: packages/admin/src/lib/api/marketplace.ts:230
+#: packages/admin/src/lib/api/marketplace.ts:231
 msgid "Read your content"
 msgstr "อ่านเนื้อหาของคุณ"
+
+#: packages/admin/src/lib/api/marketplace.ts:224
+msgid "Read your taxonomies and terms"
+msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:269
 msgid "Reading"
@@ -7729,8 +7733,8 @@ msgstr "อัปโหลดรูปภาพเพื่อเริ่มต
 msgid "Upload and delete media"
 msgstr "อัปโหลดและลบมีเดีย"
 
-#: packages/admin/src/lib/api/marketplace.ts:225
-#: packages/admin/src/lib/api/marketplace.ts:233
+#: packages/admin/src/lib/api/marketplace.ts:226
+#: packages/admin/src/lib/api/marketplace.ts:234
 msgid "Upload and manage media"
 msgstr "อัปโหลดและจัดการมีเดีย"
 

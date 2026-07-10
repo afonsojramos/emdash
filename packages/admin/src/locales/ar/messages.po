@@ -305,7 +305,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 حرف"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:255
+#: packages/admin/src/lib/api/marketplace.ts:256
 msgid "{base} to: {0}"
 msgstr "{base} إلى: {0}"
 
@@ -561,8 +561,8 @@ msgstr ""
 msgid "Access Denied"
 msgstr "الوصول مرفوض"
 
-#: packages/admin/src/lib/api/marketplace.ts:224
-#: packages/admin/src/lib/api/marketplace.ts:232
+#: packages/admin/src/lib/api/marketplace.ts:225
+#: packages/admin/src/lib/api/marketplace.ts:233
 msgid "Access your media library"
 msgstr "الوصول إلى مكتبة الوسائط"
 
@@ -1973,7 +1973,7 @@ msgid "Create your passkey"
 msgstr "إنشاء مفتاح مرور خاص بك"
 
 #: packages/admin/src/lib/api/marketplace.ts:223
-#: packages/admin/src/lib/api/marketplace.ts:231
+#: packages/admin/src/lib/api/marketplace.ts:232
 msgid "Create, update, and delete content"
 msgstr "إنشاء المحتوى وتعديله وحذفه"
 
@@ -4467,13 +4467,13 @@ msgstr "أحرف صغيرة وأرقام وشرطات سفلية فقط، تبد
 msgid "Main Sidebar"
 msgstr "الشريط الجانبي الرئيسي"
 
-#: packages/admin/src/lib/api/marketplace.ts:227
-#: packages/admin/src/lib/api/marketplace.ts:235
+#: packages/admin/src/lib/api/marketplace.ts:228
+#: packages/admin/src/lib/api/marketplace.ts:236
 msgid "Make network requests"
 msgstr "إجراء طلبات الشبكة"
 
-#: packages/admin/src/lib/api/marketplace.ts:228
-#: packages/admin/src/lib/api/marketplace.ts:236
+#: packages/admin/src/lib/api/marketplace.ts:229
+#: packages/admin/src/lib/api/marketplace.ts:237
 msgid "Make network requests to any host (unrestricted)"
 msgstr "إجراء طلبات الشبكة لأي مضيف (بدون قيود)"
 
@@ -5779,15 +5779,19 @@ msgstr "قراءة ملفات الوسائط"
 msgid "Read site settings"
 msgstr "قراءة إعدادات الموقع"
 
-#: packages/admin/src/lib/api/marketplace.ts:226
-#: packages/admin/src/lib/api/marketplace.ts:234
+#: packages/admin/src/lib/api/marketplace.ts:227
+#: packages/admin/src/lib/api/marketplace.ts:235
 msgid "Read user accounts"
 msgstr "قراءة حسابات المستخدمين"
 
 #: packages/admin/src/lib/api/marketplace.ts:222
-#: packages/admin/src/lib/api/marketplace.ts:230
+#: packages/admin/src/lib/api/marketplace.ts:231
 msgid "Read your content"
 msgstr "قراءة المحتوى"
+
+#: packages/admin/src/lib/api/marketplace.ts:224
+msgid "Read your taxonomies and terms"
+msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:269
 msgid "Reading"
@@ -7733,8 +7737,8 @@ msgstr "ارفع صورة للبدء"
 msgid "Upload and delete media"
 msgstr "رفع وحذف الوسائط"
 
-#: packages/admin/src/lib/api/marketplace.ts:225
-#: packages/admin/src/lib/api/marketplace.ts:233
+#: packages/admin/src/lib/api/marketplace.ts:226
+#: packages/admin/src/lib/api/marketplace.ts:234
 msgid "Upload and manage media"
 msgstr "رفع الوسائط وإدارتها"
 

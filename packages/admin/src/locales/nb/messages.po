@@ -301,7 +301,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 tegn"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:255
+#: packages/admin/src/lib/api/marketplace.ts:256
 msgid "{base} to: {0}"
 msgstr "{base} til: {0}"
 
@@ -557,8 +557,8 @@ msgstr "Tilgang nektet"
 msgid "Access Denied"
 msgstr "Tilgang nektet"
 
-#: packages/admin/src/lib/api/marketplace.ts:224
-#: packages/admin/src/lib/api/marketplace.ts:232
+#: packages/admin/src/lib/api/marketplace.ts:225
+#: packages/admin/src/lib/api/marketplace.ts:233
 msgid "Access your media library"
 msgstr "Få tilgang til mediebiblioteket ditt"
 
@@ -1969,7 +1969,7 @@ msgid "Create your passkey"
 msgstr "Opprett passnøkkelen din"
 
 #: packages/admin/src/lib/api/marketplace.ts:223
-#: packages/admin/src/lib/api/marketplace.ts:231
+#: packages/admin/src/lib/api/marketplace.ts:232
 msgid "Create, update, and delete content"
 msgstr "Opprett, oppdater og slett innhold"
 
@@ -4466,13 +4466,13 @@ msgstr "Kun små bokstaver, tall og understreker, og må starte med en bokstav"
 msgid "Main Sidebar"
 msgstr "Hovedsidefelt"
 
-#: packages/admin/src/lib/api/marketplace.ts:227
-#: packages/admin/src/lib/api/marketplace.ts:235
+#: packages/admin/src/lib/api/marketplace.ts:228
+#: packages/admin/src/lib/api/marketplace.ts:236
 msgid "Make network requests"
 msgstr "Send nettverksforespørsler"
 
-#: packages/admin/src/lib/api/marketplace.ts:228
-#: packages/admin/src/lib/api/marketplace.ts:236
+#: packages/admin/src/lib/api/marketplace.ts:229
+#: packages/admin/src/lib/api/marketplace.ts:237
 msgid "Make network requests to any host (unrestricted)"
 msgstr "Send nettverksforespørsler til alle verter (ubegrenset)"
 
@@ -5778,15 +5778,19 @@ msgstr "Les mediefiler"
 msgid "Read site settings"
 msgstr "Les nettstedsinnstillinger"
 
-#: packages/admin/src/lib/api/marketplace.ts:226
-#: packages/admin/src/lib/api/marketplace.ts:234
+#: packages/admin/src/lib/api/marketplace.ts:227
+#: packages/admin/src/lib/api/marketplace.ts:235
 msgid "Read user accounts"
 msgstr "Les brukerkontoer"
 
 #: packages/admin/src/lib/api/marketplace.ts:222
-#: packages/admin/src/lib/api/marketplace.ts:230
+#: packages/admin/src/lib/api/marketplace.ts:231
 msgid "Read your content"
 msgstr "Les innholdet ditt"
+
+#: packages/admin/src/lib/api/marketplace.ts:224
+msgid "Read your taxonomies and terms"
+msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:269
 msgid "Reading"
@@ -7732,8 +7736,8 @@ msgstr "Last opp et bilde for å komme i gang"
 msgid "Upload and delete media"
 msgstr "Last opp og slett medier"
 
-#: packages/admin/src/lib/api/marketplace.ts:225
-#: packages/admin/src/lib/api/marketplace.ts:233
+#: packages/admin/src/lib/api/marketplace.ts:226
+#: packages/admin/src/lib/api/marketplace.ts:234
 msgid "Upload and manage media"
 msgstr "Last opp og administrer medier"
 

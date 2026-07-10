@@ -301,7 +301,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 Zeichen"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:255
+#: packages/admin/src/lib/api/marketplace.ts:256
 msgid "{base} to: {0}"
 msgstr "{base} zu: {0}"
 
@@ -557,8 +557,8 @@ msgstr ""
 msgid "Access Denied"
 msgstr "Zugriff verweigert"
 
-#: packages/admin/src/lib/api/marketplace.ts:224
-#: packages/admin/src/lib/api/marketplace.ts:232
+#: packages/admin/src/lib/api/marketplace.ts:225
+#: packages/admin/src/lib/api/marketplace.ts:233
 msgid "Access your media library"
 msgstr "Auf Medienbibliothek zugreifen"
 
@@ -1969,7 +1969,7 @@ msgid "Create your passkey"
 msgstr "Erstelle deinen Passkey"
 
 #: packages/admin/src/lib/api/marketplace.ts:223
-#: packages/admin/src/lib/api/marketplace.ts:231
+#: packages/admin/src/lib/api/marketplace.ts:232
 msgid "Create, update, and delete content"
 msgstr "Erstelle, aktualisiere und entferne Inhalte"
 
@@ -4463,13 +4463,13 @@ msgstr "Nur Kleinbuchstaben, Zahlen und Unterstriche, beginnend mit einem Buchst
 msgid "Main Sidebar"
 msgstr "Primäre Seitenleiste"
 
-#: packages/admin/src/lib/api/marketplace.ts:227
-#: packages/admin/src/lib/api/marketplace.ts:235
+#: packages/admin/src/lib/api/marketplace.ts:228
+#: packages/admin/src/lib/api/marketplace.ts:236
 msgid "Make network requests"
 msgstr "Netzwerkanfragen senden"
 
-#: packages/admin/src/lib/api/marketplace.ts:228
-#: packages/admin/src/lib/api/marketplace.ts:236
+#: packages/admin/src/lib/api/marketplace.ts:229
+#: packages/admin/src/lib/api/marketplace.ts:237
 msgid "Make network requests to any host (unrestricted)"
 msgstr "Netzwerkanfragen an beliebige Hosts senden (uneingeschränkt)"
 
@@ -5775,15 +5775,19 @@ msgstr "Mediendateien lesen"
 msgid "Read site settings"
 msgstr "Webseiten-Einstellungen lesen"
 
-#: packages/admin/src/lib/api/marketplace.ts:226
-#: packages/admin/src/lib/api/marketplace.ts:234
+#: packages/admin/src/lib/api/marketplace.ts:227
+#: packages/admin/src/lib/api/marketplace.ts:235
 msgid "Read user accounts"
 msgstr "Benutzerkonten lesen"
 
 #: packages/admin/src/lib/api/marketplace.ts:222
-#: packages/admin/src/lib/api/marketplace.ts:230
+#: packages/admin/src/lib/api/marketplace.ts:231
 msgid "Read your content"
 msgstr "Deine Inhalte lesen"
+
+#: packages/admin/src/lib/api/marketplace.ts:224
+msgid "Read your taxonomies and terms"
+msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:269
 msgid "Reading"
@@ -7729,8 +7733,8 @@ msgstr "Lade ein Bild hoch, um zu beginnen"
 msgid "Upload and delete media"
 msgstr "Mediendateien hochladen und entfernen"
 
-#: packages/admin/src/lib/api/marketplace.ts:225
-#: packages/admin/src/lib/api/marketplace.ts:233
+#: packages/admin/src/lib/api/marketplace.ts:226
+#: packages/admin/src/lib/api/marketplace.ts:234
 msgid "Upload and manage media"
 msgstr "Medien hochladen und verwalten"
 

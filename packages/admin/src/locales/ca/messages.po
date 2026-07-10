@@ -301,7 +301,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 caràcters"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:255
+#: packages/admin/src/lib/api/marketplace.ts:256
 msgid "{base} to: {0}"
 msgstr "{base} a: {0}"
 
@@ -557,8 +557,8 @@ msgstr "Accés denegat"
 msgid "Access Denied"
 msgstr "Accés denegat"
 
-#: packages/admin/src/lib/api/marketplace.ts:224
-#: packages/admin/src/lib/api/marketplace.ts:232
+#: packages/admin/src/lib/api/marketplace.ts:225
+#: packages/admin/src/lib/api/marketplace.ts:233
 msgid "Access your media library"
 msgstr "Accedeix a la teva biblioteca multimèdia"
 
@@ -1969,7 +1969,7 @@ msgid "Create your passkey"
 msgstr "Crea la teva clau d'accés"
 
 #: packages/admin/src/lib/api/marketplace.ts:223
-#: packages/admin/src/lib/api/marketplace.ts:231
+#: packages/admin/src/lib/api/marketplace.ts:232
 msgid "Create, update, and delete content"
 msgstr "Crea, actualitza i elimina contingut"
 
@@ -4466,13 +4466,13 @@ msgstr "Només lletres minúscules, números i guions baixos, començant per una
 msgid "Main Sidebar"
 msgstr "Barra lateral principal"
 
-#: packages/admin/src/lib/api/marketplace.ts:227
-#: packages/admin/src/lib/api/marketplace.ts:235
+#: packages/admin/src/lib/api/marketplace.ts:228
+#: packages/admin/src/lib/api/marketplace.ts:236
 msgid "Make network requests"
 msgstr "Fes sol·licituds de xarxa"
 
-#: packages/admin/src/lib/api/marketplace.ts:228
-#: packages/admin/src/lib/api/marketplace.ts:236
+#: packages/admin/src/lib/api/marketplace.ts:229
+#: packages/admin/src/lib/api/marketplace.ts:237
 msgid "Make network requests to any host (unrestricted)"
 msgstr "Fes sol·licituds de xarxa a qualsevol amfitrió (sense restriccions)"
 
@@ -5778,15 +5778,19 @@ msgstr "Llegeix els fitxers multimèdia"
 msgid "Read site settings"
 msgstr "Llegeix la configuració del lloc"
 
-#: packages/admin/src/lib/api/marketplace.ts:226
-#: packages/admin/src/lib/api/marketplace.ts:234
+#: packages/admin/src/lib/api/marketplace.ts:227
+#: packages/admin/src/lib/api/marketplace.ts:235
 msgid "Read user accounts"
 msgstr "Llegeix els comptes d'usuari"
 
 #: packages/admin/src/lib/api/marketplace.ts:222
-#: packages/admin/src/lib/api/marketplace.ts:230
+#: packages/admin/src/lib/api/marketplace.ts:231
 msgid "Read your content"
 msgstr "Llegeix el teu contingut"
+
+#: packages/admin/src/lib/api/marketplace.ts:224
+msgid "Read your taxonomies and terms"
+msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:269
 msgid "Reading"
@@ -7732,8 +7736,8 @@ msgstr "Puja una imatge per començar"
 msgid "Upload and delete media"
 msgstr "Puja i elimina fitxers multimèdia"
 
-#: packages/admin/src/lib/api/marketplace.ts:225
-#: packages/admin/src/lib/api/marketplace.ts:233
+#: packages/admin/src/lib/api/marketplace.ts:226
+#: packages/admin/src/lib/api/marketplace.ts:234
 msgid "Upload and manage media"
 msgstr "Puja i gestiona fitxers multimèdia"
 
