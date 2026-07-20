@@ -760,12 +760,12 @@ msgid "admin"
 msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:95
-#: packages/admin/src/components/Sidebar.tsx:473
+#: packages/admin/src/components/Sidebar.tsx:491
 #: packages/admin/src/components/users/roleDefinitions.ts:42
 msgid "Admin"
 msgstr "Admin"
 
-#: packages/admin/src/components/Sidebar.tsx:419
+#: packages/admin/src/components/Sidebar.tsx:437
 msgid "Admin navigation"
 msgstr "Nawigacja panelu"
 
@@ -1291,12 +1291,12 @@ msgstr "Lista punktowana"
 msgid "Byline schema"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:347
+#: packages/admin/src/components/Sidebar.tsx:370
 msgid "Byline Schema"
 msgstr ""
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:537
-#: packages/admin/src/components/Sidebar.tsx:342
+#: packages/admin/src/components/Sidebar.tsx:365
 #: packages/admin/src/routes/bylines.tsx:376
 msgid "Bylines"
 msgstr "Autorzy"
@@ -1411,7 +1411,7 @@ msgstr "Podpis"
 msgid "Captions / Subtitles"
 msgstr ""
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:193
+#: packages/admin/src/components/AdminCommandPalette.tsx:199
 #: packages/admin/src/components/Widgets.tsx:133
 msgid "Categories"
 msgstr "Kategorie"
@@ -1656,7 +1656,7 @@ msgstr "Szczegóły komentarza"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:146
 #: packages/admin/src/components/ContentTypeEditor.tsx:485
-#: packages/admin/src/components/Sidebar.tsx:326
+#: packages/admin/src/components/Sidebar.tsx:349
 msgid "Comments"
 msgstr "Komentarze"
 
@@ -1707,13 +1707,13 @@ msgstr "Połączono {0}"
 msgid "content"
 msgstr ""
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:365
+#: packages/admin/src/components/AdminCommandPalette.tsx:377
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:293
 #: packages/admin/src/components/Dashboard.tsx:220
 #: packages/admin/src/components/PortableTextEditor.tsx:2326
 #: packages/admin/src/components/SectionEditor.tsx:193
-#: packages/admin/src/components/Sidebar.tsx:455
+#: packages/admin/src/components/Sidebar.tsx:473
 #: packages/admin/src/components/Widgets.tsx:882
 msgid "Content"
 msgstr "Treść"
@@ -1771,9 +1771,9 @@ msgstr "Migawka treści:"
 msgid "Content to Import"
 msgstr "Treść do zaimportowania"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:185
+#: packages/admin/src/components/AdminCommandPalette.tsx:191
 #: packages/admin/src/components/ContentTypeList.tsx:40
-#: packages/admin/src/components/Sidebar.tsx:346
+#: packages/admin/src/components/Sidebar.tsx:369
 msgid "Content Types"
 msgstr "Typy treści"
 
@@ -2115,11 +2115,11 @@ msgstr "ciemny"
 msgid "Dark"
 msgstr "Ciemny"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:131
+#: packages/admin/src/components/AdminCommandPalette.tsx:137
 #: packages/admin/src/components/ContentTypeList.tsx:244
 #: packages/admin/src/components/Dashboard.tsx:50
-#: packages/admin/src/components/Sidebar.tsx:312
-#: packages/admin/src/components/Sidebar.tsx:446
+#: packages/admin/src/components/Sidebar.tsx:335
+#: packages/admin/src/components/Sidebar.tsx:464
 msgid "Dashboard"
 msgstr "Pulpit"
 
@@ -3982,8 +3982,8 @@ msgstr "zaktualizowane URL obrazów w"
 msgid "Images"
 msgstr ""
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:227
-#: packages/admin/src/components/Sidebar.tsx:378
+#: packages/admin/src/components/AdminCommandPalette.tsx:233
+#: packages/admin/src/components/Sidebar.tsx:401
 #: packages/admin/src/components/WordPressImport.tsx:738
 msgid "Import"
 msgstr "Importuj"
@@ -4615,7 +4615,7 @@ msgstr ""
 msgid "Make network requests to any host (unrestricted)"
 msgstr ""
 
-#: packages/admin/src/components/Sidebar.tsx:465
+#: packages/admin/src/components/Sidebar.tsx:483
 msgid "Manage"
 msgstr "Zarządzaj"
 
@@ -4694,7 +4694,7 @@ msgstr "sklep"
 #: packages/admin/src/components/MarketplaceBrowse.tsx:87
 #: packages/admin/src/components/PluginManager.tsx:167
 #: packages/admin/src/components/PluginManager.tsx:355
-#: packages/admin/src/components/Sidebar.tsx:362
+#: packages/admin/src/components/Sidebar.tsx:385
 msgid "Marketplace"
 msgstr "Marketplace"
 
@@ -4719,7 +4719,7 @@ msgid "MDX"
 msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:2311
-#: packages/admin/src/components/Sidebar.tsx:321
+#: packages/admin/src/components/Sidebar.tsx:344
 #: packages/admin/src/components/WordPressImport.tsx:752
 #: packages/admin/src/components/WordPressImport.tsx:1145
 #: packages/admin/src/components/WordPressImport.tsx:1334
@@ -4747,7 +4747,7 @@ msgstr "Import mediów zakończony"
 msgid "Media import was skipped"
 msgstr "Import mediów został pominięty"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:154
+#: packages/admin/src/components/AdminCommandPalette.tsx:160
 #: packages/admin/src/components/MediaLibrary.tsx:322
 msgid "Media Library"
 msgstr "Biblioteka mediów"
@@ -4808,9 +4808,9 @@ msgstr "Nie znaleziono menu"
 msgid "Menu order has been updated."
 msgstr "Kolejność menu została zaktualizowana."
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:161
+#: packages/admin/src/components/AdminCommandPalette.tsx:167
 #: packages/admin/src/components/MenuList.tsx:103
-#: packages/admin/src/components/Sidebar.tsx:331
+#: packages/admin/src/components/Sidebar.tsx:354
 #: packages/admin/src/components/WordPressImport.tsx:1149
 msgid "Menus"
 msgstr "Menu"
@@ -4976,7 +4976,7 @@ msgstr "Nazwa i etykieta są wymagane"
 msgid "Name must start with a letter and contain only lowercase letters, numbers, and underscores"
 msgstr "Nazwa musi zaczynać się od litery i zawierać tylko małe litery, cyfry i podkreślenia"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:335
+#: packages/admin/src/components/AdminCommandPalette.tsx:347
 msgid "Navigation"
 msgstr "Nawigacja"
 
@@ -5036,7 +5036,7 @@ msgstr "Nowe przekierowanie"
 msgid "New Section"
 msgstr "Nowa sekcja"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:466
+#: packages/admin/src/components/AdminCommandPalette.tsx:478
 msgid "new tab"
 msgstr "nowa karta"
 
@@ -5326,7 +5326,7 @@ msgstr ""
 msgid "No results for \"{debouncedQuery}\". Try a different search term."
 msgstr "msgstr “Brak wyników dla „{debouncedQuery}”. Spróbuj innego zapytania.”"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:452
+#: packages/admin/src/components/AdminCommandPalette.tsx:464
 msgid "No results found"
 msgstr "Nie znaleziono wyników"
 
@@ -5774,12 +5774,12 @@ msgstr "Plugin zaktualizowany"
 msgid "Plugin widget error"
 msgstr ""
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:219
+#: packages/admin/src/components/AdminCommandPalette.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:135
 #: packages/admin/src/components/PluginManager.tsx:144
 #: packages/admin/src/components/PluginManager.tsx:153
-#: packages/admin/src/components/Sidebar.tsx:349
-#: packages/admin/src/components/Sidebar.tsx:481
+#: packages/admin/src/components/Sidebar.tsx:372
+#: packages/admin/src/components/Sidebar.tsx:499
 msgid "Plugins"
 msgstr "Pluginy"
 
@@ -6001,7 +6001,7 @@ msgstr "Przekierowywanie do logowania..."
 
 #: packages/admin/src/components/Redirects.tsx:358
 #: packages/admin/src/components/Redirects.tsx:377
-#: packages/admin/src/components/Sidebar.tsx:332
+#: packages/admin/src/components/Sidebar.tsx:355
 msgid "Redirects"
 msgstr "Przekierowania"
 
@@ -6042,7 +6042,7 @@ msgstr ""
 msgid "Registration was cancelled or timed out. Please try again."
 msgstr "Rejestracja została anulowana lub przekroczyła limit czasu. Spróbuj ponownie."
 
-#: packages/admin/src/components/Sidebar.tsx:355
+#: packages/admin/src/components/Sidebar.tsx:378
 msgid "Registry"
 msgstr ""
 
@@ -6581,7 +6581,7 @@ msgstr ""
 msgid "Search media"
 msgstr "Szukaj mediów"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:425
+#: packages/admin/src/components/AdminCommandPalette.tsx:437
 msgid "Search pages and content..."
 msgstr "Szukaj stron i treści..."
 
@@ -6658,9 +6658,9 @@ msgstr "Nie znaleziono sekcji"
 msgid "Section title"
 msgstr "Tytuł sekcji"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:177
+#: packages/admin/src/components/AdminCommandPalette.tsx:183
 #: packages/admin/src/components/Sections.tsx:134
-#: packages/admin/src/components/Sidebar.tsx:334
+#: packages/admin/src/components/Sidebar.tsx:357
 msgid "Sections"
 msgstr "Sekcje"
 
@@ -6711,7 +6711,7 @@ msgstr ""
 msgid "Security error. Make sure you're on a secure connection."
 msgstr "Błąd bezpieczeństwa. Upewnij się, że korzystasz z bezpiecznego połączenia."
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:243
+#: packages/admin/src/components/AdminCommandPalette.tsx:249
 #: packages/admin/src/components/Header.tsx:93
 #: packages/admin/src/components/settings/SecuritySettings.tsx:95
 msgid "Security Settings"
@@ -6917,14 +6917,14 @@ msgstr "Skonfiguruj swoją stronę"
 msgid "Setting up..."
 msgstr "Konfigurowanie..."
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:235
+#: packages/admin/src/components/AdminCommandPalette.tsx:241
 #: packages/admin/src/components/ContentEditor.tsx:803
 #: packages/admin/src/components/ContentEditor.tsx:1010
 #: packages/admin/src/components/ContentTypeEditor.tsx:381
 #: packages/admin/src/components/Header.tsx:101
 #: packages/admin/src/components/PluginManager.tsx:437
 #: packages/admin/src/components/Settings.tsx:63
-#: packages/admin/src/components/Sidebar.tsx:379
+#: packages/admin/src/components/Sidebar.tsx:402
 #: packages/admin/src/components/WordPressImport.tsx:1811
 msgid "Settings"
 msgstr "Ustawienia"
@@ -7300,7 +7300,7 @@ msgstr ""
 msgid "Tagline"
 msgstr "Podtytuł"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:202
+#: packages/admin/src/components/AdminCommandPalette.tsx:208
 #: packages/admin/src/components/Widgets.tsx:141
 msgid "Tags"
 msgstr "Tagi"
@@ -7449,7 +7449,7 @@ msgstr "Sekcji dostarczonych przez motyw nie można usunąć. Edytuj sekcję, ab
 msgid "Theme: {label}"
 msgstr "Motyw: {label}"
 
-#: packages/admin/src/components/Sidebar.tsx:371
+#: packages/admin/src/components/Sidebar.tsx:394
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:77
 msgid "Themes"
 msgstr "Motywy"
@@ -7595,7 +7595,7 @@ msgstr "Separator tytułu"
 msgid "to"
 msgstr ""
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:470
+#: packages/admin/src/components/AdminCommandPalette.tsx:482
 msgid "to close"
 msgstr "aby zamknąć"
 
@@ -7607,7 +7607,7 @@ msgstr ""
 msgid "to install plugins, or add them to your astro.config.mjs."
 msgstr "aby zainstalować wtyczki, lub dodaj je do astro.config.mjs."
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:460
+#: packages/admin/src/components/AdminCommandPalette.tsx:472
 msgid "to select"
 msgstr "aby wybrać"
 
@@ -8118,8 +8118,8 @@ msgstr "Szczegóły użytkownika"
 msgid "User not found"
 msgstr "Nie znaleziono użytkownika"
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:211
-#: packages/admin/src/components/Sidebar.tsx:348
+#: packages/admin/src/components/AdminCommandPalette.tsx:217
+#: packages/admin/src/components/Sidebar.tsx:371
 #: packages/admin/src/components/users/UserList.tsx:54
 msgid "Users"
 msgstr "Użytkownicy"
@@ -8368,9 +8368,9 @@ msgstr ""
 msgid "Widget updated"
 msgstr ""
 
-#: packages/admin/src/components/AdminCommandPalette.tsx:169
+#: packages/admin/src/components/AdminCommandPalette.tsx:175
 #: packages/admin/src/components/PluginManager.tsx:379
-#: packages/admin/src/components/Sidebar.tsx:333
+#: packages/admin/src/components/Sidebar.tsx:356
 #: packages/admin/src/components/Widgets.tsx:385
 #: packages/admin/src/components/WordPressImport.tsx:1157
 msgid "Widgets"
