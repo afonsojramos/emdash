@@ -128,7 +128,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr ""
 
 #. placeholder {0}: mcpTools.length
-#: packages/admin/src/components/PluginManager.tsx:439
+#: packages/admin/src/components/PluginManager.tsx:477
 msgid "{0, plural, one {# MCP tool} other {# MCP tools}}"
 msgstr ""
 
@@ -154,7 +154,7 @@ msgstr ""
 
 #. placeholder {0}: plugin.capabilities.length
 #: packages/admin/src/components/MarketplaceBrowse.tsx:290
-#: packages/admin/src/components/PluginManager.tsx:453
+#: packages/admin/src/components/PluginManager.tsx:491
 msgid "{0, plural, one {# permission} other {# permissions}}"
 msgstr ""
 
@@ -277,12 +277,12 @@ msgid "{0} fallback"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:129
+#: packages/admin/src/components/PluginManager.tsx:132
 msgid "{0} has been deactivated"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:343
+#: packages/admin/src/components/PluginManager.tsx:381
 msgid "{0} has been removed"
 msgstr ""
 
@@ -297,7 +297,7 @@ msgid "{0} installs"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:110
+#: packages/admin/src/components/PluginManager.tsx:113
 msgid "{0} is now active"
 msgstr ""
 
@@ -328,7 +328,7 @@ msgid "{0} of {total} could not be updated"
 msgstr ""
 
 #. placeholder {0}: plugins?.length ?? 0
-#: packages/admin/src/components/PluginManager.tsx:193
+#: packages/admin/src/components/PluginManager.tsx:196
 msgid "{0} plugins"
 msgstr ""
 
@@ -360,9 +360,8 @@ msgid "{0} updated everywhere it appears."
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#. placeholder {1}: updateInfo?.latest
-#: packages/admin/src/components/PluginManager.tsx:281
-msgid "{0} updated to v{1}"
+#: packages/admin/src/components/PluginManager.tsx:287
+msgid "{0} updated to v{installedVersion}"
 msgstr ""
 
 #. placeholder {0}: draft.description.length
@@ -371,7 +370,7 @@ msgid "{0}/160 characters"
 msgstr ""
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:313
+#: packages/admin/src/lib/api/marketplace.ts:417
 msgid "{base} to: {0}"
 msgstr ""
 
@@ -474,11 +473,11 @@ msgstr ""
 msgid "{overflowCount, plural, one {# file was not added because the upload list is full.} other {# files were not added because the upload list is full.}}"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:95
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:98
 msgid "{pluginName} is requesting additional permissions:"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:96
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:99
 msgid "{pluginName} requires the following permissions:"
 msgstr ""
 
@@ -728,11 +727,11 @@ msgstr ""
 msgid "About inferred bylines"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:265
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:273
 msgid "Accept & Install"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:264
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:272
 msgid "Accept & Update"
 msgstr ""
 
@@ -749,8 +748,8 @@ msgstr ""
 msgid "Access Denied"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:282
-#: packages/admin/src/lib/api/marketplace.ts:290
+#: packages/admin/src/lib/api/marketplace.ts:386
+#: packages/admin/src/lib/api/marketplace.ts:394
 msgid "Access your media library"
 msgstr ""
 
@@ -935,7 +934,7 @@ msgstr ""
 msgid "Add Passkey"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:219
+#: packages/admin/src/components/PluginManager.tsx:222
 msgid "Add plugins to your astro.config.mjs to extend EmDash functionality."
 msgstr ""
 
@@ -1003,16 +1002,16 @@ msgstr ""
 msgid "After send:"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:560
+#: packages/admin/src/components/PluginManager.tsx:598
 msgid "Agent access"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:354
+#: packages/admin/src/components/PluginManager.tsx:392
 msgid "Agent access for {0} has been updated"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:203
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:211
 msgid "Agent-callable MCP tools"
 msgstr ""
 
@@ -1091,7 +1090,7 @@ msgstr ""
 msgid "All uploads finished"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:562
+#: packages/admin/src/components/PluginManager.tsx:600
 msgid "Allow MCP tokens with plugin-tool scope to invoke these routes."
 msgstr ""
 
@@ -1116,7 +1115,7 @@ msgstr ""
 msgid "Already have an account?"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:738
+#: packages/admin/src/components/PluginManager.tsx:795
 msgid "Also delete plugin storage data"
 msgstr ""
 
@@ -1157,8 +1156,9 @@ msgstr ""
 
 #: packages/admin/src/components/DialogError.tsx:14
 #: packages/admin/src/components/MarketplaceBrowse.tsx:135
-#: packages/admin/src/components/PluginManager.tsx:116
-#: packages/admin/src/components/PluginManager.tsx:135
+#: packages/admin/src/components/PluginManager.tsx:119
+#: packages/admin/src/components/PluginManager.tsx:138
+#: packages/admin/src/components/PluginManager.tsx:320
 #: packages/admin/src/components/PluginSettings.tsx:75
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:85
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:108
@@ -1396,7 +1396,7 @@ msgstr ""
 msgid "Authorize Device"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:142
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:150
 msgid "Authorized approvers"
 msgstr ""
 
@@ -1608,7 +1608,7 @@ msgstr ""
 msgid "Browse files to upload"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:63
+#: packages/admin/src/components/PluginManager.tsx:66
 msgid "Browse the <0>marketplace</0> to install plugins, or add them to your astro.config.mjs."
 msgstr ""
 
@@ -1677,7 +1677,7 @@ msgstr ""
 
 #: packages/admin/src/components/BylineCreditsEditor.tsx:1012
 #: packages/admin/src/components/BylineFieldEditor.tsx:315
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:256
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:264
 #: packages/admin/src/components/ConfirmDialog.tsx:99
 #: packages/admin/src/components/ContentList.tsx:545
 #: packages/admin/src/components/ContentList.tsx:1378
@@ -1699,7 +1699,7 @@ msgstr ""
 #: packages/admin/src/components/MenuEditor.tsx:438
 #: packages/admin/src/components/MenuEditor.tsx:623
 #: packages/admin/src/components/MenuList.tsx:175
-#: packages/admin/src/components/PluginManager.tsx:744
+#: packages/admin/src/components/PluginManager.tsx:801
 #: packages/admin/src/components/PortableTextEditor.tsx:4697
 #: packages/admin/src/components/PublishingDateTimeEditor.tsx:367
 #: packages/admin/src/components/Redirects.tsx:183
@@ -1743,11 +1743,11 @@ msgstr ""
 msgid "Canonical URL"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:536
+#: packages/admin/src/components/PluginManager.tsx:574
 msgid "Capabilities"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:73
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:76
 msgid "Capability consent"
 msgstr ""
 
@@ -1851,7 +1851,7 @@ msgstr ""
 msgid "Character between page title and site name (e.g., \"My Post | My Site\")"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:185
+#: packages/admin/src/components/PluginManager.tsx:188
 msgid "Check for updates"
 msgstr ""
 
@@ -2089,8 +2089,8 @@ msgstr ""
 msgid "Code block actions"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:519
-#: packages/admin/src/components/PluginManager.tsx:524
+#: packages/admin/src/components/PluginManager.tsx:557
+#: packages/admin/src/components/PluginManager.tsx:562
 msgid "Collapse details"
 msgstr ""
 
@@ -2628,8 +2628,8 @@ msgstr ""
 msgid "Create your first reusable content section to get started."
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:280
-#: packages/admin/src/lib/api/marketplace.ts:289
+#: packages/admin/src/lib/api/marketplace.ts:384
+#: packages/admin/src/lib/api/marketplace.ts:393
 msgid "Create, update, and delete content"
 msgstr ""
 
@@ -3107,8 +3107,8 @@ msgstr ""
 msgid "Destination path"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:217
-#: packages/admin/src/components/PluginManager.tsx:581
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:225
+#: packages/admin/src/components/PluginManager.tsx:619
 msgid "Destructive"
 msgstr ""
 
@@ -3149,11 +3149,11 @@ msgstr ""
 msgid "Disable"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:513
+#: packages/admin/src/components/PluginManager.tsx:551
 msgid "Disable plugin"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:571
+#: packages/admin/src/components/PluginManager.tsx:609
 msgid "Disable plugin MCP tools"
 msgstr ""
 
@@ -3169,14 +3169,14 @@ msgstr ""
 msgid "Disable User?"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:402
+#: packages/admin/src/components/PluginManager.tsx:440
 #: packages/admin/src/components/Redirects.tsx:426
 #: packages/admin/src/components/users/UserDetail.tsx:201
 #: packages/admin/src/components/users/UserList.tsx:205
 msgid "Disabled"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:631
+#: packages/admin/src/components/PluginManager.tsx:669
 msgid "Disabled:"
 msgstr ""
 
@@ -3706,11 +3706,11 @@ msgstr ""
 msgid "Enable full-text search on this collection"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:513
+#: packages/admin/src/components/PluginManager.tsx:551
 msgid "Enable plugin"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:572
+#: packages/admin/src/components/PluginManager.tsx:610
 msgid "Enable plugin MCP tools"
 msgstr ""
 
@@ -3852,8 +3852,8 @@ msgstr ""
 msgid "Exit distraction-free mode"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:519
-#: packages/admin/src/components/PluginManager.tsx:524
+#: packages/admin/src/components/PluginManager.tsx:557
+#: packages/admin/src/components/PluginManager.tsx:562
 msgid "Expand details"
 msgstr ""
 
@@ -4029,7 +4029,7 @@ msgstr ""
 msgid "Failed to delete widget area"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:134
+#: packages/admin/src/components/PluginManager.tsx:137
 #: packages/admin/src/lib/api/plugins.ts:160
 msgid "Failed to disable plugin"
 msgstr ""
@@ -4054,7 +4054,7 @@ msgstr ""
 msgid "Failed to duplicate"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:115
+#: packages/admin/src/components/PluginManager.tsx:118
 #: packages/admin/src/lib/api/plugins.ts:146
 msgid "Failed to enable plugin"
 msgstr ""
@@ -4203,7 +4203,7 @@ msgstr ""
 msgid "Failed to import media"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:208
+#: packages/admin/src/lib/api/marketplace.ts:310
 #: packages/admin/src/lib/api/registry.ts:790
 msgid "Failed to install plugin"
 msgstr ""
@@ -4252,7 +4252,7 @@ msgid "Failed to load plugin settings"
 msgstr ""
 
 #. placeholder {0}: error.message
-#: packages/admin/src/components/PluginManager.tsx:163
+#: packages/admin/src/components/PluginManager.tsx:166
 msgid "Failed to load plugins: {0}"
 msgstr ""
 
@@ -4416,7 +4416,7 @@ msgstr ""
 msgid "Failed to set entry terms"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:249
+#: packages/admin/src/lib/api/marketplace.ts:353
 #: packages/admin/src/lib/api/registry.ts:1004
 msgid "Failed to uninstall plugin"
 msgstr ""
@@ -4454,7 +4454,8 @@ msgstr ""
 msgid "Failed to update media"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:232
+#: packages/admin/src/components/PluginManager.tsx:319
+#: packages/admin/src/lib/api/marketplace.ts:336
 #: packages/admin/src/lib/api/registry.ts:879
 msgid "Failed to update plugin"
 msgstr ""
@@ -4954,7 +4955,7 @@ msgstr ""
 msgid "Homepage"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:433
+#: packages/admin/src/components/PluginManager.tsx:471
 msgid "Hooks"
 msgstr ""
 
@@ -5204,7 +5205,7 @@ msgstr ""
 msgid "Increase column width"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:107
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:115
 msgid "Independent verification"
 msgstr ""
 
@@ -5350,15 +5351,15 @@ msgid "Installed"
 msgstr ""
 
 #. placeholder {0}: plugin.marketplaceVersion || plugin.version
-#: packages/admin/src/components/PluginManager.tsx:600
+#: packages/admin/src/components/PluginManager.tsx:638
 msgid "Installed from marketplace (v{0})"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:619
+#: packages/admin/src/components/PluginManager.tsx:657
 msgid "Installed:"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:262
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:270
 msgid "Installing..."
 msgstr ""
 
@@ -5541,7 +5542,7 @@ msgstr ""
 msgid "Large section heading"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:625
+#: packages/admin/src/components/PluginManager.tsx:663
 msgid "Last enabled:"
 msgstr ""
 
@@ -5735,7 +5736,7 @@ msgstr ""
 msgid "Loading menus..."
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:154
+#: packages/admin/src/components/PluginManager.tsx:157
 msgid "Loading plugins..."
 msgstr ""
 
@@ -5878,13 +5879,13 @@ msgstr ""
 msgid "Main Sidebar"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:285
-#: packages/admin/src/lib/api/marketplace.ts:293
+#: packages/admin/src/lib/api/marketplace.ts:389
+#: packages/admin/src/lib/api/marketplace.ts:397
 msgid "Make network requests"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:286
-#: packages/admin/src/lib/api/marketplace.ts:294
+#: packages/admin/src/lib/api/marketplace.ts:390
+#: packages/admin/src/lib/api/marketplace.ts:398
 msgid "Make network requests to any host (unrestricted)"
 msgstr ""
 
@@ -5906,7 +5907,7 @@ msgstr ""
 msgid "Manage content widgets in your widget areas"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:174
+#: packages/admin/src/components/PluginManager.tsx:177
 msgid "Manage installed plugins. Enable or disable plugins to control their functionality."
 msgstr ""
 
@@ -5962,8 +5963,8 @@ msgid "Markdown"
 msgstr ""
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:87
-#: packages/admin/src/components/PluginManager.tsx:190
-#: packages/admin/src/components/PluginManager.tsx:403
+#: packages/admin/src/components/PluginManager.tsx:193
+#: packages/admin/src/components/PluginManager.tsx:441
 #: packages/admin/src/components/Sidebar.tsx:478
 msgid "Marketplace"
 msgstr ""
@@ -6414,7 +6415,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:175
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:183
 msgid "NEW"
 msgstr ""
 
@@ -6448,7 +6449,7 @@ msgstr ""
 msgid "New folder"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:186
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:194
 msgid "New public routes"
 msgstr ""
 
@@ -6743,7 +6744,7 @@ msgstr ""
 msgid "No passkeys registered yet."
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:214
+#: packages/admin/src/components/PluginManager.tsx:217
 msgid "No plugins configured"
 msgstr ""
 
@@ -6763,7 +6764,7 @@ msgstr ""
 msgid "No preview"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:111
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:119
 msgid "No provenance was supplied; the signed publisher policy permits this."
 msgstr ""
 
@@ -7063,7 +7064,7 @@ msgstr ""
 msgid "Ownership"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:609
+#: packages/admin/src/components/PluginManager.tsx:647
 msgid "Package"
 msgstr ""
 
@@ -7081,7 +7082,7 @@ msgstr ""
 msgid "Page size"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:421
+#: packages/admin/src/components/PluginManager.tsx:459
 #: packages/admin/src/components/WordPressImport.tsx:1344
 msgid "Pages"
 msgstr ""
@@ -7300,11 +7301,11 @@ msgstr ""
 msgid "Plugin details"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:128
+#: packages/admin/src/components/PluginManager.tsx:131
 msgid "Plugin disabled"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:109
+#: packages/admin/src/components/PluginManager.tsx:112
 msgid "Plugin enabled"
 msgstr ""
 
@@ -7317,7 +7318,7 @@ msgstr ""
 msgid "Plugin error ({0})"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:353
+#: packages/admin/src/components/PluginManager.tsx:391
 msgid "Plugin MCP access updated"
 msgstr ""
 
@@ -7337,7 +7338,7 @@ msgstr ""
 msgid "Plugin not found. The publisher or slug may be incorrect."
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:502
+#: packages/admin/src/components/PluginManager.tsx:540
 msgid "Plugin pages"
 msgstr ""
 
@@ -7345,7 +7346,7 @@ msgstr ""
 msgid "Plugin panel unavailable."
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:89
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:92
 msgid "Plugin Permissions"
 msgstr ""
 
@@ -7364,15 +7365,16 @@ msgstr ""
 msgid "Plugin tools: {0}"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:342
+#: packages/admin/src/components/PluginManager.tsx:380
 msgid "Plugin uninstalled"
 msgstr ""
 
+#: packages/admin/src/lib/api/marketplace.ts:198
 #: packages/admin/src/lib/api/registry.ts:919
 msgid "Plugin update requires re-consent"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:280
+#: packages/admin/src/components/PluginManager.tsx:286
 msgid "Plugin updated"
 msgstr ""
 
@@ -7381,9 +7383,9 @@ msgid "Plugin widget error"
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:218
-#: packages/admin/src/components/PluginManager.tsx:153
-#: packages/admin/src/components/PluginManager.tsx:162
-#: packages/admin/src/components/PluginManager.tsx:172
+#: packages/admin/src/components/PluginManager.tsx:156
+#: packages/admin/src/components/PluginManager.tsx:165
+#: packages/admin/src/components/PluginManager.tsx:175
 #: packages/admin/src/components/Sidebar.tsx:462
 #: packages/admin/src/components/Sidebar.tsx:626
 msgid "Plugins"
@@ -7477,19 +7479,19 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:117
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:125
 msgid "Profile CID"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:110
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:118
 msgid "Provenance is verified against the signed release and artifact."
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:133
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:141
 msgid "Provenance optional"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:132
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:140
 msgid "Provenance required"
 msgstr ""
 
@@ -7549,15 +7551,15 @@ msgstr ""
 msgid "Published by <0/>"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:136
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:144
 msgid "Publisher approval required for every delegated release"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:137
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:145
 msgid "Publisher approval required only for permission escalation"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:129
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:137
 msgid "Publisher release policy"
 msgstr ""
 
@@ -7604,17 +7606,17 @@ msgstr ""
 msgid "Read site settings"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:284
-#: packages/admin/src/lib/api/marketplace.ts:292
+#: packages/admin/src/lib/api/marketplace.ts:388
+#: packages/admin/src/lib/api/marketplace.ts:396
 msgid "Read user accounts"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:279
-#: packages/admin/src/lib/api/marketplace.ts:288
+#: packages/admin/src/lib/api/marketplace.ts:383
+#: packages/admin/src/lib/api/marketplace.ts:392
 msgid "Read your content"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:281
+#: packages/admin/src/lib/api/marketplace.ts:385
 msgid "Read your taxonomies and terms"
 msgstr ""
 
@@ -7721,7 +7723,7 @@ msgstr ""
 msgid "Registry"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:123
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:131
 msgid "Release CID"
 msgstr ""
 
@@ -8139,19 +8141,19 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:88
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:91
 msgid "Review New Permissions"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:93
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:96
 msgid "Review the independently verified release evidence and permissions for {pluginName} before continuing."
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:86
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:89
 msgid "Review Verified Plugin"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:85
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:88
 msgid "Review Verified Update"
 msgstr ""
 
@@ -8236,8 +8238,8 @@ msgstr ""
 
 #. placeholder {0}: tool.route
 #. placeholder {1}: tool.permission
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:213
-#: packages/admin/src/components/PluginManager.tsx:585
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:221
+#: packages/admin/src/components/PluginManager.tsx:623
 msgid "Route: {0} · Permission: {1}"
 msgstr ""
 
@@ -8656,11 +8658,11 @@ msgstr ""
 msgid "Security audit flagged concerns"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:243
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:251
 msgid "Security audit flagged potential concerns with this plugin."
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:244
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:252
 msgid "Security audit flagged this plugin as potentially unsafe."
 msgstr ""
 
@@ -8953,7 +8955,7 @@ msgstr ""
 #: packages/admin/src/components/ContentEditor.tsx:1435
 #: packages/admin/src/components/ContentTypeEditor.tsx:392
 #: packages/admin/src/components/Header.tsx:101
-#: packages/admin/src/components/PluginManager.tsx:491
+#: packages/admin/src/components/PluginManager.tsx:529
 #: packages/admin/src/components/Settings.tsx:44
 #: packages/admin/src/components/Sidebar.tsx:500
 #: packages/admin/src/components/WordPressImport.tsx:1827
@@ -9232,7 +9234,7 @@ msgstr ""
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:500
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:704
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
-#: packages/admin/src/components/PluginManager.tsx:597
+#: packages/admin/src/components/PluginManager.tsx:635
 #: packages/admin/src/components/Redirects.tsx:475
 #: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
@@ -9619,7 +9621,7 @@ msgstr ""
 msgid "Themes"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:205
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:213
 msgid "These tools remain disabled after installation until you explicitly enable agent access."
 msgstr ""
 
@@ -9782,7 +9784,7 @@ msgstr ""
 msgid "This table has unsupported cell formatting, merged cells, or column widths. Paste it as plain text or simplify the table and try again."
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:189
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:197
 msgid "This update exposes the following routes without authentication:"
 msgstr ""
 
@@ -9816,7 +9818,7 @@ msgstr ""
 msgid "This will permanently delete this comment. This action cannot be undone."
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:733
+#: packages/admin/src/components/PluginManager.tsx:790
 msgid "This will remove the plugin and its bundle from your site."
 msgstr ""
 
@@ -10081,20 +10083,20 @@ msgid "Undo"
 msgstr ""
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:191
-#: packages/admin/src/components/PluginManager.tsx:647
-#: packages/admin/src/components/PluginManager.tsx:747
+#: packages/admin/src/components/PluginManager.tsx:685
+#: packages/admin/src/components/PluginManager.tsx:804
 msgid "Uninstall"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:731
+#: packages/admin/src/components/PluginManager.tsx:788
 msgid "Uninstall {pluginName}?"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:726
+#: packages/admin/src/components/PluginManager.tsx:783
 msgid "Uninstall confirmation"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:747
+#: packages/admin/src/components/PluginManager.tsx:804
 msgid "Uninstalling..."
 msgstr ""
 
@@ -10201,7 +10203,7 @@ msgid "Update this redirect rule."
 msgstr ""
 
 #. placeholder {0}: updateInfo.latest
-#: packages/admin/src/components/PluginManager.tsx:471
+#: packages/admin/src/components/PluginManager.tsx:509
 msgid "Update to v{0}"
 msgstr ""
 
@@ -10223,8 +10225,8 @@ msgstr ""
 msgid "Updating usage"
 msgstr ""
 
-#: packages/admin/src/components/CapabilityConsentDialog.tsx:261
-#: packages/admin/src/components/PluginManager.tsx:471
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:269
+#: packages/admin/src/components/PluginManager.tsx:509
 msgid "Updating..."
 msgstr ""
 
@@ -10248,8 +10250,8 @@ msgstr ""
 msgid "Upload and delete media"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:283
-#: packages/admin/src/lib/api/marketplace.ts:291
+#: packages/admin/src/lib/api/marketplace.ts:387
+#: packages/admin/src/lib/api/marketplace.ts:395
 msgid "Upload and manage media"
 msgstr ""
 
@@ -10479,7 +10481,7 @@ msgid "Users with email addresses from these domains can sign up without an invi
 msgstr ""
 
 #. placeholder {0}: updateInfo.latest
-#: packages/admin/src/components/PluginManager.tsx:406
+#: packages/admin/src/components/PluginManager.tsx:444
 msgid "v{0} available"
 msgstr ""
 
@@ -10506,6 +10508,7 @@ msgstr ""
 msgid "Verifying..."
 msgstr ""
 
+#: packages/admin/src/components/CapabilityConsentDialog.tsx:103
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
 #: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "Version"
@@ -10527,7 +10530,7 @@ msgstr ""
 msgid "View email provider status and send test emails"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:483
+#: packages/admin/src/components/PluginManager.tsx:521
 msgid "View in Marketplace"
 msgstr ""
 
@@ -10755,7 +10758,7 @@ msgid "Widget updated"
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:168
-#: packages/admin/src/components/PluginManager.tsx:427
+#: packages/admin/src/components/PluginManager.tsx:465
 #: packages/admin/src/components/Sidebar.tsx:426
 #: packages/admin/src/components/Widgets.tsx:388
 #: packages/admin/src/components/WordPressImport.tsx:1175
