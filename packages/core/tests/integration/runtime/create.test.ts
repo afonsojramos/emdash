@@ -134,6 +134,7 @@ describe("EmDashRuntime.create — cold boot", () => {
 				"rt.seedcheck",
 				"rt.plugins",
 				"rt.site",
+				"rt.hookselections",
 				"rt.sandbox",
 				"rt.hooks",
 				"rt.cron",
@@ -510,6 +511,60 @@ describe("EmDashRuntime.create — cold boot", () => {
 		}
 	});
 
+	it("resolves exclusive hooks from selections read in the cold-start batch", async () => {
+		const provider = (id: string) =>
+			definePlugin({
+				id,
+				version: "1.0.0",
+				capabilities: ["content:write", "content:read"],
+				hooks: {
+					"content:beforeSave": {
+						exclusive: true,
+						handler: vi.fn() as unknown as ContentBeforeSaveHandler,
+					},
+				},
+			});
+		const migratedDb = async (selection: string) => {
+			const sqlite = new Database(":memory:");
+			const setup = new Kysely<EmDashDatabase>({
+				dialect: new SqliteDialect({ database: sqlite }),
+			});
+			await runMigrations(setup);
+			await setup
+				.insertInto("options")
+				.values([
+					{ name: "emdash:setup_complete", value: "true" },
+					{
+						name: "emdash:exclusive_hook:content:beforeSave",
+						value: JSON.stringify(selection),
+					},
+				])
+				.execute();
+			return { sqlite, setup };
+		};
+		const singleton = await migratedDb("provider-a");
+		const coalescing = await migratedDb("provider-b");
+
+		const runtime = await EmDashRuntime.create({
+			...createDeps(),
+			plugins: [provider("provider-a"), provider("provider-b")],
+			createDialect: () => new SqliteDialect({ database: singleton.sqlite }),
+			createCoalescingDialect: () => new SqliteDialect({ database: coalescing.sqlite }),
+		});
+		try {
+			expect(runtime.hooks.getExclusiveSelection("content:beforeSave")).toBe("provider-b");
+		} finally {
+			await runtime.stopCron();
+			for (const handle of [singleton.setup, coalescing.setup]) {
+				try {
+					await handle.destroy();
+				} catch {
+					// already closed
+				}
+			}
+		}
+	});
+
 	// A failed migration must not be retried on every create() call: on
 	// Workers each request in a warm isolate re-enters create(), and without
 	// a backoff every request re-runs the failing migration against the
@@ -569,6 +624,28 @@ describe("EmDashRuntime.create — cold boot", () => {
 		await expect(EmDashRuntime.create(deps)).rejects.toBeInstanceOf(MigrationLockHeldError);
 		await expect(EmDashRuntime.create(deps)).rejects.toThrow(/backing off/i);
 		expect(dialectCalls).toBe(1);
+	});
+
+	it("retries immediately after an error reading migration state", async () => {
+		const unavailable = new Database(":memory:");
+		unavailable.close();
+		const healthy = new Database(":memory:");
+		await runMigrations(
+			new Kysely<EmDashDatabase>({ dialect: new SqliteDialect({ database: healthy }) }),
+		);
+
+		let dialectCalls = 0;
+		const deps: RuntimeDependencies = {
+			...createDeps(),
+			createDialect: () => {
+				dialectCalls += 1;
+				return new SqliteDialect({ database: dialectCalls === 1 ? unavailable : healthy });
+			},
+		};
+
+		await expect(EmDashRuntime.create(deps)).rejects.toThrow();
+		await expect(EmDashRuntime.create(deps)).resolves.toBeInstanceOf(EmDashRuntime);
+		expect(dialectCalls).toBe(2);
 	});
 
 	it("rechecks pending migrations without entering migration-failure backoff", async () => {
